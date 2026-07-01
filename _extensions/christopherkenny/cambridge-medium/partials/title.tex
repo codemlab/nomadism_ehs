@@ -1,0 +1,17 @@
+$if(title)$
+\title{$title$}
+$endif$
+
+$for(by-author)$
+\author{$by-author.name.literal$}
+$for(by-author.affiliations)$
+\affiliation{$if(it.department)$$it.department$$if(it.name)$, $endif$$endif$$if(it.name)$$it.name$$endif$$if(it.city)$, $it.city$$endif$$if(it.country)$, $it.country$$endif$}
+$endfor$
+$if(by-author.email)$
+\email{$by-author.email$}
+$endif$
+$endfor$
+
+$if(keywords)$
+\keywords{$for(keywords)$$it$$sep$; $endfor$}
+$endif$

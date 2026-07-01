@@ -1,0 +1,37 @@
+# Generated figures (R-produced; re-run nomad_manuscript_2025.R to rebuild)
+figures/*.png
+# Exceptions: hand-made files that cannot be regenerated
+!figures/migration_map.png
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.log
+*.run.xml
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.out
+
+# Generated LaTeX source files (at repo root only)
+/*.tex
+!variables.tex
+
+# Generated PDFs (at repo root only; _extensions PDFs are kept)
+/*.pdf
+nomadism_diff.pdf
+
+# Word exports
+*.docx
+
+# R model outputs (large binaries – store separately or use git-lfs)
+*.Rdata
+*.RData
+model_output/
+
+# Quarto build cache
+_freeze/
+.quarto/
+*_files/

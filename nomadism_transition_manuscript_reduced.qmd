@@ -1,0 +1,628 @@
+---
+title: Amazigh Nomads Show Strong Desire to Settle and Low Regret Despite Economic Costs.
+format:
+  cambridge-medium-pdf:
+    keep-tex: true
+    include-in-header: variables.tex
+execute:
+  echo: false
+  warning: false
+  message: false
+author:
+  - name: Sarah Alami
+    affiliations:
+      - name: University Mohammed VI Polytechnic
+        department: School of Collective Intelligence
+        city: Rabat
+        country: Morocco
+    email: sarah.alami@um6p.ma
+  - name: Kawtar Oukhouya
+    affiliations:
+      - name: University Mohammed VI Polytechnic
+        department: School of Collective Intelligence
+        city: Rabat
+        country: Morocco
+  - name: Edmond Seabright
+    affiliations:
+      - name: University Mohammed VI Polytechnic
+        department: School of Collective Intelligence
+        city: Rabat
+        country: Morocco
+  - name: Salma Es Sbih
+    affiliations:
+      - name: University Mohammed VI Polytechnic
+        department: School of Collective Intelligence
+        city: Rabat
+        country: Morocco
+  - name: Mohammed Ibnboubakr
+    affiliations:
+      - name: University Mohammed VI Polytechnic
+        department: School of Collective Intelligence
+        city: Rabat
+        country: Morocco
+abstract: |
+  The transition from nomadic to sedentary lifeways is one of the most consequential shifts in human evolutionary history. Understanding its drivers and consequences is essential for interpreting human evolution and for guiding public policy in regions where contemporary nomadic populations are settling. While the forager-to-farmer transition is well-studied, pastoralist sedentarization remains underexplored. Archaeological and public health studies illuminate post-settlement outcomes but tell us little about the lived experiences of those involved. Here, we investigate the factors driving settlement among nomadic pastoralists in the Southeastern High Atlas region of Morocco, describe how this transition unfolds, and evaluate its short- and long-term effects on socioeconomic well-being by comparing current nomads, first-generation settled individuals, and second- or later-generation descendants of former nomads. Despite incurring significant short-term economic costs, the large majority want to settle, and former nomads overwhelmingly report no regret. We conceptualise sedentarization as a form of *retirement* — a deliberate, intergenerational investment that trades material autonomy for physical ease, social embeddedness, and expanded opportunities for one's children. Contrary to standard accounts, settling is associated with lower income and market integration, as former nomads sell part or all of their flock and rely more on community-based sharing networks. Our findings reframe sedentarisation as an act of agency with implications for evolutionary theories of subsistence change and for policies affecting pastoral populations worldwide.
+  
+acknowledgements: |
+  This document is based on the Overleaf template.
+keywords: [template, demo]
+Social media summary:
+bibliography: references.bib
+suppress-bibliography: true
+---
+``` {r load packages}
+
+load("model_output/alami_et_al_2026.Rdata")
+library(gtsummary)
+library(gt)
+library(dplyr)
+
+```
+
+``` {r fixup-broken-vars}
+# des_s was computed with darija == "fluent" but darija is logical, and
+# mean(age) without na.rm=TRUE returns NA for groups with one missing age.
+# Recompute from d directly.
+des_s <- d |>
+  group_by(group2) |>
+  summarise(
+    mean_age = round(mean(age, na.rm = TRUE), 1),
+    sd_age   = round(sd(age,  na.rm = TRUE), 1),
+    mean_edu = round(mean(yrs_edu, na.rm = TRUE), 1),
+    sd_edu   = round(sd(yrs_edu,   na.rm = TRUE), 1),
+    dar_pct  = round(mean(darija,  na.rm = TRUE) * 100, 1),
+    .groups  = "drop"
+  )
+mean_ages_range <- range(des_s$mean_age, na.rm = TRUE) |> round(1)
+
+edu_nom   <- des_s$mean_edu[des_s$group2 == "nomad"]
+edu_fnom  <- des_s$mean_edu[des_s$group2 == "former nomad"]
+edu_never <- des_s$mean_edu[des_s$group2 == "never nomad"]
+dar_nom   <- des_s$dar_pct[des_s$group2 == "nomad"]
+dar_fnom  <- des_s$dar_pct[des_s$group2 == "former nomad"]
+dar_never <- des_s$dar_pct[des_s$group2 == "never nomad"]
+```
+## Introduction {#sec-intro}
+
+\noindent For most of our evolutionary history, humans lived as nomadic foragers, moving frequently in response to seasonal shifts and resource availability [@binford1980WillowSmokeDogs; @marlowe2005HunterGatherersHumanEvolution]. The domestication of plants between 13,000-10,000 years ago, followed by the domestication of herd animals between 11,000-5,000 years ago, marked a pivotal shift in human subsistence, catalyzing transitions to settled agriculture and pastoralist lifestyles ranging from fully nomadic to sedentary [@larson2014CurrentPerspectivesFuture; @larson2014EvolutionAnimalDomestication; @outram2009EarliestHorseHarnessing; @zohary2012DomesticationPlantsOld; @dyson-hudson1980NomadicPastoralism; @honeychurch2016ArchaeologyPastoralNomadism]. While the Neolithic forager-to-farmer transition has been extensively studied—including its climatic and ecological drivers [e.g., @ashraf2011ClimaticOriginsNeolithica; @diamond2002EvolutionConsequencesFuture; @richerson2001WasAgricultureImpossible], impacts on human biology, health and demography [e.g., @bocquet-appel2011AgriculturalDemographicTransition; @lathamHumanHealthNeolithic; @richards2002BriefReviewArchaeological; @wells2020LifeHistoryTransitions], contributions to social complexity [e.g., @kuijt2002ForagingFarmingSocial; @richerson2001WasAgricultureImpossible; @weisdorf2005ForagingFarmingExplaining], and environmental consequences [@magyari2012NeolithicHumanImpact; @vugt2025ChangesClimateDrove; @woodbridge2014ImpactNeolithicAgricultural]—the adoption and abandonment of nomadic pastoralism remain underexplored by evolutionary social scientists.
+Pastoral systems have experienced various periods of expansion and decline since their emergence [@honeychurch2014AlternativeComplexitiesArchaeology]. In recent decades, however, climate change and widespread livestock losses have increased pressure on the sustainability of pastoralism and nomadic lifeways [@manzano2021HolisticUnderstandingPastoralism; @mcguirk2025TranshumantPastoralismClimate; @tugjamba2023AdaptingNomadicPastoralism]. Understanding these transitions can illuminate long-standing questions about subsistence evolution and inform policy in regions where nomadic populations are increasingly settling. 
+
+
+### Pastoralism in anthropological research
+Nineteenth century theorists of social evolution portrayed nomadic pastoralism as an intermediate stage between nomadic foraging and settled agriculture [@kradin2002NomadismEvolutionWorldSystems; @morgan1877AncientSocietyResearches]. Within this framework, it was cast as a residual, marginal mode of subsistence, disconnected from states and modern economies, and destined for replacement by agriculture or urban life [@dyson-hudson1980NomadicPastoralism; @marxCharacteristicsMiddleEastern2004]. This view has long justified state-led sedentarization programs, from the Soviet Union’s extensive sedendarization campaigns in Central Asia [@khazanov1994NomadsOutsideWorld], to China’s “ecological resettlement” policies in Northwestern China [@fan2015SolvingOneProblem; @ptackova2017OrchestratedEnvironmentalMigration], to the Ottoman empire and early Turkish Republic’s sedentarization reforms targeting Yörüks and Kurds [@cagatay2001PopulationResettlementImmigration; @koksal2006CoercionMediationCentralization; @tetik2020NomadsMountaineersHistorical], and Israel’s land expropriation laws affecting Bedouin communities in the Naqab/Negev [@yiftachel2016RightsDenialsBedouin]. Across Africa, colonial and postcolonial governments implemented interventions ranging from forced settlement to restricted grazing mobility. For example, in West and Central Africa, French and British colonial authorities imposed grazing restrictions and created fixed settlements for Tuareg and Fulani herders [@alesbury2013SocietyMotionTuareg; @mbih2018FulaniPastoralistsTransformation], while in post-independence Mali and Niger, state-led range management programs sought to limit transhumance [@gautier2016GlobalChangesLivestock]. Similarly, in Morocco and Algeria, sedentarization efforts targeting nomadic and semi-nomadic populations began under French colonial rule and intensified during the post-independence period [@bencherifa1996SedentarizationPastoralNomads; @maxwell2016FacingFamineSomali; @ptackova2017OrchestratedEnvironmentalMigration]. While these efforts often succeeded in reducing mobility and expanding state control, they were frequently met with resistance and often resulted in livelihood collapse, ecological degradation, or political unrest. In Soviet Kazakhstan, forced settlement led to famine and displacement [@ohayon2013KazakhFamineBeginnings]; in China, Southern Somalia and North Africa, restrictions on mobility undermined pastoralists’ adaptive strategies and exacerbated environmental stress and desertification [@bencherifa1996SedentarizationPastoralNomads; @fan2015SolvingOneProblem; @johnson1993NomadismDesertificationAfrica; @maxwell2016FacingFamineSomali; @maxwell20122011SomaliaFamine]; and in Ottoman-era territories of what is now Turkey and across the Sahel, sedentarization fueled marginalization contributing to the emergence and persistence of contemporary separatist movements and armed rebellions [@akinola2023ViolentConflictSahel; @keita1998ConflictConflictResolution].
+More recent research has reshaped understandings of nomadic pastoralism's socioeconomic role. Pastoralist societies have long been embedded in trade networks with farming and urban communities [@dyson-hudson1980NomadicPastoralism; @spengler2014EarlyAgricultureCrop; @marxCharacteristicsMiddleEastern2004]. Pastoralism as an economic specialization likely co-evolved with early agricultural societies. In some cases, mixed cultivation-herding systems gave rise to more specialised animal husbandry [@hermes2019EarlyIntegrationPastoralism; @honeychurch2016ArchaeologyPastoralNomadism]. In other contexts, pastoralism may have developed among hunter-gatherer groups who acquired domesticated animals and husbandry knowledge from neighboring agropastoral communities [@dyson-hudson1980NomadicPastoralism; @honeychurch2016ArchaeologyPastoralNomadism; @arbuckle2019RisePastoralismAncient]. Contemporary pastoralists often rely on sustained interactions with sedentary neighbors for nutritional and other needs [@dyson-hudson1980NomadicPastoralism]. Even where farming is unviable, groups such as the Maasai and Samburu maintain trade networks, exchanging livestock and dairy for grains, tools, and other goods [@holtzman2007EatingTimeCapitalist; @jacobs1975MaasaiPastoralismHistorical]. In North Africa and the Middle East, nomadic pastoralism functions as a specialized sector within urban economies, with livestock raised primarily for trade—an adaptation in which mobility and diversified exchange networks manage risk while contributing to regional food systems (@marxCharacteristicsMiddleEastern2004).
+
+
+### Why do nomadic pastoralists choose to settle?
+Given their long-standing integration into broader economic and political systems, the factors driving settlement today likely differ somewhat from those that motivated prehistoric foragers. Classical models of the forager-to-farmer transition emphasize climate change, demographic pressure, and resource intensification as key drivers, with agriculture seen as an adaptation to growing populations or shrinking foraging returns [e.g., @bocquet-appel2011AgriculturalDemographicTransition; @gignoux2011RapidGlobalDemographic; @gupta2004OriginAgricultureDomestication; @richerson2001WasAgricultureImpossible]. Research on voluntary sedentarization of nomadic pastoralists typically emphasizes external pressures alongside the pursuit of new socioeconomic opportunities.
+As with the forager-to-farmer transition, climate variability and demographic pressure have been shown to prompt settlement [@bencherifa1991ChangingResourceManagement; @fratkin2005PastoralistsSettleSocial; @homewood2009StayingMaasaiLivelihoods; @little2008ChallengingOrthodoxiesUnderstanding]. There is evidence that settling often comes with significant health and livelihood costs for former nomads, suggesting it is a “best of a bad deal” response to worsening environmental and/or socioeconomic conditions. Higher settlement density facilitates disease spread, while reduced mobility limits access to diverse grazing and foraging areas and lowers dietary quality. Studies among formerly mobile pastoralists in Northern Kenya and Southwest Nigeria document rising malnutrition and infectious disease following sedentarization [@ekpo2008PrevalenceMalnutritionSettled; @fratkin2004PastoralSedentarizationIts; @nathan2005HealthMorbidityRendille], and declining well-being [@vanduijne2024ClimateMigrationWellbeing]. Settlement can also disrupt kin-based networks that supported resilience under mobile lifeways, exposing households to new vulnerabilities [@baird2024PastoralistLivelihoodDiversification].
+Settling also involves weighing constraints against new opportunities, often mirroring broader migration processes with “push” factors (e.g., environmental stress, land dispossession, political insecurity) and “pull” factors such as access to services and economic diversification. For example, in South Sudan, pastoralists displaced during the Second Sudanese Civil War opted not to return to their homelands after the conflict. While initial deterrents included insecurity and contested land rights, their long-term decision to remain was shaped by improved services, employment, and NGO support in towns [@pantulianoUnchartedTerritoryLand2009]. In northern Kenya, Rendille and Borana pastoralists have strategically settled near trading centers to diversify income [@fratkin2005PastoralistsSettleSocial]. Among Bakhtiari pastoralists in Iran, younger individuals—particularly women—prefer village life, valuing services and wage employment over the uncertainties of nomadism [@erdbrinkWhyIransNomads2018]. And in the Moroccan Middle Atlas, formerly mobile households have increasingly opted for permanent settlement, influenced by land use policies that restricted pasture access while facilitating access to education and infrastructure [@bencherifa1991ChangingResourceManagement], and offering opportunities to secure property rights [@venema2003AccessLandBerber].
+The present study contributes to ongoing research about the drivers of sedentarization by focusing on a case study of Amazigh transhumant pastoralists in the Southeastern High Atlas region of Morocco. We compare current nomads, first-generation former nomads, and never-nomadic villagers to examine how and why settling occurs and its consequences for well-being. We explore potential motivations including environmental stress, coercion, and socio-economic benefit. Finally, we discuss the insights that this case study can bring to a broader understanding of lifestyle transitions globally and throught human history.
+
+
+## Study Populations
+Transhumant nomads have historically played a vital role in Morocco’s ecology and economy, maintaining seasonal migrations, facilitating trade, and connecting desert, mountain, and oasis ecologies [@bonteCivilisationsNomades1975; @davis2007ResurrectingGranaryRome]. Their presence has been especially significant across regions such as the High Atlas, Anti-Atlas, Middle Atlas, Jbel Saghro, the pre-Saharan fringe, and parts of the eastern and southern steppe zones. In the 1930s, nomadic and transhumant groups were estimated to number about one million, comprising over 16% of the population in the French Protectorate zone of Morocco [@1935RecensementGeneralPopulation]. By the early 2000s, numbers had declined dramatically, driven by drought, land reform, and expanding infrastructure [@fratkin2005PastoralistsSettleSocial; @2016PopulationNomadeAu; @akasbi2012SocialEcologicalConstraints; @amsidder2021EmpiricalApproachPresent]. Precise figures are difficult to obtain. The most recent systematic count dates from the 2014 national census, which recorded 25,274 nomads, representing just over 7 per 10,000 inhabitants, and down from 68,540 in 2004 [@2016PopulationNomadeAu]. A new national census was conducted in September 2024, but a dedicated breakdown has not yet been published. The nomadic population is concentrated in southeastern Morocco. The province of Tinghir, where the present study was conducted (\ref{fig:map}), records the highest concentration of nomads of any province nationwide, at 21.5% of the national total in 2014 [@2016PopulationNomadeAu]. The 2014 census further documents important differences separating nomadic from settled populations: 84% of nomads were reported to have no formal schooling, school enrolment among children aged 7–12 stood at 31% compared to 94.5% nationally, and fertility rates remained nearly double the national average [@2016PopulationNomadeAu]. 
+The predominant language in the region of study is Central Atlas Amazigh, a branch of the indigenous Amazigh languages spoken widely throughout North Africa [@boukous1995SocieteLanguesCultures]. Moroccan Arabic (Darija) is also spoken, primarily as a second language, while classical Arabic and French are part of the formal curriculum for children who attend school. We collected data from three groups: individuals who are currently settled but previously lived as nomads during childhood (> 8 years old) or adulthood (hereafter “former nomads”); individuals who were born and raised in villages and have never practiced nomadism themselves (hereafter "never nomads"); and individuals who continue to lead nomadic lives (hereafter “nomads”).
+ 
+
+```{=latex}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.95\textwidth]{figures/migration_map.png}
+  \caption{Map of the study region showing the seasonal migration circuit of transhumant \textit{rahala} pastoralists between winter pastures in Jbel Saghro (south) and summer pastures in the High Atlas (north). Solid orange line: spring migration route (south to north via the Todgha corridor). Dashed blue line: autumn return route. Study village is located near Aït Hani. Inset shows the location of the study region within Morocco.}
+  \label{fig:map}
+\end{figure}
+```
+
+### Village: former nomads and never nomads
+The study community lies ~60 km from Tinghir (pop. ~44,000), comprising 77 households (~450 residents). Residents are predominantly descendants of nomads settled one to five generations ago, alongside families from neighboring villages. Livelihoods combine wage labor with subsistence agriculture and animal husbandry. Crops include apples, alfalfa, barley, and wheat, with women performing most agricultural labor. Most men engage in wage labor, particularly in construction, while a smaller proportion work as shopkeepers, government employees, or entrepreneurs. The region formerly hosted a *khol* (galena) mine that employed local men until its closure in the 2000s. Wealth inequality within the community is pronounced, with a Gini coefficient of 0.79.
+The village has had access to electricity and water infrastructure since 2004 ([ONEE 2025](https://www.one.ma/FR/pages/lvil.asp?action=prov&comm=t&esp=2&filt=71&id1=6&id2=129&t1)). However, tap water remained undrinkable at the time of data collection; residents relied on wells and springs. Irrigation follows rotation schedules governed by inter- and intra-community rules, overseen by a local official known as *Anghar n Aman* (water custodian). The village has had an elementary school since 2004, while the nearest high school is located in Aït Hani (~10 km), which also hosts administrative offices and shops.
+Governance falls under a broader administrative unit staffed by state-appointed officials, often from outside the region. In practice, local governance is also shaped by community-led associations—composed primarily of men—who coordinate projects and advocate with higher authorities. Traditional leadership also matters: the *Sheikh Al-Qbila* (tribe’s elder) maintains inter-community relations and liaises between local associations and state institutions.
+
+
+### Nomads
+Transhumant nomads of southeastern Morocco's High Atlas are known as *rahala* (Arabic: "nomads"). *Rahala* raise and herd sheep and goats, partly for personal subsistence but primarily for trade. Their diet consists mainly of bread, couscous, mint tea, and goat cheese and butter. Transhumance involves migrations between winter pastures in Jbel Saghro and summer pastures in the High Atlas, following routes through the Todgha River canyon—a major water source and tourist attraction (\ref{fig:map}). They also make shorter, opportunistic relocations in response to local pasture and water conditions. Summer camps typically consist of tents, while more permanent accommodations such as stone huts or natural caves are used in other seasons (\ref{fig:photos}). Migrations are conducted primarily on foot, with donkeys, mules, and camels transporting household goods. Wealthier families may reach as far as the Souss region, using trucks for livestock and maintaining seasonal residences. *Rahala* households face significant barriers to healthcare, education, and civil registration. Many individuals lack national identification documents, limiting their ability to enrol their children in school or access public healthcare.
+
+```{=latex}
+\begin{figure}[htbp]
+  \centering
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/nomad1.jpeg}\\[3pt]
+    \small (a)
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/nomad2.jpeg}\\[3pt]
+    \small (b)
+  \end{minipage}
+  \par\vspace{0.9em}
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/nomad3.jpeg}\\[3pt]
+    \small (c)
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.48\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/nomad4.jpeg}\\[3pt]
+    \small (d)
+  \end{minipage}
+  \par\vspace{0.9em}
+  \begin{minipage}[t]{0.5\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{figures/nomad5.jpeg}\\[3pt]
+    \small (e)
+  \end{minipage}
+  \caption{Field photographs illustrating nomadic (\textit{rahala}) living conditions in the southeastern High Atlas region of Morocco. (a)~Exterior of a dry-stone shelter used at semi-permanent campsites. (b)~Traditional black wool tent pitched between rocky outcrops. (c)~Campsite showing dry-stone livestock enclosures. (d)~Sheep flock sheltering at a stone enclosure. (e)~Interior of a tent showing cooking utensils and household equipment.}
+  \label{fig:photos}
+\end{figure}
+```
+
+## Methods
+### Data collection
+Between May and August 2023, we conducted an initial round of data collection in the study village, interviewing 190 adults (representing 91% of the adult population; 55% female). Each household was visited twice: first in May to collect census and kinship information from household heads, and again between June and August to conduct individual interviews with all adult participants. These interviews gathered data on economic activities, income and assets, and social ties. A second round was carried out between May and June 2024. We re-interviewed 35 former nomads (63% female) who had personally experienced nomadic life. We also interviewed a convenience sample of 75 nomads (55% female), including one woman and two men who described themselves as part-time nomads. These interviews covered livelihood transitions, socioeconomic status, perspectives on sedentarization, and income and assets where not previously collected. All participants were compensated the equivalent of a half-day’s wage.
+Informed consent was obtained at multiple levels. Institutional authorization came from a research permit from Tinghir’s municipal office, representing towns, villages, and affiliated nomadic populations in the region. We also obtained permission from Aït Hani’s municipal office. Our entry point was the local youth association, which facilitated contact, organized study information meetings, and later hosted results-sharing sessions. Individual consent was obtained from each participant before each interview. All procedures were approved by the SCI-UM6P ethics review board. 
+
+### Demographic characteristics
+Household heads listed all residents and their relationships. We also gathered information on close relatives living elsewhere, enabling a community census and kinship map. We asked about origins and time in the village to identify former nomads. For nomadic participants (n=75), household and kinship data were collected in a single session. We asked for date of birth where known; for those uncertain (primarily elders) we used age estimation [@gurven2007MortalityExperienceTsimane], triangulating against peers’ ages and anchor events such as the 1928 famine or Moroccan independence in 1956. Participants were asked about schooling and language fluency, and about \textit{Aadm} (bone)—their lineage and ancestry, a key marker of identity and a determinant of social solidarity.
+
+### Water and Food Insecurity 
+We used two validated instruments to assess water and food insecurity. Water insecurity was measured using the Household Water Insecurity Experiences Scale [@stoler2021HouseholdWaterInsecuritya], and food insecurity using the Food Insecurity Experience Scale [@cafiero2024ValidatingFoodInsecurity]. Questions were adapted for clarity and cultural relevance (see @tbl-watfood-items for item wording and response distributions). Composite scores were the sum of all items in each scale.
+
+### Sedentarization Interview
+
+#### Sedentarization process (former nomads)
+We asked former nomads to describe their motivations and settlement process in their own words, supplemented by structured questions on duration, cost, animals sold, and supplementary income. 
+
+#### Aspirations about settling (nomads)
+
+#### Perceived economic need 
+We asked both groups whether their economic situation felt “more”, “the same,” or “less” than their peers'. Nomads compared themselves to other nomadic households; former nomads reflected on their nomadic years relative to peers then, and on their current situation relative to other villagers. 
+
+#### Perceived access to social support
+We asked nomads how often they can turn to others for help when sick or in need (four-point scale: "never" to "always"). Former nomads were asked whether help-seeking had become easier, the same, or harder since settling.
+
+#### Well-being measures
+Both groups were asked (four-point scale: “never” to “always”) about feeling respected, experiencing conflicts, and living according to their own values. Nomads answered with reference to current life; former nomads reflected on both their nomadic past and their settled present. Former nomads were also asked whether providing food, finding work, and managing daily life had become easier, the same, or harder since settling.
+
+#### Regrets about settling
+To assess whether former nomads regretted their decision to settle, we asked: *“If you could return to being a nomad now, with the same herd you used to have, would you?”*. This was followed by an open-ended question inviting them to explain their choice.
+
+#### Perceived advantages and disadvantages of nomadic and settled lifestyles
+We asked both groups about perceived advantages of nomadic versus settled life and whether it was better for children to grow up as nomads or in a village.
+
+### Income and Assets 
+We collected detailed data on economic activities, recording daily wages and work frequency for wage laborers and service workers. The same approach was applied to shopkeepers (weekly sales) and those in livestock trading, crafts, or agriculture (quantities and values sold annually). For nomads, we focused on livestock and livestock-derived income, supplemented by any agriculture or wage labor.
+
+### Social Networks 
+Settled participants freely listed individuals important in their social lives across the following dimensions: partners in daily labour and agriculture, partners in childcare, providers and recipients of financial loans, providers and recipients of support during natural disasters, friendships and social interactions, partners for festivities, and couscous production. The specific questions used to elicit nominations are provided in Table \ref{tab-network-items} (Appendix).
+
+
+### Data analysis
+All analyses were performed using `r substr(version$version.string, 1,15)`. To compare wealth and income between first-generation former nomads and others, we fitted Bayesian lognormal GLMMs using the *brms* package. Our models assume a causal structure described by the directed acyclical graph in @fig-dag. For each outcome, we ran two models: one for the total effect of former nomad status and one including mediators (education, Darija fluency, time in community). Income was modeled using a hurdle GLMM: a Bernoulli component for zero-income probability and a lognormal component for positive income. Both models include household random intercepts and control for age and sex. We used weakly conservative priors; chains mixed well with no divergent transitions (@tbl-mcmc-diag, Appendix).
+
+![Directed acyclical graph of the assumed causal relationship between history of nomadism and economic status](figures/dag.png){#fig-dag}
+
+We did not model income differences between current nomads and sedentary community members. Because of the differences in sampling strategies between the nomadic and settled groups — the former sampled opportunistically over several square kilometers, and the latter consisting of a single study community — we could not formally compare the incomes of these two groups without violating iid assumptions. We therefore present income differences between the two samples descriptively with no statistical hypothesis testing.
+
+To evaluate social support networks, we constructed three network objects using the *network* package [@butts2008NetworkPackageManaging]. Responses on festivities, friendships, and couscous production (a social activity) formed a "socialisation and festivities" network; agriculture, childcare, and daily labour formed a "labour" network; and loan and disaster-support questions formed a "material support" network. For each, we fit exponential random graph models (ERGMs) using the *ergm* package [@hunter2008ErgmPackageFit], modeling tie log-odds as a linear function of covariates and network statistics. Models included reciprocity, dyadic relatedness (from *kinship2* [@sinnwell2014Kinship2PackagePedigree]), and node-level parameters for outgoing ties, incoming ties, and homophily. For "former nomad", for instance, we estimated three parameters: one for log odds of outgoing ties for former nomads relative to others, one for log odds of incoming ties, and one for homophily (log odds of ties within former nomads and never nomads relative to ties between these groups). Node-level variables included age, sex, tribal affiliation ("*bone*"), years of schooling, income, wealth, and number of external ties. For a full overview, see Table \ref{tab-ergm} (Appendix).
+
+
+## Results
+
+### Demographic characteristics
+
+``` {r}
+#| label: tbl-demographics
+#| tbl-cap: "Demographic characteristics of study participants by group."
+d %>%
+  dplyr::select(group2, age, sex, yrs_edu, darija) %>%
+  dplyr::mutate(group2 = tools::toTitleCase(as.character(group2))) %>%
+  tbl_summary(
+    by = group2,
+    type = list(sex ~ "dichotomous"),
+    value = list(sex ~ "female"),
+    label = list(age ~ "Age (years)", sex ~ "Sex (female)", yrs_edu ~ "Years of schooling", darija ~ "Darija fluency"),
+    statistic = list(all_continuous() ~ "{mean} ({sd})", all_categorical() ~ "{n} ({p}%)"),
+    missing = "no"
+  ) %>%
+  as_gt() %>%
+  gt::tab_options(table.font.size = 9, table.width = gt::pct(100), data_row.padding = gt::px(1))
+```
+
+@tbl-demographics presents demographic characteristics of the study participants (n=`r n`) including never nomads (n= `r nrow(never_nom)` [`r round(nn_prop * 100, 1)`%]; `r round(nn_sex * 100, 1)`% female), former nomads (n=`r nrow(former_nom)`[`r round(fn_prop * 100, 1)`%]; `r round(fn_sex * 100, 1)`% female), and nomads (n=`r nrow(current_nom)`[`r round(cn_prop * 100, 1)`%]; `r round(cn_sex * 100, 1)`% female). Across groups, age distributions are broadly comparable with mean ages ranging from `r mean_ages_range[1]` to `r mean_ages_range[2]` years and age ranges spanning younger to older adulthood in every group (never nomads: `r paste0(range(never_nom$age, na.rm = TRUE), collapse = "-")`; former nomads: `r paste0(range(former_nom$age, na.rm = TRUE), collapse = "-")`; nomads: `r paste0(range(current_nom$age, na.rm = TRUE), collapse = "-")`). The proportion of women is also similar across groups (`r paste0(sex_props_range,collapse = "-")`%). Educational attainment and fluency in Darija or Moroccan Arabic varies substantially between groups. Never nomads report substantially higher levels of schooling (mean=`r des_s$mean_edu[des_s$group2 == "never nomad"]` years[SD=`r des_s$sd_edu[des_s$group2 == "never nomad"]`]) compared to former nomads (mean=`r des_s$mean_edu[des_s$group2 == "former nomad"]`[SD=`r des_s$sd_edu[des_s$group2 == "former nomad"]`]) and especially current nomads (mean=`r des_s$mean_edu[des_s$group2 == "nomad"]` years[SD=`r des_s$sd_edu[des_s$group2 == "former nomad"]`])(Figure \ref{fig:edu-group}). `r des_s$dar_pct[des_s$group2 == "never nomad"]`% of never nomads report being fluent in Darija, compared with `r des_s$dar_pct[des_s$group2 == "former nomad"]`% of former nomads and only 4.0% of `r des_s$dar_pct[des_s$group2 == "nomad"]` (@tbl-demographics).
+
+### Water and food insecurity
+Nomads reported lower water insecurity (mean=`r ws_s$mean[ws_s$nomadic == 1]`, 95% CI = `r paste0(ws_s[ws_s$nomadic == 1, c("ci_lower","ci_upper")], collapse = " - ")`) than villagers (including former nomads; mean=`r ws_s$mean[ws_s$nomadic == 0]`, 95% CI:`r paste0(ws_s[ws_s$nomadic == 0, c("ci_lower","ci_upper")], collapse = " - ")`), reflecting their mobility and ability to camp near water sources (Figure \ref{fig:water-ins}; see discussion). However, nomads report greater food insecurity (mean=`r fs_s$mean[fs_s$nomadic == 1]`, 95% CI = `r paste0(fs_s[fs_s$nomadic == 1, c("ci_lower","ci_upper")], collapse = " - ")`) than villagers (mean=`r fs_s$mean[fs_s$nomadic == 0]`, 95% CI = `r paste0(fs_s[fs_s$nomadic == 0, c("ci_lower","ci_upper")], collapse = " - ")`).
+
+```{=latex}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/des_water_insecurity.png}
+  \caption{Water insecurity scores by group (nomads vs. villagers).}
+  \label{fig:water-ins}
+\end{figure}
+```
+
+### Wealth and income models
+Former nomads have lower wealth and income than other community members: median annual income is \$`r round(median(d$net_income[d$group2 == "former nomad"], na.rm = T))` versus \$`r round(median(d$net_income[d$group2 == "never nomad"], na.rm = T))` for others, and median wealth is $\approx$\$`r format(round(median(d$wealth[d$group2 == "former nomad"], na.rm = T)/100)*100, big.mark=",")` versus $\approx$\$`r format(round(median(d$wealth[d$group2 == "never nomad"], na.rm = T)/100)*100, big.mark=",")`. Adjusting for age, sex, and household clustering, evidence that former nomads are necessarily poorer is weak (see Figures \ref{fig:sub-a} and \ref{fig:sub-b}). The standardised total effect on log wealth is `r round(median(draws_wealth$b_former_nomad), 2)` (95% CI [`r paste(round(quantile(draws_wealth$b_former_nomad, c(0.05,0.95)),2), collapse = " - ")` ]). Including mediators, the wealth difference is driven largely by income ($\Beta$ = `r round(median(draws_wealth_full$b_income_std), 2)`, 95% CI: [`r paste(round(quantile(draws_wealth_full$b_income_std, c(0.05,0.95)),2), collapse = " - ")`]), with education ($\Beta$ = `r round(median(draws_wealth_full$b_yrs_edu_std), 2)`, 95% CI: [`r paste(round(quantile(draws_wealth_full$b_yrs_edu_std, c(0.05,0.95)),2), collapse = " - ")`]) and time in community ($\Beta$ = `r round(median(draws_wealth_full$b_time_com_std), 2)`, 95% CI: [`r paste(round(quantile(draws_wealth_full$b_time_com_std, c(0.05,0.95)),2), collapse = " - ")`]) possibly playing minor roles. Interacting years in community with former nomad status, recently settled former nomads appear substantially poorer than both longer-established former nomads and never-nomadic neighbours who have lived similar durations in the community (Figure \ref{fig:int}).
+
+Differences in income are also relatively small ($\Beta$ = `r round(median(draws_inc$b_former_nomad), 2)`, 95% CI: [`r paste(round(quantile(draws_inc$b_former_nomad, c(0.05,0.95)),2), collapse = " - ")`]), and there is essentially no difference in the log-odds of having no income ($\Beta$ = `r round(median(draws_inc$b_hu_former_nomad), 2)`, 95% CI: [`r paste(round(quantile(draws_inc$b_hu_former_nomad, c(0.05,0.95)),2), collapse = " - ")`]). There is a strong signal that Darija fluency plays an important role in income ($\Beta$ = `r round(median(draws_inc_full$b_darija), 2)`, 95% CI: [`r paste(round(quantile(draws_inc_full$b_darija, c(0.05,0.95)),2), collapse = " - ")`]), although this doesn't seem to strongly mediate the income difference between former nomads and their peers (Figure \ref{fig:sub-b}).
+
+Villagers reported much lower incomes (median = \$`r round(median(d$income[which(d$group2 != "nomad")], na.rm = TRUE))`) than current nomads (median = \$`r round(median(d$income[which(d$group2 == "nomad")], na.rm = TRUE))`) (Figure \ref{fig:inc-comp}), reflecting the large number of livestock nomads sell annually ([DATA PENDING: median livestock sold per year]).
+
+### Sedentarisation interview
+
+#### Sendentarization process (former nomads subsample)
+``` {r sedentarisation}
+# All objects pre-computed in nomad_manuscript_2025.R and loaded from alami_et_al_2026.Rdata
+```
+Former and part-time nomads (n = `r n_former_nomad` and `r n_part_nomad` respectively) reported multiple triggers for settling (see Figure \ref{fig:why-settle}). The most common were physical hardship or illness (`r freq_why_settle[search_term=="tired"]` participants; `r round(freq_why_settle[search_term=="tired"]*100/n_all_non_nomad,1)`%), followed by the desire to provide children with schooling (`r freq_why_settle[search_term=="school"]`;`r round(freq_why_settle[search_term=="school"]*100/n_all_non_nomad,1)`%), livestock loss due to drought or snow (`r freq_why_settle[search_term=="livestock"]`;`r round(freq_why_settle[search_term=="livestock"]*100/n_all_non_nomad,1)`%) and marriage to a villager (`r freq_why_settle[search_term=="marriage"]`;`r round(freq_why_settle[search_term=="marriage"]*100/n_all_non_nomad,1)`%). Other triggers included joining family already in the village (e.g., children joining grandparents or adults caring for elderly parents) (`r freq_why_settle[search_term=="family"]`;`r round(freq_why_settle[search_term=="family"]*100/n_all_non_nomad,1)`%), intra-family conflicts (`r freq_why_settle[search_term=="conflict"]`;`r round(freq_why_settle[search_term=="conflict"]*100/n_all_non_nomad,1)`%), fear of robbery of an unoccupied house (`r freq_why_settle[search_term=="defend"]`;`r round(freq_why_settle[search_term=="defend"]*100/n_all_non_nomad,1)`%), and overcrowding (`r round(freq_why_settle[search_term=="overcrowding"]*100/n_all_non_nomad,1)`%). The majority (`r n_age_adult`; `r pct_age_adult`%) settled as adults between the ages of 25 and 40. The decision was unanimously described as difficult, sometimes not their own, and involved extended family separations, with children often separated from one or both parents. Access to social support—moving in with relatives, being offered land, or receiving help building a house—was frequently cited as a reason for choosing this village. Among former nomads, `r n_settle_immediate` (`r pct_settle_immediate`%) reported receiving support from immediate family members, `r n_settle_inlaws` (`r pct_settle_inlaws`%) from in-laws, and `r n_settle_unrelated` (`r pct_settle_unrelated`%) from unrelated individuals. In addition, `r n_settle_purchase` (`r pct_settle_purchase`%) indicated that they were able to purchase a house and/or land in the village, while another `r n_settle_inherited` (`r pct_settle_inherited`%) reported inheriting land or a house there. Finally, `r n_settle_marriage` (`r pct_settle_marriage`%) stated that they settled in the village following marriage to a local resident (Figure \ref{fig:why-tz}).
+
+```{=latex}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/des_why_settle.png}
+  \caption{Reasons given by former nomads for settling.}
+  \label{fig:why-settle}
+\end{figure}
+```
+
+```{=latex}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/des_age_settled.png}
+  \caption{Age at settlement among former nomads.}
+  \label{fig:age-settled}
+\end{figure}
+```
+
+```{=latex}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/des_why_tz.png}
+  \caption{Reasons for choosing the current village as a settlement location.}
+  \label{fig:why-tz}
+\end{figure}
+```
+
+#### Aspirations about settling (nomads)
+Of `r n_ft_nomads` full-time nomads, `r n_want_yes` (`r pct_want_yes`%) wished to settle. `r freq_why_want["tired"]` described nomadism as physically exhausting, citing water scarcity and pasture degradation as lengthening travel distances. `r freq_why_want["livestock"]` cited declining herd sizes and rising feed costs, viewing nomadism as increasingly unsustainable. `r freq_why_want["school"]` cited children's schooling, and an equal number cited protection from winter cold and snow, described as life-threatening for children. Access to water, electricity, and markets was equally frequently cited. `r freq_why_want["engaged"]` participant planned to settle following engagement to a villager and another `r freq_why_want["bored"]` sought relief from boredom and social isolation (Figure \ref{fig:reasons-want-settling}).
+
+```{=latex}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/des_reasons_want_settling.png}
+  \caption{Reasons given by current nomads for wanting to settle.}
+  \label{fig:reasons-want-settling}
+\end{figure}
+```
+
+Among the `r n_want_no` who did not wish to settle, the most common reason was attachment to their herd and nomadic way of life (n = 10). The remainder were not opposed but faced constraints: six expressed concerns about earning a livelihood outside nomadism and integrating in a village, and two cited financial barriers.
+
+#### Perceived economic need
+`r fnom_set_relneed`% of former nomads reported feeling more in need than settled neighbours, compared to `r fnom_nom_relneed`% who had felt more in need than nomadic peers before settling. This closely matched the `r nom_nom_relneed`% of current nomads feeling more in need than peers, suggesting accurate recall rather than nostalgia (Figure \ref{fig:perceived-need}).
+
+```{=latex}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/perceived_need.png}
+  \caption{Perceived economic need relative to peers, among current nomads and former nomads (before and after settling).}
+  \label{fig:perceived-need}
+\end{figure}
+```
+
+#### Perceived access to social support
+Most nomads (n = `r n_nom_support`) reported limited social support: `r pct_support_never`% could never and `r pct_support_rarely`% could rarely turn to others for help when sick or in need; fewer could do so often (`r pct_support_often`%) or always (`r pct_support_always`%). Among former nomads (n=`r n_support_change`), `r pct_support_easier`% reported that obtaining help had become easier since settling, `r pct_support_same`% said the same, and `r pct_support_harder`% said harder.
+
+#### Well-being measures
+Among nomads (n = `r n_nom_resp`), the large majority reported feeling “always” respected, both by other nomads (`r n_resp_oth_always` [`r pct_resp_oth_always`%]) and by neighbouring villagers (`r n_resp_set_always` [`r pct_resp_set_always`%]); smaller minorities reported “often,” “rarely,” or “never.” Among former nomads (n=`r n_fnom_resp`), `r n_fnom_resp_oth_always` (`r pct_fnom_resp_oth_always`%) recalled “always” feeling respected by other nomads during their nomadic years, whereas only `r n_fnom_resp_set_always` (`r pct_fnom_resp_set_always`%) say they “always” feel respected by villagers in their current settled life. Reports of lower respect (“rarely” or “never”) were slightly more common in relation to current villagers (`r n_fnom_resp_set_low` [`r pct_fnom_resp_set_low`%]) than to fellow nomads in the past (`r n_fnom_resp_oth_low` [`r pct_fnom_resp_oth_low`%]).
+
+Conflicts were generally infrequent across lifestyles. Among nomads (n=`r n_nom_support`), the large majority (`r pct_conf_nom_never`%) reported never experiencing conflicts, `r pct_conf_nom_rarely`% rarely, none sometimes, and `r pct_conf_nom_often`% often. Former nomads (n=`r n_nom_sub`) recalled a similar pattern for their nomadic past (`r pct_conf_fnom_never`% never, `r pct_conf_fnom_rarely`% rarely, `r pct_conf_fnom_often`% often). After settling, `r pct_sconf_fnom_never`% reported never experiencing conflicts, `r pct_sconf_fnom_rarely`% rarely, `r pct_sconf_fnom_sometimes`% sometimes, and none often. Nomadic conflicts primarily involved disputes over grazing rights and access to water, with livestock theft less frequent. Former nomads noted a shift after settling: village conflicts now centre on irrigation schedules, children's behaviour, and land disputes.
+
+Most nomads felt they lived according to their own values and beliefs. Former nomads recalled similar experiences nomadically, but in their current lives as villagers fewer felt the same way. [DATA PENDING: nomad\_freedom and settled\_freedom variables not yet in dataset.]
+
+#### Regrets about settling
+To the question *”If you could return to being a nomad now, with the same herd you used to have, would you?”*, `r pct_no_go_back`% of former nomads (*n* = `r n_no_go_back` of `r n_go_back_total` respondents) answered “no”, `r pct_yes_go_back`% “yes”, and `r pct_unsure_go_back`% “unsure”.
+
+#### Perceived advantages and disadvantages of nomadic and settled lifestyles
+
+Perceived advantages are summarized in Figure \ref{fig:adv}. These largely align with stated reasons for settling, and former and current nomads broadly agree, though former nomads more often cite environmental quality and tradition as nomadic advantages, and markets and shelter as settling advantages.
+
+```{=latex}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/perceived_advantages.png}
+  \caption{Perceived advantages of nomadic and settled life reported by current nomads and former nomads.}
+  \label{fig:adv}
+\end{figure}
+```
+
+```{=latex}
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[b]{0.9\textwidth}
+    \includegraphics[width=\linewidth]{figures/income_model.png}
+    \caption{}\label{fig:sub-a}
+  \end{subfigure}
+
+  \vspace{0.5em} % optional: adds vertical spacing between the two
+
+  \begin{subfigure}[b]{0.9\textwidth}
+    \includegraphics[width=\linewidth]{figures/wealth_model.png}
+    \caption{}\label{fig:sub-b}
+  \end{subfigure}
+
+  \caption{Estimated effect of being a former nomad on income (a) and wealth (b).}
+  \label{fig:main}
+\end{figure}
+
+```
+```{=latex}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.6\textwidth]{figures/wealth_interaction.png}
+  \caption{Interaction between years in community and former nomad status}
+  \label{fig:int}
+\end{figure}
+```
+
+```{=latex}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/income_comparison.png}
+  \caption{Income comparison between current nomads and settled community members.}
+  \label{fig:inc-comp}
+\end{figure}
+```
+
+### Network models
+
+The full output from the ERGMs can be found in the appendix (Table \ref{tab-full}). As expected, we find evidence of very strong reciprocity and homophily by sex and *bone* (tribal affiliation), and strong kinship effects. For the purpose of this study, we focus on the estimated relationship between being a first-generation former nomad and engaging in labour exchange, social activities, and material support networks. These results can be seen in Table \ref{tab-ergm-results}. We do not find strong evidence that first generation families have more or less outgoing or incoming ties than other community members, with the possible exception of labour ties, where former nomads have `r pct_work_out`% greater odds of nominating other people (95%CI: `r ci_work_out_lo`-`r ci_work_out_hi`). However, we do find strong evidence of homophily across all three networks, with `r pct_work_hom`%, `r pct_soc_hom`%, and `r pct_sup_hom`% greater odds of a tie between members of the same group (former nomads versus others), for labour networks, socialisation, and material support respectively. These results control for age, sex, income, wealth, household, reciprocity, relatedness, and number of external ties.
+
+
+
+
+``` {r}
+#| label: ergm-table
+#| tbl-cap: Output from ERGMs. The outcome is the log-odds ratio of observing a tie between two nodes, conditional on the rest of the network parameters. This table only includes the parameters of interest, namely the effects of being a former nomad on outgoing ties and incoming ties, and homophily, i.e. the log-odds of a tie if either both nodes are former nomads or both are not.
+#| tbl-pos: "H"
+tbl1 <- tbl_regression(mod_work, exponentiate = TRUE, conf.level = 0.95,
+label = list(`nodefactor.Former nomad.Yes` = "Former nomad (outgoing ties)", 
+`nodeifactor.Former nomad.Yes` = "Former nomad (incoming ties)",
+`nodematch.Former nomad` = "Former nomad homophily")) %>% 
+  modify_header(label = "**Variable**", estimate = "**Odds Ratio**")
+
+tbl2 <- tbl_regression(mod_soc, exponentiate = TRUE, conf.level = 0.95,
+label = list(`nodefactor.Former nomad.Yes` = "Former nomad (outgoing ties)", 
+`nodeifactor.Former nomad.Yes` = "Former nomad (incoming ties)",
+`nodematch.Former nomad` = "Former nomad homophily")) %>% 
+  modify_header(estimate = "**Odds Ratio**")
+
+tbl3 <- tbl_regression(mod_support, exponentiate = TRUE, conf.level = 0.95,
+label = list(`nodefactor.Former nomad.Yes` = "Former nomad (outgoing ties)", 
+`nodeifactor.Former nomad.Yes` = "Former nomad (incoming ties)",
+`nodematch.Former nomad` = "Former nomad homophily")) %>% 
+  modify_header(estimate = "**Odds Ratio**")
+
+table <- tbl_merge(
+  tbls = list(tbl1, tbl2, tbl3),
+  tab_spanner = c("**Labour (agriculture + childcare)**", "**Socialisation and festivities**", "**Material support (including loans)**")
+) %>%
+  remove_abbreviation() %>%
+  modify_table_body(~ .x %>% dplyr::filter(.data$variable %in% c("nodefactor.Former nomad.Yes","nodeifactor.Former nomad.Yes", "nodematch.Former nomad"))) %>%
+  modify_caption("**Exponential Random Graph models of social networks**\\label{{tab-ergm-results}}") %>%
+  modify_footnote_header(footnote = "also includes controls for age, sex, log income, log wealth, household, reciprocity, relatedness, and number of external ties", columns = everything())
+
+# Print
+table %>%
+  as_gt() %>%
+  gt::tab_options(table.font.size = 8,
+                  table.width = gt::pct(100),
+                  data_row.padding = gt::px(0),
+                  table.align = "center") %>%
+  gt::cols_width(
+    label ~ gt::px(90),
+    everything() ~ gt::px(50)
+  )
+
+```
+
+
+## Discussion
+\noindent How and why contemporary nomadic pastoralists settle has important implications for evolutionary theories of subsistence change and for policies governing some of the world's most marginalised populations, yet remains among the least studied livelihood transitions in the evolutionary social sciences. Drawing on data from Amazigh transhumant pastoralists in southeastern Morocco, we examine why nomads settle, at what cost, and with what consequences for wellbeing. Unlike contexts where sedentarisation is imposed, the large majority (`r pct_want_yes`%) actively want to settle, and former nomads overwhelmingly report no regret, despite lower village incomes. We propose reframing sedentarisation not as crisis-driven rupture or modernisation upgrade, but as a deliberate, long-term investment trading material autonomy for physical ease, social embeddedness, and expanded opportunities for one's children.
+
+### Settlement as a form of retirement
+The most striking pattern is the income gap between nomadic and settled participants. Our nomadic sample was recruited opportunistically, potentially over-representing wealthier, more market-integrated nomads; our settled sample comes from a single remote community, limiting generalizability. Nevertheless, most former nomads do not regret settling and most current nomads aspire to. Several non-mutually exclusive explanations deserve consideration. First, selection bias cannot be ruled out. Illness or physical hardship was the most common reason for settling (`r pct_why_settle_tired`% of former nomads), suggesting that those least able to sustain nomadic demands leave first. If impairment correlates with earning capacity, the income gap may pre-date settlement—consistent with evidence that drought, livestock loss, and infirmity are common triggers [@fratkin2005PastoralistsSettleSocial; @little2008ChallengingOrthodoxiesUnderstanding]. Second, the comparison is temporally confounded in a way that likely overstates real income loss. Livestock values have changed substantially: sheep and goat prices roughly doubled between 2004 and 2024, far outpacing Morocco's cumulative inflation of ~48% [@worldbank2024InflationConsumerPrices]. A nomad who sold their herd a decade ago did so at a fraction of current values; cross-sectional comparisons therefore likely overstate transition-attributable income loss. Maintaining a herd has also become more costly. Successive droughts have degraded pastures across Morocco's arid zones, driving dependence on purchased feed (primarily alfalfa and barley) [@boughalmi2016AssessmentFarmLevelSustainability; @srairi2015ExtensiveLivestockFarming]. Morocco's national sheep and goat herd declined 38% between 2016 and 2025, prompting a government ban on slaughtering female animals and cancellation of the *Eid al-Adha* sacrifice [@daoudi2025MoroccoImposesBan; @cnn2025DroughthitMoroccoAsks]. `r freq_why_want["livestock"]` of `r n_ft_nomads` nomads cited declining herds and rising feed costs, consistent with nomadic pastoralism becoming economically harder to sustain [@mcguirk2025TranshumantPastoralismClimate; @tugjamba2023AdaptingNomadicPastoralism]. Third, a genuine causal effect is likely: market access may narrow after settling and the transition is capital-intensive, often taking years as households move back and forth while accumulating resources for a permanent move. Former nomads described needing capital from livestock sales and supplementary income to purchase or build a house, secure land, and weather initial vulnerability. Field informants and expert colleagues confirm that such substantial income drops are common and expected for nomadic families after they settle (Benchrifa, pers. comm.). We conceptualise settlement, for a meaningful subset, as a form of retirement: a deliberate life-course reallocation trading income for release from the physical demands and risks of a more arduous livelihood [@kaplan2000TheoryHumanLife; @gurven2007LongevityHunterGatherersCrossCultural; @gurven2025SevenDecadesHow]. This fits those who settled in middle age after deliberate capital accumulation (`r pct_age_adult`% settled between ages 25 and 40). Selection and cohort effects likely overstate the causal cost, but may reinforce the retirement interpretation: if many were already experiencing declining income, then the satisfaction with the decision to settle could reflect a clear-eyed understanding of their counterfactual prospects. 
+
+### Settlement as intergenerational investment
+A recurring motivation for settling was providing children with schooling and a pathway into Moroccan society. `r freq_why_want["school"]` of `r n_ft_nomads` nomads cited schooling as a reason for their transition, and the educational gap is stark: nomads average just `r edu_nom` years of schooling, compared to `r edu_fnom` among former nomads and `r edu_never` among never-nomads. *Darija* fluency follows the same gradient: only `r dar_nom`% of nomads report fluency, versus `r dar_fnom`% of former nomads and `r dar_never`% of never nomads. Their magnitude underscores near-total exclusion from Moroccan state infrastructure—schooling, civil registration, healthcare—reinforced by our finding that many nomads lack identification documents entirely. Settling for one's children rather than oneself is consistent with models of cooperative breeding and intergenerational transfer, where investments in younger generations yield returns over long horizons [@hrdy2009MothersOthersEvolutionary; @kaplan2000TheoryHumanLife; @gurven2025SevenDecadesHow]. It also resonates with the migration literature, where household moves are often made with the next generation in mind [@dehaas2010MigrationDevelopmentTheoretical; @carling2018AspirationDesireDrivers]. The welfare gap between lifestyles has widened considerably. Nomads and former nomads consistently cited electricity, running water, schooling, healthcare, leisure, and year-round shelter as features making village life attractive and nomadic life hard to justify, especially to their children. This is not unique to Morocco. As settled amenities expand globally, the relative costs of mobility rise, favouring sedentarisation regardless of individual circumstances [@honeychurch2016ArchaeologyPastoralNomadism; @manzano2021HolisticUnderstandingPastoralism]. Climate change amplifies these pressures by degrading pasture, lengthening routes, and increasing income volatility [@tugjamba2023AdaptingNomadicPastoralism; @mcguirk2025TranshumantPastoralismClimate]. Crucially, this undermines nomadic mobility's core function: managing risk by moving in response to unpredictable resources [@dyson-hudson1980NomadicPastoralism; @nori2008BrowsingFencesPastoral]. Where mobility once buffered environmental uncertainty, degraded rangelands, rising costs, and shrinking herds may be rendering it unviable in the long term.
+
+### Settlement is enabled by community-based sharing networks
+Classic accounts associate settlement with increasing market integration and decreasing reliance on community risk-sharing [@scott1976MoralEconomyPeasant; @polanyi1944GreatTransformationPolitical; @bates1981MarketsStatesTropical; @netting1993SmallholdersHouseholdersFarm; @fratkin2005PastoralistsSettleSocial; @dehaas2010MigrationDevelopmentTheoretical]. Our data suggest the reverse. Nomads are the more market-integrated group: herds raised primarily for sale, livelihoods exposed to commodity and climate shocks, and social support severely limited (`r pct_support_never`% can never and `r pct_support_rarely`% rarely turn to others for help). Settlement represents a move from market exposure to community embeddedness. Former nomads report a striking increase in support access after settling (`r pct_support_easier`% said it became easier), and network analyses reveal strong homophily across all three network types: `r pct_work_hom`%, `r pct_soc_hom`%, and `r pct_sup_hom`% greater odds of a tie between former nomads versus a former nomad and a never nomad, for labour, socialisation, and material support. Former nomads form a partially distinct but well-integrated cluster within village networks, building the relational infrastructure needed to buffer early post-settlement vulnerability. This challenges the assumption that settlement trades communal life for market individualism; for these nomads, it enables the social solidarity their mobility had precluded. This is consistent with work on social capital buffering livelihood transitions [@putnam2000BowlingAloneCollapse; @aldrich2015SocialCapitalCommunity] and with evidence that co-ethnic networks are critical for newly arrived migrants [@massey1993TheoriesInternationalMigration]. One caveat: if nomadic social life was once richer, growing nomad scarcity may itself accelerate settlement as those remaining face a thinner social landscape. As peers settle, this may signal that settlement is worthwhile, accelerating the transition through social learning [@henrich1998EvolutionConformistTransmission; @efferson2008ConformistsMavericksEmpirics]. Nevertheless, transhumant pastoralism in the southeastern High Atlas was never organised around large aggregations—the basic mobile unit is one or a few extended family households [@akasbi2012SocialEcologicalConstraints; @amsidder2021EmpiricalApproachPresent]. Social thinning likely contributes but is unlikely to be the primary driver. Village sociality has its own costs. Former nomads describe new pressures absent from nomadic life: irrigation disputes, noise, social comparison, social obligations, and gossip within a dense community. `r pct_all_peace`% of participants (`r pct_fnom_peace`% of former nomads) cited "peace of mind" as a nomadic advantage, suggesting mobile life's social simplicity carries some psychological benefit despite isolation.
+
+### Implications for policy
+A consistent thread is the centrality of agency to sedentarisation. Former nomads described themselves not as victims—though hardship clearly plays a role—but as individuals making difficult, deliberate choices for a better life. Asked whether they would return to nomadism, the large majority said no, even as many expressed genuine nostalgia for nomadic culture, their herds, and the freedom of nomadic life. The well-documented harms of forced sedentarisation [@khazanov1994NomadsOutsideWorld; @ohayon2013KazakhFamineBeginnings; @fan2015SolvingOneProblem] have rightly sensitised researchers and policymakers to the risks of state-led programs. The barrier in this context is not motivation—the large majority want to settle—but capital. The transition is expensive, and its costs are steepest in the early stages. Recently settled individuals face a dual disadvantage: materially relative to nomads, and in education, *Darija* fluency, and literacy relative to longer-established residents—gaps that constrain integration (educaiton figure or graph). These gaps narrow with time but will take generations to close (graph education over gen). Policy efforts will be most effective reducing the costs of voluntary sedentarisation rather than promoting or discouraging it: by ensuring settled communities have functional infrastructure; providing literacy classes and educational programmes to recently settled families; extending civil registration, documentation, education, and healthcare to nomadic populations still on the move; and preserving the conditions under which voluntary nomadism remains viable. Protecting traditional pasture routes and grazing rights would help ensure sedentarisation reflects genuine preference rather than the foreclosure of alternatives [@manzano2021HolisticUnderstandingPastoralism; @kratli2010LivingUncertaintyIntelligent]. 
+
+### Limitations and future directions
+Several limitations deserve mention. First, the cross-sectional design precludes causal inference: group differences may reflect pre-existing variation rather than the transition itself. Second, nomadic participants were recruited by convenience—a practical necessity given access and funding constraints—and may not represent the broader population, for whom systematic demographic data are absent. We cannot guarantee that our sample doesn't over-represent higher income, more market-integrated families, or that our focal community represents a relatively less successful outcome for nomads who decide to settle. Third, self-reported data on income, assets, and wellbeing are subject to recall and desirability biases. Multi-season engagement and ethnographic corroboration provide some confidence, but this remains a constraint. Future longitudinal data will allow tracking of socioeconomic status, health (chronic disease burden appears substantially elevated in the village), children's development, and network structure—addressing the current design's inferential limits and improving the evidence base for policies affecting some of the world's most vulnerable populations. 
+
+## Conclusion
+Nomadic sedentarisation is among the most consequential contemporary livelihood transitions, yet has received remarkably little systematic attention from evolutionary social scientists. This study offers one of the first mixed-methods accounts of voluntary sedentarisation—documenting not only the structural pressures making nomadic life increasingly difficult, but the deliberate, forward-looking logic through which individuals navigate the transition.
+Our findings converge on a picture of sedentarisation that is neither crisis-driven last resort nor modernisation upgrade: it is a protracted, capital-intensive life-course reallocation—oriented toward the next generation as much as the present, enabled by community networks, and chosen despite real costs by the large majority of those who choose to undergo it. The barriers are material and embodied rather than motivational: recently settled individuals start at a disadvantage in socioeconomic standing, education, and cultural capital, and closing that gap takes time. These findings extend beyond Morocco. As climate change erodes pastoral viability across Africa, the Middle East, and Central Asia, supporting voluntary sedentarisation equitably—without coercion and without foreclosing the nomadic alternative—becomes increasingly urgent. They also speak to longstanding questions about why, repeatedly across history, mobile populations have chosen to settle. Studying it while still ongoing, with the behavioural resolution living populations afford, may be one of the most productive windows into the deep history of human subsistence change.
+
+##### Funding Statement
+
+We would like to thank the ENDOW, Rep2SI, and EIC projects for supporting this research.
+
+##### Competing Interests
+
+The authors declare no competing interests.
+
+## References
+
+:::{#refs}
+:::
+
+## Appendix {.appendix}
+
+``` {r}
+#| label: tbl-watfood-items
+#| tbl-cap: "Item-level wording and response distribution for the water and food insecurity scales."
+#| tbl-pos: "H"
+watfood_info <- data.frame(
+  Item = c("Water need", "Water interruption", "Changed plans (water)",
+           "Fewer than 3 meals/day", "No food in house", "Hungry all day/night"),
+  Wording = c(
+    "In the past 6 months, have you worried that you wouldn't have enough water for your family's needs?",
+    "In the past 6 months, has your source of water been interrupted or limited?",
+    "Have you or your family ever had to change plans because of problems with your access to water?",
+    "In the past 6 months, outside the month of Ramadan, have you eaten fewer than three meals a day?",
+    "In the past 6 months, outside the month of Ramadan, have you had no food of any kind to eat in your house?",
+    "In the past 6 months, outside the month of Ramadan, have you gone a whole day and night without eating?"
+  ),
+  col = c("water_need", "water_interruption", "water_change_plans",
+          "fewer_meals", "no_food", "hungry_alldaynight"),
+  has_always = c(TRUE, TRUE, TRUE, FALSE, FALSE, FALSE)
+)
+
+likert_levs <- c("never", "rarely", "sometimes", "often", "always")
+freq_counts <- t(sapply(watfood_info$col, function(cl) {
+  table(factor(d[[cl]], levels = likert_levs))
+}))
+colnames(freq_counts) <- c("Never", "Rarely", "Sometimes", "Often", "Always")
+watfood_tab <- cbind(watfood_info[, c("Item", "Wording")], as.data.frame(freq_counts))
+watfood_tab$Always[!watfood_info$has_always] <- NA
+
+watfood_tab %>%
+  gt::gt(rowname_col = "Item") %>%
+  gt::tab_row_group(label = "Food insecurity (FIES)", rows = 4:6) %>%
+  gt::tab_row_group(label = "Water insecurity (HWISE)", rows = 1:3) %>%
+  gt::row_group_order(groups = c("Water insecurity (HWISE)", "Food insecurity (FIES)")) %>%
+  gt::sub_missing(missing_text = "—") %>%
+  gt::cols_width(Wording ~ gt::px(230), everything() ~ gt::px(55)) %>%
+  gt::tab_options(table.font.size = 8, table.width = gt::pct(100), data_row.padding = gt::px(2))
+```
+
+```{=latex}
+\begin{table}[H]
+\small
+\centering
+\rowcolors{2}{rowgray}{white}
+\begin{tabular}{p{3.2cm}p{3.2cm}p{7.3cm}}
+\toprule
+\textbf{Network} & \textbf{Dimension} & \textbf{Elicitation prompt} \\
+\midrule
+Labour & Daily labour & ``Who do you work with on a daily basis? Either in jnanate, with ksiba, on a construction site? Please name up to 10 people.'' \\
+Labour & Childcare & ``Who helps you take care of your young children when you're busy?'' \\
+Socialisation \& festivities & Couscous preparation & ``Who came to help prepare couscous? Name all the women who helped you.'' \\
+Socialisation \& festivities & Friendship (women) & ``Please name up to 10 women with whom you like to sit outside and chat.'' \\
+Socialisation \& festivities & Friendship (men) & ``Please name up to 10 men with whom you like to meet at the coffeeshop.'' \\
+Socialisation \& festivities & Festivities (received) & ``Please name up to 10 women who have helped you and your household in the past with cooking or chores during a wedding or another celebration.'' \\
+Socialisation \& festivities & Festivities (given) & ``Please name up to 10 women whom you have helped with cooking or chores during a wedding or another celebration.'' \\
+Material support & Natural hazards (received) & ``Please name up to 10 people who provided you with any kind of help during that time.'' \\
+Material support & Natural hazards (given) & ``Please name up to 10 people who you have helped during that time.'' \\
+Material support & Loans (received) & ``Please name up to 10 people from whom you have borrowed, or from whom you or anyone in your household could borrow, over 200 dirhams.'' \\
+Material support & Loans (given) & ``Please name up to 10 people who have borrowed over 200 dirhams from you or from other members of your household.'' \\
+\bottomrule
+\end{tabular}
+\caption{Elicitation prompts used to construct the three social support networks.\label{tab-network-items}}
+\end{table}
+```
+
+All four wealth and income models used weakly informative priors: Normal(0, 1) on group-level standard deviations and Normal(0, 5) on the intercept. Diagnostics are summarised in @tbl-mcmc-diag.
+
+``` {r}
+#| label: tbl-mcmc-diag
+#| tbl-cap: "MCMC diagnostics for the Bayesian wealth and income models. Each model was run with 4 chains, 1,000 warmup and 1,000 sampling iterations (4,000 post-warmup draws total)."
+#| tbl-pos: "H"
+library(brms)
+diag_models <- list(
+  "Income, total effect" = inc_model_brm,
+  "Income, full model"   = inc_model_brm_full,
+  "Wealth, total effect" = wealth_model_brm,
+  "Wealth, full model"   = wealth_model_brm_full
+)
+diag_tab <- do.call(rbind, lapply(names(diag_models), function(nm) {
+  m  <- diag_models[[nm]]
+  np <- nuts_params(m)
+  data.frame(
+    Model = nm,
+    `Divergent transitions` = sum(np$Value[np$Parameter == "divergent__"]),
+    `Parameters with Rhat > 1.01` = sum(rhat(m) >= 1.01, na.rm = TRUE),
+    `Parameters with ESS ratio < 0.5` = sum(neff_ratio(m) < 0.5, na.rm = TRUE),
+    `Parameters with ESS ratio < 0.1` = sum(neff_ratio(m) < 0.1, na.rm = TRUE),
+    check.names = FALSE
+  )
+}))
+
+diag_tab %>%
+  gt::gt() %>%
+  gt::tab_options(table.font.size = 8, table.width = gt::pct(100))
+```
+
+```{=latex}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/des_education_by_group.png}
+  \caption{Years of schooling by group (nomads, former nomads, never nomads).}
+  \label{fig:edu-group}
+\end{figure}
+```
+
+```{=latex}
+\begin{table}[ht]
+\centering
+\rowcolors{2}{rowgray}{white} % stripe every other row
+\begin{tabular}{lccc}
+\toprule
+\textbf{Variable} & \textbf{Outgoing ties} & \textbf{Incoming ties} & \textbf{Homophily} \\
+\midrule
+Age              & $\checkmark$ &             &             \\
+Sex              & $\checkmark$ & $\checkmark$  & $\checkmark$ \\
+Bone             & $\checkmark$ &             & $\checkmark$ \\
+Household ID     &            &             & $\checkmark$ \\
+External ties    & $\checkmark$ & $\checkmark$  &             \\
+Years of schooling & $\checkmark$ & $\checkmark$ &             \\
+Income (ln)      & $\checkmark$ & $\checkmark$  & $\checkmark$ \\
+Wealth (ln)      & $\checkmark$ & $\checkmark$  & $\checkmark$ \\
+Former Nomad     & $\checkmark$ & $\checkmark$  & $\checkmark$ \\
+\bottomrule
+\end{tabular}
+\caption{Parameters included in ERGM models.\label{tab-ergm}}
+\end{table}
+```
+
+``` {r}
+#| label: full-table
+#| tbl-cap: Full output from ERGMS. Nodefactor and nodecov refer to effects of variables on outgoing ties, nodeifactor and nodeicov on incoming ties. Nodematch and absdiff are estimates of homophily, and the "relmat" variables refer to relatedness. "Mutual" is an estimate of reciprocity, and "edges" is an intercept term (baseline logodds of ties)
+tbl1 <- tbl_regression(mod_work, exponentiate = TRUE, conf.level = 0.95) |> 
+    modify_header(label = "**Variable**", estimate = "**Odds Ratio**")
+  
+  tbl2 <- tbl_regression(mod_soc, exponentiate = TRUE, conf.level = 0.95)|>
+    modify_header(estimate = "**Odds Ratio (**")
+  
+  tbl3 <- tbl_regression(mod_support, exponentiate = TRUE, conf.level = 0.95) |>
+    modify_header(estimate = "**Odds Ratio**")
+  
+  final_table_full <- tbl_merge(
+    tbls = list(tbl1, tbl2, tbl3),
+    tab_spanner = c("**Labour (agriculture + childcare)**", "**Socialisation and festivities**", "**Material support (including loans)**")
+  ) %>%
+    remove_abbreviation() %>%
+    # Remove CI footnote
+    modify_caption("**Exponential Random Graph models of social networks (full output)**\\label{{tab-full}}")
+  
+  
+  # Print
+  final_table_full %>%
+  as_gt() %>%
+  gt::tab_options(table.font.size = 7,
+                  table.width = gt::pct(105),
+                  data_row.padding = gt::px(0),
+                  table.align = "center"  ) %>%      # 
+  gt::cols_width(
+    label ~ gt::px(100), 
+    everything() ~ gt::px(50)
+  )
+```

@@ -1,0 +1,20 @@
+
+% Allow CSLReferences environment to be empty without LaTeX error
+\makeatletter
+\@ifundefined{CSLReferences}{}{%
+  \let\oldCSLReferences\CSLReferences
+  \let\oldendCSLReferences\endCSLReferences
+  \renewenvironment{CSLReferences}[2]
+    {\begin{list}{}{\setlength{\leftmargin}{0pt}}\item\relax\vspace{-\baselineskip}}
+    {\end{list}}
+}
+\makeatother
+
+\usepackage{booktabs} % nice horizontal rules
+\usepackage{amssymb}  % for checkmark
+\usepackage{array}    % better column formatting
+\usepackage{amssymb}
+\usepackage{colortbl}
+\usepackage{xcolor}
+\definecolor{rowgray}{gray}{0.95} % very light grey
+
