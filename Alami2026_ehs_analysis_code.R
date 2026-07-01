@@ -177,7 +177,7 @@ sum(neff_ratio(wealth_model_brm_full)< 0.5)
 sum(neff_ratio(wealth_model_brm_full)< 0.1)
 
 ## network creation
-source('network_creation_function.R')
+source('code/network_creation_function.R')
 ### socialising:
 socnet <- create_network("network", data = alt,
                                     census = dvil[dvil$nomadic==0,],
@@ -814,7 +814,7 @@ models <- list(
   "Material support (including loans)" = mod_support
 )
 
-source("dag_plot.R")
+source("code/dag_plot.R")
 
 des_education_by_group <- ggplot(d, aes(x = factor(group2, levels = c("nomad", "former nomad", "never nomad")), y = yrs_edu, fill = group2)) +
   geom_boxplot(alpha = 0.8, outlier.shape = 21) +
@@ -1039,7 +1039,7 @@ table(tbl_not_want_settle$want_settle_why_cat)
 
 
 ##=========  MAP PLOT ==========
-source("map_plot.R")
+source("code/map_plot.R")
 
 ### Save
 save(list = ls(), file = "model_output/alami_et_al_2026.Rdata")
