@@ -40,9 +40,6 @@ install.packages(c(
   "ggspatial", "posterior", "rnaturalearth", "rnaturalearthdata",
   "sf", "terra", "tidyverse"
 ))
-
-# STRAND is installed from GitHub
-devtools::install_github("ctross/STRAND")
 ```
 
 ---
