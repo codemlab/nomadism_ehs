@@ -22,12 +22,6 @@ author:
         department: School of Collective Intelligence
         city: Rabat
         country: Morocco
-  - name: Edmond Seabright
-    affiliations:
-      - name: University Mohammed VI Polytechnic
-        department: School of Collective Intelligence
-        city: Rabat
-        country: Morocco
   - name: Salma Es Sbih
     affiliations:
       - name: University Mohammed VI Polytechnic
@@ -35,6 +29,12 @@ author:
         city: Rabat
         country: Morocco
   - name: Mohammed Ibnboubakr
+    affiliations:
+      - name: University Mohammed VI Polytechnic
+        department: School of Collective Intelligence
+        city: Rabat
+        country: Morocco
+  - name: Edmond Seabright
     affiliations:
       - name: University Mohammed VI Polytechnic
         department: School of Collective Intelligence
