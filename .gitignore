@@ -21,7 +21,9 @@ figures/*.png
 
 # Generated PDFs (at repo root only; _extensions PDFs are kept)
 /*.pdf
-nomadism_diff.pdf
+
+# Stray LaTeX class files (real copy lives in _extensions/)
+/*.cls
 
 # Word exports
 *.docx
