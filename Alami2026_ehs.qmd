@@ -378,13 +378,13 @@ Perceived advantages are summarized in Figure \ref{fig:adv}. These largely align
 
 ### Network models
 
-The full output from the ERGMs can be found in the appendix (Table \ref{tab-full}). As expected, we find evidence of very strong reciprocity and homophily by sex and *bone* (tribal affiliation), and strong kinship effects. For the purpose of this study, we focus on the estimated relationship between being a first-generation former nomad and engaging in labour exchange, social activities, and material support networks. These results can be seen in Table \ref{tab-ergm-results}. We do not find strong evidence that first generation families have more or less outgoing or incoming ties than other community members, with the possible exception of labour ties, where former nomads have `r pct_work_out`% greater odds of nominating other people (95%CI: `r ci_work_out_lo`-`r ci_work_out_hi`). However, we do find strong evidence of homophily across all three networks, with `r pct_work_hom`%, `r pct_soc_hom`%, and `r pct_sup_hom`% greater odds of a tie between members of the same group (former nomads versus others), for labour networks, socialisation, and material support respectively. These results control for age, sex, income, wealth, household, reciprocity, relatedness, and number of external ties.
+The full output from the ERGMs can be found in the appendix (@tbl-full). As expected, we find evidence of very strong reciprocity and homophily by sex and *bone* (tribal affiliation), and strong kinship effects. For the purpose of this study, we focus on the estimated relationship between being a first-generation former nomad and engaging in labour exchange, social activities, and material support networks. These results can be seen in @tbl-ergm-results. We do not find strong evidence that first generation families have more or less outgoing or incoming ties than other community members, with the possible exception of labour ties, where former nomads have `r pct_work_out`% greater odds of nominating other people (95%CI: `r ci_work_out_lo`-`r ci_work_out_hi`). However, we do find strong evidence of homophily across all three networks, with `r pct_work_hom`%, `r pct_soc_hom`%, and `r pct_sup_hom`% greater odds of a tie between members of the same group (former nomads versus others), for labour networks, socialisation, and material support respectively. These results control for age, sex, income, wealth, household, reciprocity, relatedness, and number of external ties.
 
 
 
 
 ``` {r}
-#| label: ergm-table
+#| label: tbl-ergm-results
 #| tbl-cap: Output from ERGMs. The outcome is the log-odds ratio of observing a tie between two nodes, conditional on the rest of the network parameters. This table only includes the parameters of interest, namely the effects of being a former nomad on outgoing ties and incoming ties, and homophily, i.e. the log-odds of a tie if either both nodes are former nomads or both are not.
 #| tbl-pos: "H"
 tbl1 <- tbl_regression(mod_work, exponentiate = TRUE, conf.level = 0.95,
@@ -594,7 +594,7 @@ Former Nomad     & $\checkmark$ & $\checkmark$  & $\checkmark$ \\
 ```
 
 ``` {r}
-#| label: full-table
+#| label: tbl-full
 #| tbl-cap: Full output from ERGMS. Nodefactor and nodecov refer to effects of variables on outgoing ties, nodeifactor and nodeicov on incoming ties. Nodematch and absdiff are estimates of homophily, and the "relmat" variables refer to relatedness. "Mutual" is an estimate of reciprocity, and "edges" is an intercept term (baseline logodds of ties)
 tbl1 <- tbl_regression(mod_work, exponentiate = TRUE, conf.level = 0.95) |> 
     modify_header(label = "**Variable**", estimate = "**Odds Ratio**")
