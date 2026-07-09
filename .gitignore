@@ -31,7 +31,8 @@ figures/*.png
 # R model outputs (large binaries – store separately or use git-lfs)
 *.Rdata
 *.RData
-model_output/
+model_output/*
+!model_output/.gitkeep
 
 # Quarto build cache
 _freeze/

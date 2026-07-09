@@ -42,7 +42,7 @@ install.packages("cmdstanr", repos = c("https://stan-dev.r-universe.dev", "https
 cmdstanr::install_cmdstan()
 
 install.packages(c(
-  "boot", "brms", "broom.mixed", "DiagrammeR", "dplyr", "ergm",
+  "boot", "brms", "broom.helpers", "broom.mixed", "DiagrammeR", "dplyr", "ergm",
   "ggdist", "ggpattern", "ggplot2", "glmmTMB", "gt", "gtsummary",
   "janitor", "kableExtra", "kinship2", "lme4", "network", "patchwork",
   "scales", "sna", "statnet", "tibble", "tidyr",

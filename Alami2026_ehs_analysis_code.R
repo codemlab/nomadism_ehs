@@ -9,6 +9,7 @@ set.seed(10101)
 
 # Load packages
 library(lme4)
+library(broom.helpers)
 library(ggdist)
 library(ggpattern)
 library(DiagrammeR)
@@ -30,6 +31,9 @@ library(janitor)
 library(boot)
 library(kableExtra)
 library(scales)
+
+dir.create("model_output/", showWarnings = FALSE, recursive = TRUE)
+dir.create("figures/", showWarnings = FALSE, recursive = TRUE)
 
 # Load data
 d <- read.csv("manuscript_data/main_dataset.csv")
@@ -767,11 +771,11 @@ ggsave("figures/wealth_model.png", p_wealth, width = 8, height = 4)
 
 ##==================== MODELS OVER TIME ====================##
 
-wealth_model <- glmmTMB(ln_wealth ~ sex + age + former_nomad + (1|householdID), data = dw)
+wealth_model <- suppressWarnings(glmmTMB(ln_wealth ~ sex + age + former_nomad + (1|householdID), data = dw))
 inc_nomads <- lm(ln_income ~ years_in_com + sex + age, data = dinc[which(dinc$group2=='former nomad'),])
 wealth_nomads <- lm(ln_wealth ~ years_in_com*former_nomad + sex + age, data = dw)
 
-dw$wealth_resid <- residuals(lmer(ln_wealth ~ sex + age +(1|householdID), data = dw))
+dw$wealth_resid <- suppressWarnings(residuals(lmer(ln_wealth ~ sex + age +(1|householdID), data = dw)))
 dw$predicted_wealth <- predict(wealth_nomads, newdata = dw)
 
 ggplot(dw[which(dw$wealth>0 & !is.na(dw$years_in_com)),], aes(x = years_in_com, y = wealth_resid, color = factor(former_nomad), fill = factor(former_nomad))) +
@@ -791,8 +795,8 @@ ggsave("figures/wealth_interaction.png", width = 12, height = 6)
 # income nomad comparison
 dall_inc <- d[!is.na(d$income),]
 ggplot(dall_inc, aes(x = group2, y = income, fill = group2)) +
-  geom_boxplot(width = 0.3) +
-  stat_slab(side = "right", scale = 0.4) +
+  geom_boxplot(width = 0.3, na.rm = TRUE) +
+  stat_slab(side = "right", scale = 0.4, na.rm = TRUE) +
   theme_minimal(base_size = 25) +
   labs(y = "Annual income (USD)") +
   scale_fill_manual(values = c("former nomad" = "slateblue", "never nomad" = "forestgreen", "nomad" = "coral"))
@@ -802,7 +806,7 @@ ggsave("figures/income_comparison.png", width = 12, height = 6)
 # wealth nomad comparison
 dall_w <- d[!is.na(d$wealth),]
 ggplot(dall_w, aes(x = group2, y = wealth, fill = group2)) +
-  geom_boxplot() +
+  geom_boxplot(na.rm = TRUE) +
   labs(y = "Wealth (USD)") +
   theme_minimal()
 
@@ -817,7 +821,7 @@ models <- list(
 source("code/dag_plot.R")
 
 des_education_by_group <- ggplot(d, aes(x = factor(group2, levels = c("nomad", "former nomad", "never nomad")), y = yrs_edu, fill = group2)) +
-  geom_boxplot(alpha = 0.8, outlier.shape = 21) +
+  geom_boxplot(alpha = 0.8, outlier.shape = 21, na.rm = TRUE) +
   labs(x = NULL, y = "Years of education") +
   theme_bw(base_size = 16) +
   scale_fill_manual(values = c("nomad" = "#D55E00", "former nomad" = "#FFC800", "never nomad" = "#0072B2")) +
@@ -881,7 +885,7 @@ aggregate(d$yrs_edu, list(group2 = d$group2),
           function(x) c(n = length(x), mean = mean(x), sd = sd(x), min = min(x), max = max(x)))
 
 p.edu <- ggplot(d, aes(x = group2, y = yrs_edu)) +
-  geom_boxplot(outlier.shape = NA, aes(fill = group2), alpha = 0.4) +
+  geom_boxplot(outlier.shape = NA, aes(fill = group2), alpha = 0.4, na.rm = TRUE) +
   geom_jitter(aes(color = group2), width = 0.15, size = 2, alpha = 0.6) +
   scale_color_manual(values = c("never nomad" = "#0072B2", "former nomad" = "#FFC800", "nomad" = "#D55E00")) +
   scale_fill_manual(values  = c("never nomad" = "#0072B2", "former nomad" = "#FFC800", "nomad" = "#D55E00")) +
