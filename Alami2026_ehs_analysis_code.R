@@ -943,7 +943,7 @@ ws$water_insecurity   <- ws$water_need + ws$water_interruption + ws$water_change
 ws <- ws[!is.na(ws$water_insecurity),]
 
 des_water_insecurity <- ggplot(ws, aes(x = water_insecurity, fill = group2)) +
-  stat_bin(aes(y = ..density..), position = 'dodge', binwidth = 1) +
+  stat_bin(aes(y = after_stat(density)), position = 'dodge', binwidth = 1, na.rm = TRUE) +
   labs(x = "Water insecurity score", y = "Proportion", fill = "group") +
   theme_bw() +
   theme(axis.title.x = element_text(size = 18), axis.title.y = element_text(size = 18),
@@ -967,7 +967,7 @@ fs <- fs[!is.na(fs$food_insecurity),]
 fs$food_insecurity <- as.numeric(fs$food_insecurity)
 
 des_food_insecurity <- ggplot(fs, aes(x = food_insecurity, fill = group2)) +
-  stat_bin(aes(y = ..density..), position = 'dodge', binwidth = 1) +
+  stat_bin(aes(y = after_stat(density)), position = 'dodge', binwidth = 1, na.rm = TRUE) +
   labs(x = "Food insecurity score", y = "Proportion", fill = "group") +
   theme_bw() +
   theme(axis.title.x = element_text(size = 18), axis.title.y = element_text(size = 18),
