@@ -91,13 +91,14 @@ inc_model_brm <- brm(
 )
 draws_inc <- as_draws_df(inc_model_brm)
 
+dincfull <- dinc[!is.na(dinc$yrs_edu_std)& !is.na(dinc$time_com_std),]
 inc_model_brm_full <- brm(
   bf(
     income_std ~ sex + age_std + former_nomad + time_com_std + darija + yrs_edu_std + (1 | householdID),
     hu ~ 1 + age_std + sex + former_nomad + time_com_std + darija + yrs_edu_std + (1 | householdID)
   ),
   family = hurdle_lognormal(),
-  data = dinc,
+  data = dincfull,
   prior = prior_list,
   backend = "cmdstanr",
   chains = 4,
@@ -135,12 +136,14 @@ wealth_model_brm <- brm(
 
 draws_wealth <- as_draws_df(wealth_model_brm)
 
+dwfull <- dw[!is.na(dw$yrs_edu_std)& !is.na(dw$time_com_std),]
+
 wealth_model_brm_full <- brm(
   bf(
     wealth_std ~ sex + age_std + former_nomad + time_com_std + darija + yrs_edu_std + income_std +(1 | householdID)
   ),
   family = lognormal(),
-  data = dw,
+  data = dwfull,
   prior = prior_list,
   backend = "cmdstanr",
   chains = 4,
@@ -771,11 +774,11 @@ ggsave("figures/wealth_model.png", p_wealth, width = 8, height = 4)
 
 ##==================== MODELS OVER TIME ====================##
 
-wealth_model <- suppressWarnings(glmmTMB(ln_wealth ~ sex + age + former_nomad + (1|householdID), data = dw))
+wealth_model <- glmmTMB(ln_wealth ~ sex + age + former_nomad + (1|householdID), data = dw)
 inc_nomads <- lm(ln_income ~ years_in_com + sex + age, data = dinc[which(dinc$group2=='former nomad'),])
 wealth_nomads <- lm(ln_wealth ~ years_in_com*former_nomad + sex + age, data = dw)
 
-dw$wealth_resid <- suppressWarnings(residuals(lmer(ln_wealth ~ sex + age +(1|householdID), data = dw)))
+dw$wealth_resid <- residuals(lmer(ln_wealth ~ sex + age +(1|householdID), data = dw))
 dw$predicted_wealth <- predict(wealth_nomads, newdata = dw)
 
 ggplot(dw[which(dw$wealth>0 & !is.na(dw$years_in_com)),], aes(x = years_in_com, y = wealth_resid, color = factor(former_nomad), fill = factor(former_nomad))) +
