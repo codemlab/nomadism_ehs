@@ -31,6 +31,10 @@ This produces `Alami2026_ehs.pdf`. Quarto requires a LaTeX distribution (e.g. [T
 Install all required packages before running the analysis script:
 
 ```r
+# cmdstanr is not on CRAN — install from Stan's r-universe
+install.packages("cmdstanr", repos = c("https://stan-dev.r-universe.dev", "https://cloud.r-project.org"))
+cmdstanr::install_cmdstan()
+
 install.packages(c(
   "boot", "brms", "broom.mixed", "DiagrammeR", "dplyr", "ergm",
   "ggdist", "ggpattern", "ggplot2", "glmmTMB", "gt", "gtsummary",
