@@ -1,6 +1,6 @@
 # Alami et al. 2026 — Amazigh Nomads Show Strong Desire to Settle and Low Regret Despite Economic Costs
 
-Replication code and manuscript source for the paper submitted to *Evolution and Human Sciences*.
+Replication code and manuscript source for the paper submitted to *Evolution and Human Sciences*. Analysis was run under R 4.6.1.
 
 ## Reproducing the paper
 
@@ -36,7 +36,7 @@ install.packages(c(
   "ggdist", "ggpattern", "ggplot2", "glmmTMB", "gt", "gtsummary",
   "janitor", "kableExtra", "kinship2", "lme4", "network", "patchwork",
   "scales", "sna", "statnet", "tibble", "tidyr",
-  "bayestestR", "elevatr", "ggdist", "ggrepel", "ggridges",
+  "bayestestR", "elevatr", "ggrepel", "ggridges",
   "ggspatial", "posterior", "rnaturalearth", "rnaturalearthdata",
   "sf", "terra", "tidyverse"
 ))
