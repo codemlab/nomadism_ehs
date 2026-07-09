@@ -9,7 +9,7 @@ set.seed(10101)
 
 # Load packages
 library(lme4)
-library(gghalves)
+library(ggdist)
 library(ggpattern)
 library(DiagrammeR)
 library(sna)
@@ -791,8 +791,8 @@ ggsave("figures/wealth_interaction.png", width = 12, height = 6)
 # income nomad comparison
 dall_inc <- d[!is.na(d$income),]
 ggplot(dall_inc, aes(x = group2, y = income, fill = group2)) +
-  geom_boxplot() +
-  geom_half_violin() +
+  geom_boxplot(width = 0.3) +
+  stat_slab(side = "right", scale = 0.4) +
   theme_minimal(base_size = 25) +
   labs(y = "Annual income (USD)") +
   scale_fill_manual(values = c("former nomad" = "slateblue", "never nomad" = "forestgreen", "nomad" = "coral"))

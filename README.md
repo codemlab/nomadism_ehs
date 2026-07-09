@@ -33,7 +33,7 @@ Install all required packages before running the analysis script:
 ```r
 install.packages(c(
   "boot", "brms", "broom.mixed", "DiagrammeR", "dplyr", "ergm",
-  "gghalves", "ggpattern", "ggplot2", "glmmTMB", "gt", "gtsummary",
+  "ggdist", "ggpattern", "ggplot2", "glmmTMB", "gt", "gtsummary",
   "janitor", "kableExtra", "kinship2", "lme4", "network", "patchwork",
   "scales", "sna", "statnet", "tibble", "tidyr",
   "bayestestR", "elevatr", "ggdist", "ggrepel", "ggridges",
