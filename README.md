@@ -30,6 +30,12 @@ This produces `Alami2026_ehs.pdf`. Quarto requires a LaTeX distribution (e.g. [T
 
 Install all required packages before running the analysis script:
 
+The Bayesian models (via `brms` and `cmdstanr`) require a C++ toolchain:
+
+- **Windows**: install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) matching your R version
+- **Mac**: run `xcode-select --install` in Terminal
+- **Linux**: install `r-base-dev` (included if R was installed via the CRAN apt repository)
+
 ```r
 # cmdstanr is not on CRAN — install from Stan's r-universe
 install.packages("cmdstanr", repos = c("https://stan-dev.r-universe.dev", "https://cloud.r-project.org"))
