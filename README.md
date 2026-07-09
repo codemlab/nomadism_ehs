@@ -24,6 +24,18 @@ quarto render Alami2026_ehs.qmd
 
 This produces `Alami2026_ehs.pdf`. Quarto requires a LaTeX distribution (e.g. [TinyTeX](https://yihui.org/tinytex/): `quarto install tinytex`).
 
+The manuscript uses the `biblatex-chicago` LaTeX package (via the Cambridge journal extension). If the render fails with a missing-package error, install it via:
+
+```bash
+tlmgr install biblatex-chicago biber
+```
+
+Or from within R:
+
+```r
+tinytex::tlmgr_install(c("biblatex-chicago", "biber"))
+```
+
 ---
 
 ## R package dependencies

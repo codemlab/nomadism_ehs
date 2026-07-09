@@ -114,4 +114,4 @@ ggplot() +
   coord_fixed() +
   theme_void()
 
-ggsave("manuscripts/nomadism_ehs/figures/dag.png", width = 12, height = 6)
+ggsave("figures/dag.png", width = 12, height = 6)
