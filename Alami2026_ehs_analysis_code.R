@@ -940,7 +940,7 @@ ws$water_need         <- as.numeric(factor(ws$water_need,         levels = liker
 ws$water_interruption <- as.numeric(factor(ws$water_interruption, levels = likert_levels)) - 1
 ws$water_change_plans <- as.numeric(factor(ws$water_change_plans, levels = likert_levels)) - 1
 ws$water_insecurity   <- ws$water_need + ws$water_interruption + ws$water_change_plans
-ws <- ws[!is.na(ws$water_insecurity),]
+ws <- ws[complete.cases(ws[c("water_insecurity", "group2")]), ]
 
 des_water_insecurity <- ggplot(ws, aes(x = water_insecurity, fill = group2)) +
   stat_bin(aes(y = after_stat(density)), position = 'dodge', binwidth = 1, na.rm = TRUE) +
@@ -963,7 +963,7 @@ fs$fewer_meals        <- as.numeric(factor(fs$fewer_meals,        levels = liker
 fs$no_food            <- as.numeric(factor(fs$no_food,            levels = likert_levels)) - 1
 fs$hungry_alldaynight <- as.numeric(factor(fs$hungry_alldaynight, levels = likert_levels)) - 1
 fs$food_insecurity    <- fs$fewer_meals + fs$no_food + fs$hungry_alldaynight
-fs <- fs[!is.na(fs$food_insecurity),]
+fs <- fs[complete.cases(fs[c("food_insecurity", "group2")]), ]
 fs$food_insecurity <- as.numeric(fs$food_insecurity)
 
 des_food_insecurity <- ggplot(fs, aes(x = food_insecurity, fill = group2)) +
