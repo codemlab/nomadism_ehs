@@ -10,12 +10,15 @@
 }
 \makeatother
 
-\setmainfont[
-  Path           = /Users/sarahalami/Library/TinyTeX/texmf-dist/fonts/opentype/public/fbb/,
-  ItalicFont     = fbb-Italic.otf,
-  BoldFont       = fbb-Bold.otf,
-  BoldItalicFont = fbb-BoldItalic.otf
-]{fbb-Regular.otf}
+\usepackage{etoolbox}
+\AtEndPreamble{%
+  \setmainfont[
+    Path           = /Users/sarahalami/Library/TinyTeX/texmf-dist/fonts/opentype/public/fbb/,
+    ItalicFont     = fbb-Italic.otf,
+    BoldFont       = fbb-Bold.otf,
+    BoldItalicFont = fbb-BoldItalic.otf
+  ]{fbb-Regular.otf}%
+}
 
 \usepackage{booktabs} % nice horizontal rules
 \usepackage{amssymb}  % for checkmark
