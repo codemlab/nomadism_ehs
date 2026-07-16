@@ -462,6 +462,11 @@ pct_fnom_free_always <- round(mean(fnom_raw$nomad_freedom   == "always", na.rm=T
 pct_fnom_sfree_often  <- round(mean(fnom_raw$settled_freedom == "often",  na.rm=T)*100, 1)
 pct_fnom_sfree_always <- round(mean(fnom_raw$settled_freedom == "always", na.rm=T)*100, 1)
 pct_fnom_sfree_rarely <- round(mean(fnom_raw$settled_freedom == "rarely", na.rm=T)*100, 1)
+n_nom_free          <- sum(!is.na(nomads_raw$nomad_freedom))
+n_fnom_free         <- sum(!is.na(fnom_raw$nomad_freedom) & !is.na(fnom_raw$settled_freedom))
+pct_nom_free_high   <- round(mean(nomads_raw$nomad_freedom %in% c("always","often"), na.rm=T)*100, 1)
+pct_fnom_free_high  <- round(mean(fnom_raw$nomad_freedom   %in% c("always","often"), na.rm=T)*100, 1)
+pct_fnom_sfree_high <- round(mean(fnom_raw$settled_freedom %in% c("always","often"), na.rm=T)*100, 1)
 
 # Regrets: would you go back? (nom_raw, former nomads)
 n_go_back_total    <- sum(!is.na(fnom_raw$go_back))
