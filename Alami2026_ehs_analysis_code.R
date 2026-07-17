@@ -353,7 +353,8 @@ search_term     <- search_terms
 freq_why_settle <- sapply(search_terms, function(x) sum(grepl(x, nom$why_settle_cats), na.rm = TRUE))
 names(freq_why_settle) <- search_terms
 
-pct_why_settle_tired <- round(freq_why_settle["tired"] / n_nom_sub * 100, 1)
+pct_why_settle_tired      <- round(freq_why_settle["tired"]     / n_nom_sub * 100, 1)
+pct_why_settle_livestock  <- round(freq_why_settle["livestock"] / n_nom_sub * 100, 1)
 
 # Sedentarisation process: who decided
 own_pat     <- "^Me$|^Me,|^I am|^Me and"
@@ -801,6 +802,9 @@ ggplot(dw[which(dw$wealth>0 & !is.na(dw$years_in_com)),], aes(x = years_in_com, 
 ggsave("figures/wealth_interaction.png", width = 12, height = 6)
 
 # income nomad comparison
+med_inc_nomad      <- round(median(d$income[d$group2 == "nomad"],        na.rm = TRUE))
+med_inc_fnom       <- round(median(d$income[d$group2 == "former nomad"], na.rm = TRUE))
+ratio_inc_nom_fnom <- round(med_inc_nomad / med_inc_fnom, 1)
 dall_inc <- d[!is.na(d$income),]
 ggplot(dall_inc, aes(x = group2, y = income, fill = group2)) +
   geom_boxplot(width = 0.3, na.rm = TRUE) +
