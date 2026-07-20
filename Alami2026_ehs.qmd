@@ -280,6 +280,26 @@ Differences in income are also relatively small ($\Beta$ = `r round(median(draws
 
 Villagers reported much lower incomes (median = \$`r round(median(d$income[which(d$group2 != "nomad")], na.rm = TRUE))`) than current nomads (median = \$`r round(median(d$income[which(d$group2 == "nomad")], na.rm = TRUE))`) (Figure \ref{fig:inc-comp}), reflecting the large number of livestock nomads sell annually.
 
+```{=latex}
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.9\textwidth}
+    \includegraphics[width=\linewidth]{figures/income_model.png}
+    \caption{}\label{fig:sub-a}
+  \end{subfigure}
+
+  \vspace{0.5em}
+
+  \begin{subfigure}[b]{0.9\textwidth}
+    \includegraphics[width=\linewidth]{figures/wealth_model.png}
+    \caption{}\label{fig:sub-b}
+  \end{subfigure}
+
+  \caption{Estimated effect of being a former nomad on income (a) and wealth (b).}
+  \label{fig:main}
+\end{figure}
+```
+
 ### Sedentarisation interview
 
 #### Sendentarization process (former nomads subsample)
@@ -367,26 +387,6 @@ Perceived advantages are summarized in Figure \ref{fig:adv}. These largely align
 \end{figure}
 ```
 
-```{=latex}
-\begin{figure}[h]
-  \centering
-  \begin{subfigure}[b]{0.9\textwidth}
-    \includegraphics[width=\linewidth]{figures/income_model.png}
-    \caption{}\label{fig:sub-a}
-  \end{subfigure}
-
-  \vspace{0.5em} % optional: adds vertical spacing between the two
-
-  \begin{subfigure}[b]{0.9\textwidth}
-    \includegraphics[width=\linewidth]{figures/wealth_model.png}
-    \caption{}\label{fig:sub-b}
-  \end{subfigure}
-
-  \caption{Estimated effect of being a former nomad on income (a) and wealth (b).}
-  \label{fig:main}
-\end{figure}
-
-```
 ```{=latex}
 \begin{figure}[h]
   \centering
