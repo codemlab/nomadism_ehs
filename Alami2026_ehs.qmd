@@ -291,6 +291,24 @@ Villagers reported much lower incomes (median = \$`r round(median(d$income[which
 \end{figure}
 ```
 
+```{=latex}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{figures/wealth_interaction.png}
+  \caption{Interaction between years in community and former nomad status}
+  \label{fig:int}
+\end{figure}
+```
+
+```{=latex}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/income_comparison.png}
+  \caption{Income comparison between current nomads and settled community members.}
+  \label{fig:inc-comp}
+\end{figure}
+```
+
 ### Sedentarisation interview
 
 #### Sendentarization process (former nomads subsample)
@@ -375,24 +393,6 @@ Perceived advantages are summarized in Figure \ref{fig:adv}. These largely align
   \includegraphics[width=0.9\textwidth]{figures/perceived_advantages.png}
   \caption{Perceived advantages of nomadic and settled life reported by current nomads and former nomads.}
   \label{fig:adv}
-\end{figure}
-```
-
-```{=latex}
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.6\textwidth]{figures/wealth_interaction.png}
-  \caption{Interaction between years in community and former nomad status}
-  \label{fig:int}
-\end{figure}
-```
-
-```{=latex}
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.9\textwidth]{figures/income_comparison.png}
-  \caption{Income comparison between current nomads and settled community members.}
-  \label{fig:inc-comp}
 \end{figure}
 ```
 
