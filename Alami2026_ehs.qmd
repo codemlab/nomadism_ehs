@@ -46,7 +46,8 @@ abstract: |
 acknowledgements: |
   We thank Abderrafiae Allal, Hanane Hrouk, Karim Jidani, and Samir Haqi for their help with data collection; the Youth association in Tizougaghin for their support with logistics; the Sobhi, Allal and Hrouk families for hosting our research team; and the people of Tizougaghin, Ait Hani and Tizgui for their hospitality and cooperation.
 keywords: [subsistence transition, nomadic pastoralism, sedentarisation, life history theory, lifestyle change, Morocco]
-Social media summary: For most of human evolutionary history, people lived as mobile foragers or herders. Today, many of the world's remaining nomadic populations are settling into villages and towns, but we know little about why they choose to do so or how it affects them. We studied Amazigh transhumant herders in Morocco's High Atlas mountains, comparing people who are still nomadic, people who settled after a nomadic life, and lifelong villagers. Most nomads said they wanted to settle, and almost all who had already settled said they would not return to a nomadic lifestyle — even though settling was linked to lower income. We interpret settling as a kind of retirement: a deliberate, long-term investment that trades a demanding livelihood for physical ease, stronger community support, and better schooling and prospects for one's children. These findings can help guide fairer policies for mobile pastoralist communities worldwide.
+Social media summary: |
+  For most of human evolutionary history, people lived as mobile foragers or herders. Today, many of the world's remaining nomadic populations are settling into villages and towns, but we know little about why they choose to do so or how it affects them. We studied Amazigh transhumant herders in Morocco's High Atlas mountains, comparing people who are still nomadic, people who settled after a nomadic life, and lifelong villagers. Most nomads said they wanted to settle, and almost all who had already settled said they would not return to a nomadic lifestyle — even though settling was linked to lower income. We interpret settling as a kind of retirement: a deliberate, long-term investment that trades a demanding livelihood for physical ease, stronger community support, and better schooling and prospects for one's children. These findings can help guide fairer policies for mobile pastoralist communities worldwide.
 bibliography: references.bib
 suppress-bibliography: true
 ---
@@ -57,6 +58,28 @@ library(gtsummary)
 library(gt)
 library(dplyr)
 
+```
+
+``` {r derived-vars}
+nom <- read.csv("manuscript_data/nomadism_qual.csv")
+nom$group2 <- nom$group
+nom$group2[nom$group2 == "part-time nomad"] <- "nomad"
+nom$group2[nom$group2 == "full-time nomad"] <- "nomad"
+nomads_raw <- nom[nom$group2 == "nomad", ]
+fnom_raw   <- nom[nom$group  == "former nomad", ]
+n_nom_free           <- sum(!is.na(nomads_raw$nomad_freedom))
+n_fnom_free          <- sum(!is.na(fnom_raw$nomad_freedom) & !is.na(fnom_raw$settled_freedom))
+pct_nom_free_always  <- round(mean(nomads_raw$nomad_freedom == "always", na.rm = TRUE) * 100, 1)
+pct_fnom_free_always <- round(mean(fnom_raw$nomad_freedom   == "always", na.rm = TRUE) * 100, 1)
+pct_fnom_sfree_always <- round(mean(fnom_raw$settled_freedom == "always", na.rm = TRUE) * 100, 1)
+med_inc_nomad      <- round(median(d$income[d$group2 == "nomad"],        na.rm = TRUE))
+med_inc_fnom       <- round(median(d$income[d$group2 == "former nomad"], na.rm = TRUE))
+ratio_inc_nom_fnom <- round(med_inc_nomad / med_inc_fnom, 1)
+n_nom_sub <- sum(nom$group == "former nomad")
+search_terms    <- c("tired", "school", "livestock", "marriage", "conflict", "family", "defend", "overcrowding")
+freq_why_settle <- sapply(search_terms, function(x) sum(grepl(x, nom$why_settle_cats), na.rm = TRUE))
+names(freq_why_settle) <- search_terms
+pct_why_settle_livestock <- round(freq_why_settle["livestock"] / n_nom_sub * 100, 1)
 ```
 
 ``` {r fixup-broken-vars}
@@ -232,7 +255,7 @@ d %>%
 @tbl-demographics presents demographic characteristics of the study participants (n=`r n`) including never nomads (n= `r nrow(never_nom)` [`r round(nn_prop * 100, 1)`%]; `r round(nn_sex * 100, 1)`% female), former nomads (n=`r nrow(former_nom)`[`r round(fn_prop * 100, 1)`%]; `r round(fn_sex * 100, 1)`% female), and nomads (n=`r nrow(current_nom)`[`r round(cn_prop * 100, 1)`%]; `r round(cn_sex * 100, 1)`% female). Across groups, age distributions are broadly comparable with mean ages ranging from `r mean_ages_range[1]` to `r mean_ages_range[2]` years and age ranges spanning younger to older adulthood in every group (never nomads: `r paste0(range(never_nom$age, na.rm = TRUE), collapse = "-")`; former nomads: `r paste0(range(former_nom$age, na.rm = TRUE), collapse = "-")`; nomads: `r paste0(range(current_nom$age, na.rm = TRUE), collapse = "-")`). The proportion of women is also similar across groups (`r paste0(sex_props_range,collapse = "-")`%). Educational attainment and fluency in Darija or Moroccan Arabic varies substantially between groups. Never nomads report substantially higher levels of schooling (mean=`r des_s$mean_edu[des_s$group2 == "never nomad"]` years[SD=`r des_s$sd_edu[des_s$group2 == "never nomad"]`]) compared to former nomads (mean=`r des_s$mean_edu[des_s$group2 == "former nomad"]`[SD=`r des_s$sd_edu[des_s$group2 == "former nomad"]`]) and especially current nomads (mean=`r des_s$mean_edu[des_s$group2 == "nomad"]` years[SD=`r des_s$sd_edu[des_s$group2 == "former nomad"]`])(Figure \ref{fig:edu-group}). `r des_s$dar_pct[des_s$group2 == "never nomad"]`% of never nomads report being fluent in Darija, compared with `r des_s$dar_pct[des_s$group2 == "former nomad"]`% of former nomads and only 4.0% of `r des_s$dar_pct[des_s$group2 == "nomad"]` (@tbl-demographics).
 
 ### Water and food insecurity
-Nomads reported lower water insecurity (mean=`r ws_s$mean[ws_s$nomadic == 1]`, 95% CI = `r paste0(ws_s[ws_s$nomadic == 1, c("ci_lower","ci_upper")], collapse = " - ")`) than villagers (including former nomads; mean=`r ws_s$mean[ws_s$nomadic == 0]`, 95% CI:`r paste0(ws_s[ws_s$nomadic == 0, c("ci_lower","ci_upper")], collapse = " - ")`), reflecting their mobility and ability to camp near water sources (Figure \ref{fig:water-ins}; see discussion). However, nomads report greater food insecurity (mean=`r fs_s$mean[fs_s$nomadic == 1]`, 95% CI = `r paste0(fs_s[fs_s$nomadic == 1, c("ci_lower","ci_upper")], collapse = " - ")`) than villagers (mean=`r fs_s$mean[fs_s$nomadic == 0]`, 95% CI = `r paste0(fs_s[fs_s$nomadic == 0, c("ci_lower","ci_upper")], collapse = " - ")`) (Figure \ref{fig:food-ins}).
+Nomads reported lower water insecurity (mean=`r ws_s$mean[ws_s$nomadic == 1]`, 95% CI = `r paste0(ws_s[ws_s$nomadic == 1, c("ci_lower","ci_upper")], collapse = " - ")`) than villagers (including former nomads; mean=`r ws_s$mean[ws_s$nomadic == 0]`, 95% CI:`r paste0(ws_s[ws_s$nomadic == 0, c("ci_lower","ci_upper")], collapse = " - ")`), reflecting their mobility and ability to camp near water sources (Figure \ref{fig:water-ins}; see discussion). However, nomads report greater food insecurity (mean=`r fs_s$mean[fs_s$nomadic == 1]`, 95% CI = `r paste0(fs_s[fs_s$nomadic == 1, c("ci_lower","ci_upper")], collapse = " - ")`) than villagers (mean=`r fs_s$mean[fs_s$nomadic == 0]`, 95% CI = `r paste0(fs_s[fs_s$nomadic == 0, c("ci_lower","ci_upper")], collapse = " - ")`).
 
 ```{=latex}
 \begin{figure}[h]
@@ -240,15 +263,6 @@ Nomads reported lower water insecurity (mean=`r ws_s$mean[ws_s$nomadic == 1]`, 9
   \includegraphics[width=0.9\textwidth]{figures/des_water_insecurity.png}
   \caption{Water insecurity scores by group (nomads vs. villagers).}
   \label{fig:water-ins}
-\end{figure}
-```
-
-```{=latex}
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.9\textwidth]{figures/des_food_insecurity.png}
-  \caption{Food insecurity scores by group (nomads vs. villagers).}
-  \label{fig:food-ins}
 \end{figure}
 ```
 
@@ -460,7 +474,7 @@ Several limitations deserve mention. First, the cross-sectional design precludes
 
 ## Conclusion
 Nomadic sedentarisation is among the most consequential contemporary livelihood transitions, yet has received remarkably little systematic attention from evolutionary social scientists. This study offers one of the first mixed-methods accounts of voluntary sedentarisation, documenting not only the structural pressures making nomadic life increasingly difficult, but the deliberate, forward-looking logic through which individuals navigate the transition.
-Taken together, our findings indicate that sedentarisation among High Atlas transhumant pastoralists is best characterised as a deliberate, capital-intensive life-course transition: driven primarily by physical toll and intergenerational aspiration, enabled by community-based risk-sharing, and undertaken willingly by the large majority despite substantial income loss. The barriers are material and embodied rather than motivational: recently settled individuals start at a disadvantage in socioeconomic standing, education, and cultural capital, and closing that gap takes time. As climate change erodes pastoral viability across Africa, the Middle East, and Central Asia, supporting voluntary sedentarisation equitably, without coercion and without foreclosing the nomadic alternative, becomes increasingly urgent. Our findings also speak to longstanding questions about why, repeatedly across history, mobile populations have chosen to settle. Classical accounts of subsistence transitions emphasise distal, structural drivers — climate shifts, demographic pressure, resource intensification [@richerson2001WasAgricultureImpossible; @bocquet-appel2011AgriculturalDemographicTransition; @gupta2004OriginAgricultureDomestication]. Our data suggest these forces operate primarily through proximate individual motivations: accumulated physical toll, aspirations for children's education, and anticipation of a more socially embedded lifestyle. Climate change and pasture degradation rarely prompt settlement directly; they raise the standing cost of mobility until, for each individual, the balance tips. Distinguishing proximate triggers from distal causes matters for interpretation: the same population-level sedentarisation trend can reflect environmental coercion or deliberate agency depending on which level of analysis one prioritises — and the answer has direct implications for how policy should respond. Studying sedentarisation while still ongoing, with the behavioural resolution living populations afford, may be one of the most productive windows into the deep history of human subsistence change.
+Taken together, our findings indicate that sedentarisation among High Atlas transhumant pastoralists is best characterised as a deliberate, capital-intensive life-course transition: driven primarily by physical toll and intergenerational aspiration, enabled by community-based risk-sharing, and undertaken willingly by the large majority despite substantial income loss. The barriers are material and embodied rather than motivational: recently settled individuals start at a disadvantage in socioeconomic standing, education, and cultural capital, and closing that gap takes time. As climate change erodes pastoral viability across Africa, the Middle East, and Central Asia, supporting voluntary sedentarisation equitably, without coercion and without foreclosing the nomadic alternative, becomes increasingly urgent. Our findings also speak to longstanding questions about why, repeatedly across history, mobile populations have chosen to settle. Classical accounts of subsistence transitions emphasise distal, structural drivers — climate shifts, demographic pressure, resource intensification [@richerson2001WasAgricultureImpossible; @bocquet-appel2011AgriculturalDemographicTransition; @gupta2004OriginAgricultureDomestication]. Our data suggest these forces operate primarily through proximate individual motivations: accumulated physical toll, aspirations for children's education, and anticipation of a more socially embedded lifestyle. Climate change and pasture degradation rarely prompt settlement directly; they raise the standing cost of mobility until, for each individual, the balance tips. Distinguishing proximate triggers from distal causes matters for interpretation: the same population-level sedentarisation trend can reflect environmental coercion or deliberate agency depending on which level of analysis one prioritises — and the answer has direct implications for how policy should respond. Studying sedentarisation while still ongoing, with the behavioural resolution living populations afford, provides a window into the history of human subsistence change.
 
 ##### Author Contributions
 
