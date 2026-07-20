@@ -252,6 +252,15 @@ d %>%
 
 @tbl-demographics presents demographic characteristics of the study participants (n=`r n`) including never nomads (n= `r nrow(never_nom)` [`r round(nn_prop * 100, 1)`%]; `r round(nn_sex * 100, 1)`% female), former nomads (n=`r nrow(former_nom)`[`r round(fn_prop * 100, 1)`%]; `r round(fn_sex * 100, 1)`% female), and nomads (n=`r nrow(current_nom)`[`r round(cn_prop * 100, 1)`%]; `r round(cn_sex * 100, 1)`% female). Across groups, age distributions are broadly comparable with mean ages ranging from `r mean_ages_range[1]` to `r mean_ages_range[2]` years and age ranges spanning younger to older adulthood in every group (never nomads: `r paste0(range(never_nom$age, na.rm = TRUE), collapse = "-")`; former nomads: `r paste0(range(former_nom$age, na.rm = TRUE), collapse = "-")`; nomads: `r paste0(range(current_nom$age, na.rm = TRUE), collapse = "-")`). The proportion of women is also similar across groups (`r paste0(sex_props_range,collapse = "-")`%). Educational attainment and fluency in Darija or Moroccan Arabic varies substantially between groups. Never nomads report substantially higher levels of schooling (mean=`r des_s$mean_edu[des_s$group2 == "never nomad"]` years[SD=`r des_s$sd_edu[des_s$group2 == "never nomad"]`]) compared to former nomads (mean=`r des_s$mean_edu[des_s$group2 == "former nomad"]`[SD=`r des_s$sd_edu[des_s$group2 == "former nomad"]`]) and especially current nomads (mean=`r des_s$mean_edu[des_s$group2 == "nomad"]` years[SD=`r des_s$sd_edu[des_s$group2 == "former nomad"]`])(Figure \ref{fig:edu-group}). `r des_s$dar_pct[des_s$group2 == "never nomad"]`% of never nomads report being fluent in Darija, compared with `r des_s$dar_pct[des_s$group2 == "former nomad"]`% of former nomads and only 4.0% of `r des_s$dar_pct[des_s$group2 == "nomad"]` (@tbl-demographics).
 
+```{=latex}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/des_education_by_group.png}
+  \caption{Years of schooling by group (nomads, former nomads, never nomads).}
+  \label{fig:edu-group}
+\end{figure}
+```
+
 ### Water and food insecurity
 Nomads reported lower water insecurity (mean=`r ws_s$mean[ws_s$nomadic == 1]`, 95% CI = `r paste0(ws_s[ws_s$nomadic == 1, c("ci_lower","ci_upper")], collapse = " - ")`) than villagers (including former nomads; mean=`r ws_s$mean[ws_s$nomadic == 0]`, 95% CI:`r paste0(ws_s[ws_s$nomadic == 0, c("ci_lower","ci_upper")], collapse = " - ")`), reflecting their mobility and ability to camp near water sources (Figure \ref{fig:water-ins}; see discussion). However, nomads report greater food insecurity (mean=`r fs_s$mean[fs_s$nomadic == 1]`, 95% CI = `r paste0(fs_s[fs_s$nomadic == 1, c("ci_lower","ci_upper")], collapse = " - ")`) than villagers (mean=`r fs_s$mean[fs_s$nomadic == 0]`, 95% CI = `r paste0(fs_s[fs_s$nomadic == 0, c("ci_lower","ci_upper")], collapse = " - ")`).
 
@@ -590,15 +599,6 @@ diag_tab <- do.call(rbind, lapply(names(diag_models), function(nm) {
 diag_tab %>%
   gt::gt() %>%
   gt::tab_options(table.font.size = 8, table.width = gt::pct(100))
-```
-
-```{=latex}
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.9\textwidth]{figures/des_education_by_group.png}
-  \caption{Years of schooling by group (nomads, former nomads, never nomads).}
-  \label{fig:edu-group}
-\end{figure}
 ```
 
 ```{=latex}
