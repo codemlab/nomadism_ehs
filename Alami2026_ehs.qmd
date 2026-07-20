@@ -22,7 +22,7 @@ author:
         department: School of Collective Intelligence
         city: Rabat
         country: Morocco
-  - name: Salma Es Sbih
+  - name: Salma EsSbih
     affiliations:
       - name: University Mohammed VI Polytechnic
         department: School of Collective Intelligence
@@ -43,8 +43,6 @@ author:
 abstract: |
   The transition from nomadic to sedentary lifeways is one of the most consequential shifts in human evolutionary history. Understanding its drivers and consequences is essential for interpreting human evolution and for guiding public policy in regions where nomads are settling. While the forager-to-farmer transition is well-studied, pastoralist sedentarisation remains underexplored. Archaeological and public health studies illuminate post-settlement outcomes but tell us little about lived experiences. Here, we investigate the factors driving settlement among nomadic pastoralists in Morocco's Southeastern High Atlas, describe how this transition unfolds, and evaluate its short- and long-term effects on socioeconomic well-being by comparing current nomads, first-generation settlers, and later-generation descendants. Despite incurring significant short-term economic costs, the large majority want to settle, and former nomads overwhelmingly report no regret. We conceptualise sedentarisation as a form of *retirement*, a deliberate, intergenerational investment that trades material autonomy for physical ease, social embeddedness, and expanded opportunities for one's children. Settling is associated with lower income and market integration, as former nomads sell part or all of their flock and rely more on community-based sharing networks. Our findings reframe sedentarisation as an act of agency with implications for evolutionary theories of subsistence change and for policies affecting pastoral populations worldwide.
   
-acknowledgements: |
-  We thank Abderrafiae Allal, Hanane Hrouk, Karim Jidani, and Samir Haqi for their help with data collection; the Youth association in Tizougaghin for their support with logistics; the Sobhi, Allal and Hrouk families for hosting our research team; and the people of Tizougaghin, Ait Hani and Tizgui for their hospitality and cooperation.
 keywords: [subsistence transition, nomadic pastoralism, sedentarisation, life history theory, lifestyle change, Morocco]
 Social media summary: |
   For most of human evolutionary history, people lived as mobile foragers or herders. Today, many of the world's remaining nomadic populations are settling into villages and towns, but we know little about why they choose to do so or how it affects them. We studied Amazigh transhumant herders in Morocco's High Atlas mountains, comparing people who are still nomadic, people who settled after a nomadic life, and lifelong villagers. Most nomads said they wanted to settle, and almost all who had already settled said they would not return to a nomadic lifestyle — even though settling was linked to lower income. We interpret settling as a kind of retirement: a deliberate, long-term investment that trades a demanding livelihood for physical ease, stronger community support, and better schooling and prospects for one's children. These findings can help guide fairer policies for mobile pastoralist communities worldwide.
@@ -487,6 +485,10 @@ We would like to thank the ENDOW (NSF awards 1743019, 2218860, and 2218861), Rep
 ##### Competing Interests
 
 The authors declare no competing interests.
+
+##### Acknowledgements
+
+We thank Abderrafiae Allal, Hanane Hrouk, Karim Jidani, and Samir Haqi for their help with data collection; the Youth association in Tizougaghin for their support with logistics; the Sobhi, Allal and Hrouk families for hosting our research team; and the people of Tizougaghin, Ait Hani and Tizgui for their hospitality and cooperation.
 
 ## References
 
