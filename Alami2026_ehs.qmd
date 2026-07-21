@@ -475,6 +475,10 @@ We thank Abderrafiae Allal, Hanane Hrouk, Karim Jidani, and Samir Haqi for their
 
 The data and analysis code underlying this article are openly available at \url{https://github.com/codemlab/nomadism\_ehs}. The repository includes raw data files, analysis scripts, and the Quarto document used to generate all results and figures reported here, enabling full reproduction of the analyses.
 
+##### Use of AI Tools
+
+Claude Code (Anthropic, claude-sonnet-4-6) was used for cleaning, organising, and verifying the code used for the formatting and preparation of data for analysis, the management of references in the bibliography file, and the creation of graphs and figures (minor adjustments only). It was not used for drafting the writing or the design of the data analysis.
+
 ## References
 
 :::{#refs}
