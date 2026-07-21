@@ -471,6 +471,10 @@ The authors declare no competing interests.
 
 We thank Abderrafiae Allal, Hanane Hrouk, Karim Jidani, and Samir Haqi for their help with data collection; the Youth association in Tizougaghin for their support with logistics; the Sobhi, Allal and Hrouk families for hosting our research team; and the people of Tizougaghin, Ait Hani and Tizgui for their hospitality and cooperation.
 
+##### Data Availability
+
+The data and analysis code underlying this article are openly available at \url{https://github.com/codemlab/nomadism\_ehs}. The repository includes raw data files, analysis scripts, and the Quarto document used to generate all results and figures reported here, enabling full reproduction of the analyses.
+
 ## References
 
 :::{#refs}
