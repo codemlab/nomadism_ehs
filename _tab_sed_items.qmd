@@ -13,7 +13,7 @@ Perceived economic need & \checkmark & \checkmark & Nomads: current situation re
 Perceived access to social support & \checkmark & \checkmark & Nomads: current frequency (never--always). Former nomads: change since settling (easier/same/harder) \\
 Well-being measures & \checkmark & \checkmark & Nomads: current life. Former nomads: nomadic past and settled present \\
 Regrets about settling & \checkmark & -- & Hypothetical return to nomadism \\
-Advantages and disadvantages of each lifestyle & \checkmark & \checkmark & General \\
+Advantages of each lifestyle & \checkmark & \checkmark & General \\
 \bottomrule
 \end{tabular}
 \caption{Modules of the sedentarisation interview, the groups to which each was administered, and the reference period for responses. Never nomads did not complete this interview.\label{tab-sed-items}}
