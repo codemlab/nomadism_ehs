@@ -1,0 +1,21 @@
+```{=latex}
+\begin{table}[H]
+\small
+\centering
+\rowcolors{2}{rowgray}{white}
+\begin{tabular}{p{3.6cm}p{2.6cm}p{2.2cm}p{5.3cm}}
+\toprule
+\textbf{Module} & \textbf{Former nomads (n=35)} & \textbf{Nomads (n=75)} & \textbf{Reference period / comparison} \\
+\midrule
+Sedentarisation process & \checkmark & -- & Past (time of settling) \\
+Aspirations about settling & -- & \checkmark & Future \\
+Perceived economic need & \checkmark & \checkmark & Nomads: current situation relative to other nomadic households. Former nomads: nomadic years relative to peers at the time, and current situation relative to other villagers \\
+Perceived access to social support & \checkmark & \checkmark & Nomads: current frequency (never--always). Former nomads: change since settling (easier/same/harder) \\
+Well-being measures & \checkmark & \checkmark & Nomads: current life. Former nomads: nomadic past and settled present \\
+Regrets about settling & \checkmark & -- & Hypothetical return to nomadism \\
+Advantages and disadvantages of each lifestyle & \checkmark & \checkmark & General \\
+\bottomrule
+\end{tabular}
+\caption{Modules of the sedentarisation interview, the groups to which each was administered, and the reference period for responses. Never nomads did not complete this interview.\label{tab-sed-items}}
+\end{table}
+```
