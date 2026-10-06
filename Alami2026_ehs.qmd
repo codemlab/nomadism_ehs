@@ -63,6 +63,13 @@ nom <- read.csv("manuscript_data/nomadism_qual.csv")
 nom$group2 <- nom$group
 nom$group2[nom$group2 == "part-time nomad"] <- "nomad"
 nom$group2[nom$group2 == "full-time nomad"] <- "nomad"
+n_bfc              <- sum(!is.na(nom$best_for_children))
+n_bfc_village      <- sum(nom$best_for_children == "village life is better", na.rm = TRUE)
+pct_bfc_village    <- round(n_bfc_village / n_bfc * 100, 1)
+n_bfc_nomadic      <- sum(nom$best_for_children == "nomadic life is better", na.rm = TRUE)
+n_bfc_undecided    <- sum(nom$best_for_children == "undecided or it depends", na.rm = TRUE)
+n_bfc_vil_school   <- sum(grepl("schooling", nom$best_for_children_why_cat[nom$best_for_children %in% "village life is better"]))
+pct_bfc_vil_school <- round(n_bfc_vil_school / n_bfc_village * 100, 1)
 nomads_raw <- nom[nom$group2 == "nomad", ]
 fnom_raw   <- nom[nom$group  == "former nomad", ]
 n_nom_free           <- sum(!is.na(nomads_raw$nomad_freedom))
