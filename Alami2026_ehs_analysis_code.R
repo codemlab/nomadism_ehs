@@ -1054,6 +1054,69 @@ tbl_not_want_settle <- subset(nom, nom$want_settle == "no")
 table(tbl_not_want_settle$want_settle_why_cat)
 
 
+##========= WHERE IS IT BETTER FOR CHILDREN TO GROW UP? ==========
+# Inline scalars
+n_bfc            <- sum(!is.na(nom$best_for_children))
+n_bfc_village    <- sum(nom$best_for_children == "village life is better", na.rm = T)
+pct_bfc_village  <- round(n_bfc_village / n_bfc * 100, 1)
+n_bfc_nomadic    <- sum(nom$best_for_children == "nomadic life is better", na.rm = T)
+n_bfc_undecided  <- sum(nom$best_for_children == "undecided or it depends", na.rm = T)
+n_bfc_vil_school <- sum(grepl("schooling", nom$best_for_children_why_cat[nom$best_for_children %in% "village life is better"]))
+pct_bfc_vil_school <- round(n_bfc_vil_school / n_bfc_village * 100, 1)
+
+# Panel A: preference by group
+nom$group2_lab <- ifelse(nom$group2 == "nomad", "Current nomads", "Former nomads")
+df_bfc <- nom[!is.na(nom$best_for_children), ] |>
+  count(group2_lab, best_for_children) |>
+  complete(group2_lab, best_for_children, fill = list(n = 0)) |>
+  group_by(group2_lab) |>
+  mutate(prct = n / sum(n) * 100,
+         group2_lab = paste0(group2_lab, " (n=", sum(n), ")")) |>
+  ungroup() |>
+  mutate(best_for_children = factor(best_for_children,
+           levels = rev(c("village life is better", "nomadic life is better", "undecided or it depends")),
+           labels = rev(c("Village life is better", "Nomadic life is better", "Undecided / it depends"))),
+         group2_lab = factor(group2_lab, levels = rev(sort(unique(group2_lab)))))  # current nomads on top
+
+theme_bfc <- theme_minimal(base_size = 11) +
+  theme(panel.grid.major.y = element_blank(), panel.grid.minor = element_blank(),
+        axis.title.y = element_blank(), plot.title = element_text(face = "bold", size = 11),
+        legend.position = "top", legend.title = element_blank())
+
+p_bfc_pref <- ggplot(df_bfc, aes(x = prct, y = best_for_children, fill = group2_lab)) +
+  geom_col(position = position_dodge(width = 0.8), width = 0.7) +
+  geom_text(aes(label = paste0(round(prct), "% (n=", n, ")")),
+            position = position_dodge(width = 0.8), hjust = -0.1, size = 3, colour = "grey20") +
+  scale_fill_manual(values = setNames(c("#D55E00", "#FFC800"), rev(levels(df_bfc$group2_lab))),
+                    breaks = rev(levels(df_bfc$group2_lab))) +
+  scale_x_continuous(limits = c(0, 125), breaks = seq(0, 100, 25), labels = function(x) paste0(x, "%")) +
+  labs(title = "A. Where is it better for children to grow up?", x = "% of respondents") +
+  theme_bfc
+
+# Panel B: reasons given by those who prefer the village (an answer can mention several)
+village_why <- strsplit(nom$best_for_children_why_cat[nom$best_for_children %in% "village life is better"], "; ")
+df_bfc_why <- as.data.frame(table(theme = unlist(village_why)), stringsAsFactors = FALSE)
+df_bfc_why$prct <- df_bfc_why$Freq / n_bfc_village * 100
+df_bfc_why$theme <- paste0(toupper(substr(df_bfc_why$theme, 1, 1)), substring(df_bfc_why$theme, 2))
+theme_order <- df_bfc_why$theme[order(df_bfc_why$theme == "No reason given", -df_bfc_why$Freq)]
+df_bfc_why$theme <- factor(df_bfc_why$theme, levels = rev(theme_order))  # most frequent on top, no reason last
+
+p_bfc_why <- ggplot(df_bfc_why, aes(x = prct, y = theme)) +
+  geom_col(width = 0.7, fill = "grey35") +
+  geom_text(aes(label = paste0(round(prct), "% (n=", Freq, ")")), hjust = -0.1, size = 3, colour = "grey20") +
+  scale_x_continuous(limits = c(0, 110), breaks = seq(0, 100, 25), labels = function(x) paste0(x, "%")) +
+  labs(title = paste0("B. Reasons given by those who prefer the village (n=", n_bfc_village, ")"),
+       x = "% of respondents mentioning the reason") +
+  theme_bfc
+
+des_best_for_children <- p_bfc_pref / p_bfc_why + plot_layout(heights = c(1, 1.6))
+ggsave("figures/des_best_for_children.png", des_best_for_children, width = 7, height = 7, dpi = 300, bg = "white")
+
+# Nomadic and undecided groups are too small for percentages: report their reasons as counts
+table(nom$best_for_children_why_cat[!nom$best_for_children %in% "village life is better"],
+      nom$best_for_children[!nom$best_for_children %in% "village life is better"])
+
+
 ##=========  MAP PLOT ==========
 source("code/map_plot.R")
 
