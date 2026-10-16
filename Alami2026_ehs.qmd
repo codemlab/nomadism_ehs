@@ -60,6 +60,7 @@ library(dplyr)
 
 ``` {r derived-vars}
 nom <- read.csv("manuscript_data/nomadism_qual.csv")
+loo_tab <- readRDS("model_output/loo_comparison.rds")
 nom$group2 <- nom$group
 nom$group2[nom$group2 == "part-time nomad"] <- "nomad"
 nom$group2[nom$group2 == "full-time nomad"] <- "nomad"
@@ -248,7 +249,9 @@ Settled participants freely listed individuals important in their social lives a
 
 
 ### Data analysis
-All analyses were performed using `r substr(version$version.string, 1,15)`. To compare wealth and income between first-generation former nomads and never nomads living in the same village, we fitted Bayesian lognormal GLMMs using the *brms* package. Current nomads were not included in these models. Villagers were sampled systematically (all consenting adults in the village), whereas nomads were a convenience sample whose income and wealth may not be representative of the wider nomadic population (see Limitations). Comparisons between nomads and villagers are therefore descriptive only. Our models assume a causal structure described by the directed acyclical graph in @fig-dag. For each outcome, we ran two models: one for the total effect of former nomad status and one including mediators (education, Darija fluency, time in community). Income was modelled using a hurdle GLMM: a Bernoulli component for zero-income probability and a lognormal component for positive income. Both models include household random intercepts and control for age and sex. We used weakly conservative priors; chains mixed well with no divergent transitions (@tbl-mcmc-diag, Appendix).
+All analyses were performed using `r substr(version$version.string, 1,15)`. To compare wealth and income between first-generation former nomads and never nomads living in the same village, we fitted Bayesian generalised linear mixed models (GLMMs) using the *brms* package. Current nomads were not included in these models. Villagers were sampled systematically (all consenting adults in the village), whereas nomads were a convenience sample whose income and wealth may not be representative of the wider nomadic population (see Limitations). Comparisons between nomads and villagers are therefore descriptive only. Wealth was modelled with a lognormal distribution. Income was modelled with a hurdle-lognormal distribution, because many participants reported no income. This is a single model with two parts estimated jointly: a Bernoulli part for the probability of having zero income, and a lognormal part for the amount of income among those with some income. The hurdle structure allows former nomad status to affect whether someone earns any income separately from how much they earn.
+
+Our models assume the causal structure shown in the directed acyclic graph in @fig-dag. Following this structure, we fitted two models for each outcome. The first estimates the total effect of former nomad status, adjusting only for age and sex. The second adds the hypothesised mediators (education, Darija fluency and time in the community, plus income in the wealth model) to estimate the direct effect remaining once these pathways are accounted for. Because each model asks a different question, we did not use model-fit criteria to choose between them; a leave-one-out comparison is reported in the Appendix (@tbl-loo). All four models include household random intercepts. We used weakly informative priors; chains mixed well with no divergent transitions (@tbl-mcmc-diag, Appendix).
 
 ![Directed acyclical graph of the assumed causal relationship between history of nomadism and economic status](figures/dag.png){#fig-dag}
 
@@ -614,6 +617,23 @@ diag_tab <- do.call(rbind, lapply(names(diag_models), function(nm) {
 }))
 
 diag_tab %>%
+  gt::gt() %>%
+  gt::tab_options(table.font.size = 8, table.width = gt::pct(100))
+```
+
+Leave-one-out cross-validation, with both models fitted to the same `r loo_tab$n[1]` participants, showed no reliable difference in predictive performance between the total-effect and mediator models for either income or wealth (@tbl-loo). The estimated effect of former nomad status in the total-effect models was virtually unchanged when they were refitted on this common sample.
+
+``` {r}
+#| label: tbl-loo
+#| tbl-cap: 'Leave-one-out cross-validation comparison of total-effect and mediator models. ELPD is the expected log predictive density (higher is better); ELPD difference is relative to the better-fitting model.'
+#| tbl-pos: "H"
+data.frame(
+  Outcome = loo_tab$Outcome,
+  Model = loo_tab$Model,
+  `ELPD (SE)` = sprintf("%.1f (%.1f)", loo_tab$elpd, loo_tab$elpd_se),
+  `ELPD difference (SE)` = ifelse(loo_tab$elpd_diff == 0, "0.0", sprintf("%.1f (%.1f)", loo_tab$elpd_diff, loo_tab$se_diff)),
+  check.names = FALSE
+) %>%
   gt::gt() %>%
   gt::tab_options(table.font.size = 8, table.width = gt::pct(100))
 ```

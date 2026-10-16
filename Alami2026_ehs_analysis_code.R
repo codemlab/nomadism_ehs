@@ -183,6 +183,31 @@ sum(rhat(wealth_model_brm_full)>=1.01)
 sum(neff_ratio(wealth_model_brm_full)< 0.5)
 sum(neff_ratio(wealth_model_brm_full)< 0.1)
 
+## LOO comparison of total-effect and mediator models
+# The mediator models drop participants with missing mediators, so the total-effect
+# models are refitted on the same sample before comparison. Observations with
+# Pareto k > 0.7 are refitted exactly (reloo).
+loo_pair <- function(m_total, m_full, outcome) {
+  m_total_common <- update(m_total, newdata = m_full$data, seed = 1, refresh = 0)
+  l_total <- loo(m_total_common, reloo = TRUE, k_threshold = 0.7)
+  l_full  <- loo(m_full, reloo = TRUE, k_threshold = 0.7)
+  cmp <- as.data.frame(loo_compare(list(total = l_total, mediators = l_full)))
+  cmp_total <- if ("model" %in% names(cmp)) cmp[cmp$model == "total", ] else cmp["total", ]
+  data.frame(
+    Outcome    = outcome,
+    Model      = c("Mediators", "Total effect"),
+    n          = nobs(m_full),
+    elpd       = c(l_full$estimates["elpd_loo", "Estimate"], l_total$estimates["elpd_loo", "Estimate"]),
+    elpd_se    = c(l_full$estimates["elpd_loo", "SE"],       l_total$estimates["elpd_loo", "SE"]),
+    elpd_diff  = c(0, cmp_total$elpd_diff),
+    se_diff    = c(0, cmp_total$se_diff),
+    former_nomad_total_common = fixef(m_total_common)["former_nomad", "Estimate"]
+  )
+}
+loo_tab <- rbind(loo_pair(inc_model_brm,    inc_model_brm_full,    "Income"),
+                 loo_pair(wealth_model_brm, wealth_model_brm_full, "Wealth"))
+saveRDS(loo_tab, "model_output/loo_comparison.rds")
+
 ## network creation
 source('code/network_creation_function.R')
 ### socialising:
