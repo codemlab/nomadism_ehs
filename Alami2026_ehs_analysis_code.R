@@ -208,6 +208,43 @@ loo_tab <- rbind(loo_pair(inc_model_brm,    inc_model_brm_full,    "Income"),
                  loo_pair(wealth_model_brm, wealth_model_brm_full, "Wealth"))
 saveRDS(loo_tab, "model_output/loo_comparison.rds")
 
+## Interactions of former nomad status with sex and age (reviewer robustness check)
+# Same data, priors and random effects as the total-effect models; the original
+# models are unchanged. For income, interactions enter both hurdle parts.
+inc_model_int <- update(inc_model_brm,
+  formula. = bf(income_std ~ sex * former_nomad + age_std * former_nomad + (1 | householdID),
+                hu ~ 1 + sex * former_nomad + age_std * former_nomad + (1 | householdID)),
+  newdata = inc_model_brm$data, seed = 1, refresh = 0)
+wealth_model_int <- update(wealth_model_brm,
+  formula. = bf(wealth_std ~ sex * former_nomad + age_std * former_nomad + (1 | householdID)),
+  newdata = wealth_model_brm$data, seed = 1, refresh = 0)
+
+# Interaction terms and former-nomad effects by sex (mean age) and by age (women,
+# the reference category); medians with 90% intervals
+summ_int <- function(m, part, outcome) {
+  d <- as_draws_df(m); b <- function(n) d[[paste0("b_", part, n)]]
+  fn <- b("former_nomad"); xs <- b("sexmale:former_nomad"); xa <- b("former_nomad:age_std")
+  draws <- list("Sex × former nomad" = xs, "Age × former nomad" = xa,
+                "Former nomad effect: women" = fn, "Former nomad effect: men" = fn + xs,
+                "Former nomad effect: age -1 SD" = fn - xa, "Former nomad effect: age +1 SD" = fn + xa)
+  data.frame(Outcome = outcome, Term = names(draws),
+             est = sapply(draws, median), lo = sapply(draws, quantile, 0.05), hi = sapply(draws, quantile, 0.95),
+             row.names = NULL)
+}
+int_tab <- rbind(summ_int(inc_model_int, "",    "Income: amount (earners)"),
+                 summ_int(inc_model_int, "hu_", "Income: probability of no income"),
+                 summ_int(wealth_model_int, "", "Wealth"))
+# LOO comparison with the original total-effect models (same data)
+loo_int <- function(m0, m1) {
+  cmp <- as.data.frame(loo_compare(list(original = loo(m0, reloo = TRUE, k_threshold = 0.7),
+                                        interaction = loo(m1, reloo = TRUE, k_threshold = 0.7))))
+  r <- if ("model" %in% names(cmp)) cmp[cmp$model == "interaction", ] else cmp["interaction", ]
+  c(elpd_diff = r$elpd_diff, se_diff = r$se_diff)
+}
+int_loo <- rbind(Income = loo_int(inc_model_brm, inc_model_int),
+                 Wealth = loo_int(wealth_model_brm, wealth_model_int))
+saveRDS(list(tab = int_tab, loo = int_loo), "model_output/interaction_models.rds")
+
 ## network creation
 source('code/network_creation_function.R')
 ### socialising:
