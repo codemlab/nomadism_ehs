@@ -369,7 +369,7 @@ fs_des <- fs_des[!is.na(fs_des$food_insecurity), ]
 mean_stat <- function(data, indices) mean(data[indices])
 
 ws_des |> group_by(nomadic) |>
-  summarise(mean = round(mean(water_insecurity)), sd = round(sd(water_insecurity)),
+  summarise(mean = round(mean(water_insecurity), 1), sd = round(sd(water_insecurity), 1),
             ci_lower = NA_real_, ci_upper = NA_real_, .groups = "drop") |>
   as.data.frame() -> ws_s
 
