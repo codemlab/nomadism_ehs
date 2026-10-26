@@ -258,7 +258,7 @@ Our models assume the causal structure shown in the directed acyclic graph in @f
 
 ![Directed acyclical graph of the assumed causal relationship between history of nomadism and economic status](figures/dag.png){#fig-dag}
 
-The models above compare former nomads with never nomads living in the same village (Figure \ref{fig:main}); current nomads are not included. We did not statistically test income differences between current nomads and villagers. Instead, we present this comparison descriptively (Figure \ref{fig:inc-comp}, Appendix). This is because the two groups were sampled differently. Villagers were sampled systematically: we interviewed all consenting adults in a single community, so the village sample closely reflects that community. Nomads, in contrast, were a convenience sample, recruited opportunistically over a wide area wherever households could be located and reached. This sample may be biased, for example towards households that are easier to reach or more market-integrated. Because no systematic data exist on the wider nomadic population, we cannot assess how representative our sample is.
+The models above compare former nomads with never nomads living in the same village (Figure \ref{fig:main}); current nomads are not included. We did not statistically test income differences between current nomads and villagers. Instead, we present this comparison descriptively (Figure \ref{fig:inc-comp}). This is because the two groups were sampled differently. Villagers were sampled systematically: we interviewed all consenting adults in a single community, so the village sample closely reflects that community. Nomads, in contrast, were a convenience sample, recruited opportunistically over a wide area wherever households could be located and reached. This sample may be biased, for example towards households that are easier to reach or more market-integrated. Because no systematic data exist on the wider nomadic population, we cannot assess how representative our sample is.
 
 To test whether former nomads are integrated into village support networks, or instead form a separate and more isolated group, we constructed three network objects using the *network* package [@butts2008NetworkPackageManaging]. Responses on festivities, friendships, and couscous production (a social activity) formed a "socialisation and festivities" network; agriculture, childcare, and daily labour formed a "labour" network; and loan and disaster-support questions formed a "material support" network. For each, we fit exponential random graph models (ERGMs) using the *ergm* package [@hunter2008ErgmPackageFit], modelling tie log-odds as a linear function of covariates and network statistics. Models included reciprocity, dyadic relatedness (from *kinship2* [@sinnwell2014Kinship2PackagePedigree]), and node-level parameters for outgoing ties, incoming ties, and homophily. For "former nomad", for instance, we estimated three parameters: one for log odds of outgoing ties for former nomads relative to others, one for log odds of incoming ties, and one for homophily (log odds of ties within former nomads and never nomads relative to ties between these groups). Node-level variables included age, sex, tribal affiliation ("*bone*"), years of schooling, income, wealth, and number of external ties. For a full overview, see Table \ref{tab-ergm} (Appendix).
 
@@ -267,7 +267,9 @@ Open-ended responses were recorded in Tamazight or Darija, transcribed in Latin 
 
 ## Results
 
-### Demographic characteristics
+### Participants
+
+We first describe the three groups compared in this study: nomads, former nomads (first-generation settlers) and never nomads living in the same village. Throughout, "villagers" refers to former nomads and never nomads together.
 
 ``` {r}
 #| label: tbl-demographics
@@ -289,24 +291,69 @@ d %>%
 
 @tbl-demographics presents demographic characteristics of the study participants (n=`r n`) including never nomads (n= `r nrow(never_nom)` [`r round(nn_prop * 100, 1)`%]; `r round(nn_sex * 100, 1)`% female), former nomads (n=`r nrow(former_nom)`[`r round(fn_prop * 100, 1)`%]; `r round(fn_sex * 100, 1)`% female), and nomads (n=`r nrow(current_nom)`[`r round(cn_prop * 100, 1)`%]; `r round(cn_sex * 100, 1)`% female). Across groups, age distributions are broadly comparable with mean ages ranging from `r mean_ages_range[1]` to `r mean_ages_range[2]` years and age ranges spanning younger to older adulthood in every group (never nomads: `r paste0(range(never_nom$age, na.rm = TRUE), collapse = "-")`; former nomads: `r paste0(range(former_nom$age, na.rm = TRUE), collapse = "-")`; nomads: `r paste0(range(current_nom$age, na.rm = TRUE), collapse = "-")`). The proportion of women is also similar across groups (`r paste0(sex_props_range,collapse = "-")`%). Educational attainment and fluency in Darija or Moroccan Arabic varies substantially between groups. Never nomads report substantially higher levels of schooling (mean=`r des_s$mean_edu[des_s$group2 == "never nomad"]` years[SD=`r des_s$sd_edu[des_s$group2 == "never nomad"]`]) compared to former nomads (mean=`r des_s$mean_edu[des_s$group2 == "former nomad"]`[SD=`r des_s$sd_edu[des_s$group2 == "former nomad"]`]) and especially current nomads (mean=`r des_s$mean_edu[des_s$group2 == "nomad"]` years[SD=`r des_s$sd_edu[des_s$group2 == "nomad"]`])(Figure \ref{fig:edu-group}, Appendix). `r des_s$dar_pct[des_s$group2 == "never nomad"]`% of never nomads report being fluent in Darija, compared with `r des_s$dar_pct[des_s$group2 == "former nomad"]`% of former nomads and only `r des_s$dar_pct[des_s$group2 == "nomad"]`% of current nomads (@tbl-demographics).
 
-### Water and food insecurity
-Nomads reported lower water insecurity (mean=`r ws_s$mean[ws_s$nomadic == 1]`, 95% CI = `r paste0(ws_s[ws_s$nomadic == 1, c("ci_lower","ci_upper")], collapse = " - ")`) than villagers (including former nomads; mean=`r ws_s$mean[ws_s$nomadic == 0]`, 95% CI:`r paste0(ws_s[ws_s$nomadic == 0, c("ci_lower","ci_upper")], collapse = " - ")`), reflecting their mobility and ability to camp near water sources (Figure \ref{fig:water-ins}; see discussion). However, nomads report greater food insecurity (mean=`r fs_s$mean[fs_s$nomadic == 1]`, 95% CI = `r paste0(fs_s[fs_s$nomadic == 1, c("ci_lower","ci_upper")], collapse = " - ")`) than villagers (mean=`r fs_s$mean[fs_s$nomadic == 0]`, 95% CI = `r paste0(fs_s[fs_s$nomadic == 0, c("ci_lower","ci_upper")], collapse = " - ")`).
+### Why do nomads settle?
+
+This section draws on the sedentarisation interview with former nomads and nomads. We report why former nomads settled, whether current nomads wish to settle, and how both groups view the advantages of each way of life.
+
+#### Reasons for settling (former nomads)
+``` {r sedentarisation}
+# All objects pre-computed in nomad_manuscript_2025.R and loaded from alami_et_al_2026.Rdata
+```
+
+Former and part-time nomads (n = `r n_former_nomad` and `r n_part_nomad` respectively) reported multiple triggers for settling (see Figure \ref{fig:why-settle}). The most common were physical hardship or illness (`r freq_why_settle[search_term=="tired"]` participants; `r round(freq_why_settle[search_term=="tired"]*100/n_all_non_nomad,1)`%), followed by the desire to provide children with schooling (`r freq_why_settle[search_term=="school"]`;`r round(freq_why_settle[search_term=="school"]*100/n_all_non_nomad,1)`%), livestock loss due to drought or snow (`r freq_why_settle[search_term=="livestock"]`;`r round(freq_why_settle[search_term=="livestock"]*100/n_all_non_nomad,1)`%) and marriage to a villager (`r freq_why_settle[search_term=="marriage"]`;`r round(freq_why_settle[search_term=="marriage"]*100/n_all_non_nomad,1)`%). Other triggers included joining family already in the village (e.g., children joining grandparents or adults caring for elderly parents) (`r freq_why_settle[search_term=="family"]`;`r round(freq_why_settle[search_term=="family"]*100/n_all_non_nomad,1)`%), intra-family conflicts (`r freq_why_settle[search_term=="conflict"]`;`r round(freq_why_settle[search_term=="conflict"]*100/n_all_non_nomad,1)`%), fear of robbery of an unoccupied house (`r freq_why_settle[search_term=="defend"]`;`r round(freq_why_settle[search_term=="defend"]*100/n_all_non_nomad,1)`%), and overcrowding (`r freq_why_settle[search_term=="overcrowding"]`;`r round(freq_why_settle[search_term=="overcrowding"]*100/n_all_non_nomad,1)`%). The majority (`r n_age_adult`; `r pct_age_adult`%) settled as adults between the ages of 25 and 40 (Figure \ref{fig:age-settled}, Appendix). The decision was unanimously described as difficult, sometimes not their own, and involved extended family separations, with children often separated from one or both parents. In an open-ended question, we also asked former nomads why they chose this particular village; each answer was coded into one main reason. Access to social support (moving in with relatives, being offered land, or receiving help building a house) was the most common reason, given by `r n_settle_immediate + n_settle_inlaws + n_settle_unrelated` former nomads: `r n_settle_immediate` (`r pct_settle_immediate`%) cited support from immediate family members, `r n_settle_inlaws` (`r pct_settle_inlaws`%) from in-laws, and `r n_settle_unrelated` (`r pct_settle_unrelated`%) from unrelated individuals. The remaining participants cited property: `r n_settle_purchase` (`r pct_settle_purchase`%) had purchased a house and/or land in the village and `r n_settle_inherited` (`r pct_settle_inherited`%) had inherited land or a house there. For the `r n_settle_marriage` former nomads whose move was triggered by marriage to a villager, the choice of village followed from the marriage (Figure \ref{fig:why-tz}, Appendix).
+
+```{=latex}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/des_why_settle.png}
+  \caption{Reasons given by former nomads for settling.}
+  \label{fig:why-settle}
+\end{figure}
+```
+
+#### Aspirations about settling (nomads)
+
+Of `r n_ft_nomads` nomads, `r n_want_yes` (`r pct_want_yes`%) wished to settle. `r freq_why_want["tired"]` described nomadism as physically exhausting, citing water scarcity and pasture degradation as lengthening travel distances. `r freq_why_want["livestock"]` cited declining herd sizes and rising feed costs, viewing nomadism as increasingly unsustainable. `r freq_why_want["school"]` cited children's schooling, and an equal number cited protection from winter cold and snow, described as life-threatening for children. Access to water, electricity, and markets was equally frequently cited. `r freq_why_want["engaged"]` participant planned to settle following engagement to a villager and another `r freq_why_want["bored"]` sought relief from boredom and social isolation (Figure \ref{fig:reasons-want-settling}).
 
 ```{=latex}
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.9\textwidth]{figures/des_water_insecurity.png}
-  \caption{Water insecurity scores by group (nomads vs. villagers).}
-  \label{fig:water-ins}
+  \includegraphics[width=0.9\textwidth]{figures/des_reasons_want_settling.png}
+  \caption{Reasons given by current nomads for wanting to settle.}
+  \label{fig:reasons-want-settling}
 \end{figure}
 ```
 
-### Wealth and income models
-Former nomads have lower wealth and income than never nomads living in the same village: median annual income is \$`r round(median(d$net_income[d$group2 == "former nomad"], na.rm = T))` versus \$`r round(median(d$net_income[d$group2 == "never nomad"], na.rm = T))`, and median wealth is $\approx$\$`r format(round(median(d$wealth[d$group2 == "former nomad"], na.rm = T)/100)*100, big.mark=",")` versus $\approx$\$`r format(round(median(d$wealth[d$group2 == "never nomad"], na.rm = T)/100)*100, big.mark=",")`. After adjusting for age, sex and household, former nomads remain poorer than never nomads, although the size of the difference is uncertain (Figure \ref{fig:main}). The standardised total effect on log wealth is `r round(median(draws_wealth$b_former_nomad), 2)` (90% CI [`r paste(round(quantile(draws_wealth$b_former_nomad, c(0.05,0.95)),2), collapse = " - ")` ]). Adding mediators reduced the estimated wealth difference between former nomads and never nomads (from `r round(median(draws_wealth$b_former_nomad), 2)` to `r round(median(draws_wealth_full$b_former_nomad), 2)`, 90% CI [`r paste(round(quantile(draws_wealth_full$b_former_nomad, c(0.05,0.95)),2), collapse = " - ")`]). In this model, wealth was positively associated with income ($\Beta$ = `r round(median(draws_wealth_full$b_income_std), 2)` per SD, about US\$2,000; 90% CI [`r paste(round(quantile(draws_wealth_full$b_income_std, c(0.05,0.95)),2), collapse = " - ")`]) and with time in the community ($\Beta$ = `r round(median(draws_wealth_full$b_time_com_std), 2)` per SD, about 18.5 years; 90% CI [`r paste(round(quantile(draws_wealth_full$b_time_com_std, c(0.05,0.95)),2), collapse = " - ")`]), but not with education ($\Beta$ = `r round(median(draws_wealth_full$b_yrs_edu_std), 2)`, 90% CI [`r paste(round(quantile(draws_wealth_full$b_yrs_edu_std, c(0.05,0.95)),2), collapse = " - ")`]) (@tbl-mediators, Appendix). Interacting years in community with former nomad status, recently settled former nomads appear substantially poorer than both longer-established former nomads and never-nomadic neighbours who have lived similar durations in the community (Figure \ref{fig:int}, Appendix).
+Among the `r n_want_no` who did not wish to settle, the most common reason was attachment to their herd and nomadic way of life (n = 10). The remainder were not opposed but faced constraints: six expressed concerns about earning a livelihood outside nomadism and integrating in a village, and two cited financial barriers.
+
+#### Perceived advantages of nomadic and settled lifestyles (nomads and former nomads)
+
+Perceived advantages are summarised in Figure \ref{fig:adv}. These largely align with stated reasons for settling, and former and current nomads broadly agree, though former nomads more often cite environmental quality and tradition as nomadic advantages, and markets and shelter as settling advantages.
+
+```{=latex}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/perceived_advantages.png}
+  \caption{Perceived advantages of nomadic and settled life reported by current nomads and former nomads.}
+  \label{fig:adv}
+\end{figure}
+```
+
+Asked where it is better for children to grow up, `r pct_bfc_village`% of respondents (*n* = `r n_bfc_village` of `r n_bfc`) answered the village, `r pct_bfc_vil_school`% of whom cited schooling. Only `r n_bfc_nomadic` preferred nomadic life and `r n_bfc_undecided` were undecided (Figure \ref{fig:best-children}). Undecided respondents were not opposed to nomadic life: for most, what mattered was access to schooling rather than where children grow up.
+
+#### Regrets about settling (former nomads)
+
+To the question *”If you could return to being a nomad now, with the same herd you used to have, would you?”*, `r pct_no_go_back`% of former nomads (*n* = `r n_no_go_back` of `r n_go_back_total` respondents) answered “no”, `r pct_yes_go_back`% “yes”, and `r pct_unsure_go_back`% “unsure”.
+
+### What does settling cost?
+
+We next ask whether settling carries an economic cost, by comparing the income and wealth of former nomads with those of never nomads in the same village, and by describing how participants perceive their own economic situation.
+
+#### Wealth and income (former nomads and never nomads)
+
+Former nomads have lower wealth and income than never nomads living in the same village: median annual income is \$`r round(median(d$net_income[d$group2 == "former nomad"], na.rm = T))` versus \$`r round(median(d$net_income[d$group2 == "never nomad"], na.rm = T))`, and median wealth is $\approx$\$`r format(round(median(d$wealth[d$group2 == "former nomad"], na.rm = T)/100)*100, big.mark=",")` versus $\approx$\$`r format(round(median(d$wealth[d$group2 == "never nomad"], na.rm = T)/100)*100, big.mark=",")`. After adjusting for age, sex and household, former nomads remain poorer than never nomads, although the size of the difference is uncertain (Figure \ref{fig:main}). The standardised total effect on log wealth is `r round(median(draws_wealth$b_former_nomad), 2)` (90% CI [`r paste(round(quantile(draws_wealth$b_former_nomad, c(0.05,0.95)),2), collapse = " - ")` ]). Adding mediators reduced the estimated wealth difference between former nomads and never nomads (from `r round(median(draws_wealth$b_former_nomad), 2)` to `r round(median(draws_wealth_full$b_former_nomad), 2)`, 90% CI [`r paste(round(quantile(draws_wealth_full$b_former_nomad, c(0.05,0.95)),2), collapse = " - ")`]). In this model, wealth was positively associated with income ($\Beta$ = `r round(median(draws_wealth_full$b_income_std), 2)` per SD, about US\$2,000; 90% CI [`r paste(round(quantile(draws_wealth_full$b_income_std, c(0.05,0.95)),2), collapse = " - ")`]) and with time in the community ($\Beta$ = `r round(median(draws_wealth_full$b_time_com_std), 2)` per SD, about 18.5 years; 90% CI [`r paste(round(quantile(draws_wealth_full$b_time_com_std, c(0.05,0.95)),2), collapse = " - ")`]), but not with education ($\Beta$ = `r round(median(draws_wealth_full$b_yrs_edu_std), 2)`, 90% CI [`r paste(round(quantile(draws_wealth_full$b_yrs_edu_std, c(0.05,0.95)),2), collapse = " - ")`]) (@tbl-mediators, Appendix). Interacting years in community with former nomad status, recently settled former nomads appear substantially poorer than both longer-established former nomads and never nomads who have lived similar durations in the community (Figure \ref{fig:int}, Appendix).
 
 Differences in income are also relatively small ($\Beta$ = `r round(median(draws_inc$b_former_nomad), 2)`, 90% CI: [`r paste(round(quantile(draws_inc$b_former_nomad, c(0.05,0.95)),2), collapse = " - ")`]), and there is essentially no difference in the log-odds of having no income ($\Beta$ = `r round(median(draws_inc$b_hu_former_nomad), 2)`, 90% CI: [`r paste(round(quantile(draws_inc$b_hu_former_nomad, c(0.05,0.95)),2), collapse = " - ")`]). There is a strong signal that Darija fluency plays an important role in income ($\Beta$ = `r round(median(draws_inc_full$b_darija), 2)`, 90% CI: [`r paste(round(quantile(draws_inc_full$b_darija, c(0.05,0.95)),2), collapse = " - ")`]), although this doesn't seem to strongly mediate the income difference between former nomads and never nomads (@tbl-mediators, Appendix). Allowing the effect of former nomad status to vary by sex and age did not improve model fit (ELPD difference: income `r sprintf("%.1f", int_res$loo["Income","elpd_diff"])`, SE = `r sprintf("%.1f", int_res$loo["Income","se_diff"])`; wealth `r sprintf("%.1f", int_res$loo["Wealth","elpd_diff"])`, SE = `r sprintf("%.1f", int_res$loo["Wealth","se_diff"])`), and we found no clear evidence that the effect differed between women and men or across ages (@tbl-interact, Appendix). Among earners, the effect of former nomad status on income was similar for women ($\Beta$ = `r fmt_int("Income: amount (earners)", "Former nomad effect: women")`) and men ($\Beta$ = `r fmt_int("Income: amount (earners)", "Former nomad effect: men")`). The income gap among earners was somewhat larger for older former nomads (age × former nomad: $\Beta$ = `r fmt_int("Income: amount (earners)", "Age × former nomad")`), but this difference was uncertain.
-
-Villagers reported much lower incomes (median = \$`r round(median(d$income[which(d$group2 != "nomad")], na.rm = TRUE))`) than current nomads (median = \$`r round(median(d$income[which(d$group2 == "nomad")], na.rm = TRUE))`) (Figure \ref{fig:inc-comp}, Appendix), reflecting the large number of livestock nomads sell annually. As nomads were a convenience sample, this comparison is descriptive.
 
 ```{=latex}
 \begin{figure}[H]
@@ -328,57 +375,20 @@ Villagers reported much lower incomes (median = \$`r round(median(d$income[which
 \end{figure}
 ```
 
-### Sedentarisation interview
-
-#### Sedentarisation process (former nomads subsample)
-``` {r sedentarisation}
-# All objects pre-computed in nomad_manuscript_2025.R and loaded from alami_et_al_2026.Rdata
-```
-Former and part-time nomads (n = `r n_former_nomad` and `r n_part_nomad` respectively) reported multiple triggers for settling (see Figure \ref{fig:why-settle}). The most common were physical hardship or illness (`r freq_why_settle[search_term=="tired"]` participants; `r round(freq_why_settle[search_term=="tired"]*100/n_all_non_nomad,1)`%), followed by the desire to provide children with schooling (`r freq_why_settle[search_term=="school"]`;`r round(freq_why_settle[search_term=="school"]*100/n_all_non_nomad,1)`%), livestock loss due to drought or snow (`r freq_why_settle[search_term=="livestock"]`;`r round(freq_why_settle[search_term=="livestock"]*100/n_all_non_nomad,1)`%) and marriage to a villager (`r freq_why_settle[search_term=="marriage"]`;`r round(freq_why_settle[search_term=="marriage"]*100/n_all_non_nomad,1)`%). Other triggers included joining family already in the village (e.g., children joining grandparents or adults caring for elderly parents) (`r freq_why_settle[search_term=="family"]`;`r round(freq_why_settle[search_term=="family"]*100/n_all_non_nomad,1)`%), intra-family conflicts (`r freq_why_settle[search_term=="conflict"]`;`r round(freq_why_settle[search_term=="conflict"]*100/n_all_non_nomad,1)`%), fear of robbery of an unoccupied house (`r freq_why_settle[search_term=="defend"]`;`r round(freq_why_settle[search_term=="defend"]*100/n_all_non_nomad,1)`%), and overcrowding (`r freq_why_settle[search_term=="overcrowding"]`;`r round(freq_why_settle[search_term=="overcrowding"]*100/n_all_non_nomad,1)`%). The majority (`r n_age_adult`; `r pct_age_adult`%) settled as adults between the ages of 25 and 40 (Figure \ref{fig:age-settled}). The decision was unanimously described as difficult, sometimes not their own, and involved extended family separations, with children often separated from one or both parents. In an open-ended question, we also asked former nomads why they chose this particular village; each answer was coded into one main reason. Access to social support (moving in with relatives, being offered land, or receiving help building a house) was the most common reason, given by `r n_settle_immediate + n_settle_inlaws + n_settle_unrelated` former nomads: `r n_settle_immediate` (`r pct_settle_immediate`%) cited support from immediate family members, `r n_settle_inlaws` (`r pct_settle_inlaws`%) from in-laws, and `r n_settle_unrelated` (`r pct_settle_unrelated`%) from unrelated individuals. The remaining participants cited property: `r n_settle_purchase` (`r pct_settle_purchase`%) had purchased a house and/or land in the village and `r n_settle_inherited` (`r pct_settle_inherited`%) had inherited land or a house there. For the `r n_settle_marriage` former nomads whose move was triggered by marriage to a villager, the choice of village followed from the marriage (Figure \ref{fig:why-tz}).
+Figure \ref{fig:inc-comp} shows annual gross income (before expenses) in the three groups. Current nomads reported much higher incomes (median = \$`r format(round(median(d$income[which(d$group2 == "nomad")], na.rm = TRUE)), big.mark = ",")`) than former nomads (median = \$`r format(round(median(d$income[which(d$group2 == "former nomad")], na.rm = TRUE)), big.mark = ",")`) and never nomads (median = \$`r format(round(median(d$income[which(d$group2 == "never nomad")], na.rm = TRUE)), big.mark = ",")`), reflecting the large number of livestock nomads sell annually. Incomes in the two village groups were similar and mostly low: about a third of both former and never nomads reported no income, and only a few earned more than \$5,000 a year. As nomads were a convenience sample, this comparison is descriptive.
 
 ```{=latex}
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{figures/des_why_settle.png}
-  \caption{Reasons given by former nomads for settling.}
-  \label{fig:why-settle}
+  \includegraphics[width=0.9\textwidth]{figures/income_comparison.png}
+  \caption{Annual income (USD) of former nomads, never nomads and current nomads. This comparison is descriptive, as nomads were a convenience sample.}
+  \label{fig:inc-comp}
 \end{figure}
 ```
 
-```{=latex}
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.9\textwidth]{figures/des_age_settled.png}
-  \caption{Age at settlement among former nomads.}
-  \label{fig:age-settled}
-\end{figure}
-```
+#### Perceived economic need (nomads and former nomads)
 
-```{=latex}
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.9\textwidth]{figures/des_why_tz.png}
-  \caption{Reasons for choosing the current village as a settlement location.}
-  \label{fig:why-tz}
-\end{figure}
-```
-
-#### Aspirations about settling (nomads)
-Of `r n_ft_nomads` nomads, `r n_want_yes` (`r pct_want_yes`%) wished to settle. `r freq_why_want["tired"]` described nomadism as physically exhausting, citing water scarcity and pasture degradation as lengthening travel distances. `r freq_why_want["livestock"]` cited declining herd sizes and rising feed costs, viewing nomadism as increasingly unsustainable. `r freq_why_want["school"]` cited children's schooling, and an equal number cited protection from winter cold and snow, described as life-threatening for children. Access to water, electricity, and markets was equally frequently cited. `r freq_why_want["engaged"]` participant planned to settle following engagement to a villager and another `r freq_why_want["bored"]` sought relief from boredom and social isolation (Figure \ref{fig:reasons-want-settling}).
-
-```{=latex}
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.9\textwidth]{figures/des_reasons_want_settling.png}
-  \caption{Reasons given by current nomads for wanting to settle.}
-  \label{fig:reasons-want-settling}
-\end{figure}
-```
-
-Among the `r n_want_no` who did not wish to settle, the most common reason was attachment to their herd and nomadic way of life (n = 10). The remainder were not opposed but faced constraints: six expressed concerns about earning a livelihood outside nomadism and integrating in a village, and two cited financial barriers.
-
-#### Perceived economic need
-`r fnom_set_relneed`% of former nomads reported feeling more in need than settled neighbours, compared to `r fnom_nom_relneed`% who had felt more in need than nomadic peers before settling. This closely matched the `r nom_nom_relneed`% of current nomads feeling more in need than peers, suggesting accurate recall rather than nostalgia (Figure \ref{fig:perceived-need}).
+`r fnom_set_relneed`% of former nomads reported feeling more in need than other villagers, compared to `r fnom_nom_relneed`% who had felt more in need than other nomads before settling. This closely matched the `r nom_nom_relneed`% of current nomads feeling more in need than other nomads, suggesting accurate recall rather than nostalgia (Figure \ref{fig:perceived-need}).
 
 ```{=latex}
 \begin{figure}[H]
@@ -389,36 +399,29 @@ Among the `r n_want_no` who did not wish to settle, the most common reason was a
 \end{figure}
 ```
 
-#### Perceived access to social support
+### How does settling affect well-being and social life?
+
+Finally, we examine material and social well-being: water and food insecurity (nomads and villagers); perceived support, respect, conflict and personal values (nomads and former nomads); and integration into village networks (former nomads and never nomads).
+
+#### Water and food insecurity (nomads and villagers)
+
+Nomads reported lower water insecurity (mean=`r ws_s$mean[ws_s$nomadic == 1]`, 95% CI = `r paste0(ws_s[ws_s$nomadic == 1, c("ci_lower","ci_upper")], collapse = " - ")`) than villagers (mean=`r ws_s$mean[ws_s$nomadic == 0]`, 95% CI:`r paste0(ws_s[ws_s$nomadic == 0, c("ci_lower","ci_upper")], collapse = " - ")`), reflecting their mobility and ability to camp near water sources (Figure \ref{fig:water-ins}, Appendix; see Discussion). However, nomads report greater food insecurity (mean=`r fs_s$mean[fs_s$nomadic == 1]`, 95% CI = `r paste0(fs_s[fs_s$nomadic == 1, c("ci_lower","ci_upper")], collapse = " - ")`) than villagers (mean=`r fs_s$mean[fs_s$nomadic == 0]`, 95% CI = `r paste0(fs_s[fs_s$nomadic == 0, c("ci_lower","ci_upper")], collapse = " - ")`).
+
+#### Perceived access to social support (nomads and former nomads)
+
 Most nomads (n = `r n_nom_support`) reported limited perceived access to social support: `r pct_support_never`% could never and `r pct_support_rarely`% could rarely turn to others for help when sick or in need; fewer could do so often (`r pct_support_often`%) or always (`r pct_support_always`%). Among former nomads (n=`r n_support_change`), `r pct_support_easier`% reported that obtaining help had become easier since settling, `r pct_support_same`% said the same, and `r pct_support_harder`% said harder.
 
-#### Well-being measures
+#### Respect, conflict and values (nomads and former nomads)
+
 Among nomads (n = `r n_nom_resp`), the large majority reported feeling “always” respected, both by other nomads (`r n_resp_oth_always` [`r pct_resp_oth_always`%]) and by neighbouring villagers (`r n_resp_set_always` [`r pct_resp_set_always`%]); smaller minorities reported “often,” “rarely,” or “never.” Among former nomads (n=`r n_fnom_resp`), `r n_fnom_resp_oth_always` (`r pct_fnom_resp_oth_always`%) recalled “always” feeling respected by other nomads during their nomadic years, whereas only `r n_fnom_resp_set_always` (`r pct_fnom_resp_set_always`%) say they “always” feel respected by villagers in their current settled life. Reports of lower respect (“rarely” or “never”) were slightly more common in relation to current villagers (`r n_fnom_resp_set_low` [`r pct_fnom_resp_set_low`%]) than to fellow nomads in the past (`r n_fnom_resp_oth_low` [`r pct_fnom_resp_oth_low`%]).
 
-Conflicts were generally infrequent across lifestyles. Among nomads (n=`r n_nom_support`), the large majority (`r pct_conf_nom_never`%) reported never experiencing conflicts, `r pct_conf_nom_rarely`% rarely, none sometimes, and `r pct_conf_nom_often`% often. Former nomads (n=`r n_nom_sub`) recalled a similar pattern for their nomadic past (`r pct_conf_fnom_never`% never, `r pct_conf_fnom_rarely`% rarely, `r pct_conf_fnom_often`% often). After settling, `r pct_sconf_fnom_never`% reported never experiencing conflicts, `r pct_sconf_fnom_rarely`% rarely, `r pct_sconf_fnom_sometimes`% sometimes, and none often. Nomadic conflicts primarily involved disputes over grazing rights and access to water, with livestock theft less frequent. Former nomads noted a shift after settling: village conflicts now centre on irrigation schedules, children's behaviour, and land disputes.
+Conflicts were infrequent in both lifestyles: most nomads (`r pct_conf_nom_never`%) and most former nomads, both recalling their nomadic past (`r pct_conf_fnom_never`%) and describing village life (`r pct_sconf_fnom_never`%), reported never experiencing conflicts (full distribution in @tbl-conflicts, Appendix). What changed was their source: nomadic conflicts mainly involved grazing rights and access to water, with livestock theft less frequent, whereas former nomads described village conflicts over irrigation schedules, children's behaviour and land.
 
 Current nomads (n = `r n_nom_free`) were much more likely to report that they lived "according to [their] own beliefs and values", with `r pct_nom_free_always`% saying they "always" felt this way; former nomads (n = `r n_fnom_free`) felt similarly about their nomadic years (`r pct_fnom_free_always`% "always") but none of them felt the same level of personal freedom in village life (`r pct_fnom_sfree_always`% "always"). 
 
-#### Regrets about settling
-To the question *”If you could return to being a nomad now, with the same herd you used to have, would you?”*, `r pct_no_go_back`% of former nomads (*n* = `r n_no_go_back` of `r n_go_back_total` respondents) answered “no”, `r pct_yes_go_back`% “yes”, and `r pct_unsure_go_back`% “unsure”.
+#### Social networks (former nomads and never nomads)
 
-#### Perceived advantages of nomadic and settled lifestyles
-
-Perceived advantages are summarised in Figure \ref{fig:adv}. These largely align with stated reasons for settling, and former and current nomads broadly agree, though former nomads more often cite environmental quality and tradition as nomadic advantages, and markets and shelter as settling advantages.
-
-```{=latex}
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.9\textwidth]{figures/perceived_advantages.png}
-  \caption{Perceived advantages of nomadic and settled life reported by current nomads and former nomads.}
-  \label{fig:adv}
-\end{figure}
-```
-
-Asked where it is better for children to grow up, `r pct_bfc_village`% of respondents (*n* = `r n_bfc_village` of `r n_bfc`) answered the village, `r pct_bfc_vil_school`% of whom cited schooling. Only `r n_bfc_nomadic` preferred nomadic life and `r n_bfc_undecided` were undecided (Figure \ref{fig:best-children}). Undecided respondents were not opposed to nomadic life: for most, what mattered was access to schooling rather than where children grow up.
-
-### Network models
-The full output from the ERGMs can be found in the appendix (@tbl-full). As expected, we find evidence of very strong reciprocity and homophily by sex and *bone* (tribal affiliation), and strong kinship effects. For the purpose of this study, we focus on the estimated relationship between being a first-generation former nomad and engaging in labour exchange, social activities, and material support networks. These results can be seen in @tbl-ergm-results. We do not find strong evidence that first generation families have more or less outgoing or incoming ties than other community members, with the possible exception of labour ties, where former nomads have `r pct_work_out`% greater odds of nominating other people (95%CI: `r ci_work_out_lo`-`r ci_work_out_hi`). However, we do find strong evidence of homophily across all three networks, with `r pct_work_hom`%, `r pct_soc_hom`%, and `r pct_sup_hom`% greater odds of a tie between members of the same group (former nomads versus others), for labour networks, socialisation, and material support respectively. These results control for age, sex, income, wealth, household, reciprocity, relatedness, and number of external ties.
+The full output from the ERGMs can be found in the appendix (@tbl-full). As expected, we find evidence of very strong reciprocity and homophily by sex and *bone* (tribal affiliation), and strong kinship effects. For the purpose of this study, we focus on the estimated relationship between being a first-generation former nomad and engaging in labour exchange, social activities, and material support networks. These results can be seen in @tbl-ergm-results. We do not find strong evidence that first generation families have more or less outgoing or incoming ties than never nomads, with the possible exception of labour ties, where former nomads have `r pct_work_out`% greater odds of nominating other people (95%CI: `r ci_work_out_lo`-`r ci_work_out_hi`). However, we do find strong evidence of homophily across all three networks, with `r pct_work_hom`%, `r pct_soc_hom`%, and `r pct_sup_hom`% greater odds of a tie between members of the same group (former nomads versus never nomads), for labour networks, socialisation, and material support respectively. These results control for age, sex, income, wealth, household, reciprocity, relatedness, and number of external ties.
 
 
 
@@ -468,7 +471,6 @@ table %>%
 
 ```
 
-
 ## Discussion
 \noindent How and why contemporary nomadic pastoralists settle has important implications for evolutionary theories of subsistence change and for policies governing some of the world's most marginalised populations, yet remains among the least studied livelihood transitions in the evolutionary social sciences. Drawing on data from Amazigh transhumant pastoralists in southeastern Morocco, we examine why nomads settle, at what cost, and with what consequences for wellbeing. Unlike contexts where sedentarisation is imposed, the large majority (`r pct_want_yes`%) actively want to settle, and former nomads overwhelmingly report no regret, despite lower village incomes. We propose reframing sedentarisation not as crisis-driven displacement or a linear transition towards a more market integrated lifestyle, but as a calculated trade-off in which individuals trade material autonomy for reduced physical hardship, social embeddedness, and expanded opportunities for one's children.
 
@@ -485,7 +487,7 @@ Climate change is likely a fundamental driver of sedentarisation at the populati
 Classic accounts associate settlement with increasing market integration and decreasing reliance on community risk-sharing [@scott1976MoralEconomyPeasant; @polanyi1944GreatTransformationPolitical; @bates1981MarketsStatesTropical; @netting1993SmallholdersHouseholdersFarm; @fratkin2005PastoralistsSettleSocial; @dehaas2010MigrationDevelopmentTheoretical]. Our data suggest the reverse. Nomads are the more market-integrated group: herds are raised primarily for sale, livelihoods are exposed to commodity and climate shocks, and traditional forms of social support are severely limited (`r pct_support_never`% can never and `r pct_support_rarely`% rarely turn to others for help). Settlement represents a move from market exposure to community embeddedness. Former nomads report a striking increase in perceived access to social support after settling (`r pct_support_easier`% said it became easier), and network analyses, which record actual exchanges of support, reveal strong homophily across all three network types: `r pct_work_hom`%, `r pct_soc_hom`%, and `r pct_sup_hom`% greater odds of a tie between former nomads versus a former nomad and a never nomad, for labour, socialisation, and material support. Former nomads form a partially distinct but well-integrated cluster within village networks, building the relational infrastructure needed to buffer early post-settlement vulnerability. This challenges the assumption that settlement trades communal life for market individualism; for these nomads, it enables the social solidarity their mobility had precluded. This is consistent with work on social capital buffering livelihood transitions [@putnam2000BowlingAloneCollapse; @aldrich2015SocialCapitalCommunity] and with evidence that co-ethnic networks are critical for newly arrived migrants [@massey1993TheoriesInternationalMigration]. However, if nomadic social life was once richer, growing nomad scarcity may itself accelerate settlement as those remaining face a thinner social landscape. As peers settle, this may signal that settlement is worthwhile, accelerating the transition through social learning [@henrich1998EvolutionConformistTransmission; @efferson2008ConformistsMavericksEmpirics]. Nevertheless, transhumant pastoralism in the southeastern High Atlas was never organised around large aggregations. The basic mobile unit is one or a few extended family households [@akasbi2012SocialEcologicalConstraints; @amsidder2021EmpiricalApproachPresent]. Social thinning is likely a contributing factor to sedentarisation, but is unlikely to constitute its primary driver. Village sociality has its own costs. Former nomads describe new pressures absent from nomadic life: irrigation disputes, noise, social comparison, social obligations, and gossip within a dense community. `r pct_all_peace`% of participants (`r pct_fnom_peace`% of former nomads) cited "peace of mind" as a nomadic advantage, suggesting mobile life's social simplicity carries some psychological benefit despite isolation.
 
 ### Implications for policy
-A consistent thread is the centrality of agency to sedentarisation. Former nomads described themselves not as victims, though hardship clearly plays a role, but as individuals making difficult and deliberate choices for a better life. Asked whether they would return to nomadism, the large majority of former nomads (`r pct_no_go_back`%) said no, even as many expressed genuine nostalgia for nomadic culture and traditions, caring for their herds, and the freedom and financial autonomy of nomadic life (Figure \ref{fig:adv}). The well-documented harms of forced sedentarisation [@khazanov1994NomadsOutsideWorld; @ohayon2013KazakhFamineBeginnings; @fan2015SolvingOneProblem] have rightly sensitised researchers and policymakers to the risks of state-led programmes. The barrier in this context is not motivation - the large majority want to settle (`r pct_want_yes`% of nomads) - but capital. The transition is expensive, and its costs are steepest in the early stages. Recently settled individuals face a dual disadvantage: materially relative to nomads and never nomads (Figures \ref{fig:int} and \ref{fig:inc-comp}, Appendix), and in education, *Darija* fluency, and literacy (Figure \ref{fig:edu-group}, Appendix). These gaps may narrow with time but will likely take generations to close (Figure \ref{fig:int}, Appendix). Policy efforts will be most effective reducing the costs of voluntary sedentarisation rather than promoting or discouraging it: by ensuring settled communities have functional infrastructure; providing literacy classes and educational programmes to recently settled families; extending civil registration, documentation, education, and healthcare to nomadic populations still on the move; and preserving the conditions under which voluntary nomadism remains viable. Protecting traditional pasture routes and grazing rights would help ensure sedentarisation reflects genuine preference rather than the foreclosure of alternatives [@manzano2021HolisticUnderstandingPastoralism; @kratli2010LivingUncertaintyIntelligent]. 
+A consistent thread is the centrality of agency to sedentarisation. Former nomads described themselves not as victims, though hardship clearly plays a role, but as individuals making difficult and deliberate choices for a better life. Asked whether they would return to nomadism, the large majority of former nomads (`r pct_no_go_back`%) said no, even as many expressed genuine nostalgia for nomadic culture and traditions, caring for their herds, and the freedom and financial autonomy of nomadic life (Figure \ref{fig:adv}). The well-documented harms of forced sedentarisation [@khazanov1994NomadsOutsideWorld; @ohayon2013KazakhFamineBeginnings; @fan2015SolvingOneProblem] have rightly sensitised researchers and policymakers to the risks of state-led programmes. The barrier in this context is not motivation - the large majority want to settle (`r pct_want_yes`% of nomads) - but capital. The transition is expensive, and its costs are steepest in the early stages. Recently settled individuals face a dual disadvantage: materially relative to nomads and never nomads (Figure \ref{fig:inc-comp}; Figure \ref{fig:int}, Appendix), and in education, *Darija* fluency, and literacy (Figure \ref{fig:edu-group}, Appendix). These gaps may narrow with time but will likely take generations to close (Figure \ref{fig:int}, Appendix). Policy efforts will be most effective reducing the costs of voluntary sedentarisation rather than promoting or discouraging it: by ensuring settled communities have functional infrastructure; providing literacy classes and educational programmes to recently settled families; extending civil registration, documentation, education, and healthcare to nomadic populations still on the move; and preserving the conditions under which voluntary nomadism remains viable. Protecting traditional pasture routes and grazing rights would help ensure sedentarisation reflects genuine preference rather than the foreclosure of alternatives [@manzano2021HolisticUnderstandingPastoralism; @kratli2010LivingUncertaintyIntelligent]. 
 
 ### Limitations and future directions
 Several limitations deserve mention. First, the cross-sectional design precludes causal inference: group differences may reflect pre-existing variation rather than the transition itself. Second, nomadic participants were recruited by convenience — a practical necessity given access and funding constraints — and may not represent the broader population, for whom systematic demographic data are absent. We cannot guarantee that our sample doesn't over-represent higher income, more market-integrated families, or that our focal community represents a relatively less successful outcome for nomads who decide to settle. Third, self-reported data on income, assets, and wellbeing are subject to recall and desirability biases. Income and wealth rely on self-reported herd sizes and sales, which may be subject to recall error. Multi-season engagement and ethnographic corroboration provide some confidence, but this remains a constraint. Future longitudinal data will allow tracking of socioeconomic status, health (chronic disease burden appears substantially elevated in the village), children's development, and network structure, addressing the current design's inferential limits.
@@ -715,20 +717,56 @@ Former Nomad     & $\checkmark$ & $\checkmark$  & $\checkmark$ \\
 ```{=latex}
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.9\textwidth]{figures/income_comparison.png}
-  \caption{Income comparison between current nomads and settled community members.}
-  \label{fig:inc-comp}
+  \includegraphics[width=0.9\textwidth]{figures/des_education_by_group.png}
+  \caption{Years of schooling by group (nomads, former nomads, never nomads).}
+  \label{fig:edu-group}
 \end{figure}
 ```
 
 ```{=latex}
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.9\textwidth]{figures/des_education_by_group.png}
-  \caption{Years of schooling by group (nomads, former nomads, never nomads).}
-  \label{fig:edu-group}
+  \includegraphics[width=0.9\textwidth]{figures/des_water_insecurity.png}
+  \caption{Water insecurity scores by group (nomads vs. villagers).}
+  \label{fig:water-ins}
 \end{figure}
 ```
+
+```{=latex}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/des_age_settled.png}
+  \caption{Age at settlement among former nomads.}
+  \label{fig:age-settled}
+\end{figure}
+```
+
+```{=latex}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/des_why_tz.png}
+  \caption{Reasons for choosing the current village as a settlement location.}
+  \label{fig:why-tz}
+\end{figure}
+```
+
+``` {r}
+#| label: tbl-conflicts
+#| tbl-cap: "Frequency of conflicts reported by nomads (current life) and former nomads (nomadic past and village life)."
+#| tbl-pos: "H"
+cf <- function(n, total) sprintf("%d (%.1f%%)", n, 100 * n / total)
+with_na <- function(x, total) c(x, total - sum(x))
+data.frame(
+  Frequency = c("Never", "Rarely", "Sometimes", "Often", "No answer"),
+  `Nomads` = cf(with_na(c(n_conf_nom_never, n_conf_nom_rarely, 0, n_conf_nom_often), n_nom_support), n_nom_support),
+  `Former nomads: nomadic past` = cf(with_na(c(n_conf_fnom_never, n_conf_fnom_rarely, 0, n_conf_fnom_often), n_nom_sub), n_nom_sub),
+  `Former nomads: village life` = cf(with_na(c(n_sconf_fnom_never, n_sconf_fnom_rarely, n_sconf_fnom_sometimes, 0), n_nom_sub), n_nom_sub),
+  check.names = FALSE
+) %>%
+  gt::gt() %>%
+  gt::tab_options(table.font.size = 8, table.width = gt::pct(100))
+```
+
 
 ```{=latex}
 \begin{figure}[h]
