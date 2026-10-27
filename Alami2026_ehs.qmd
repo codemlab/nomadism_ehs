@@ -398,7 +398,7 @@ Figure \ref{fig:inc-comp} shows annual gross income (before expenses) in the thr
 \end{figure}
 ```
 
-### How does settling affect well-being and former nomads' support networks?
+### How does settling affect well-being and support networks?
 
 Finally, we examine material and social well-being: water and food insecurity (nomads and villagers); perceived support, respect, conflict and personal values (nomads and former nomads); and integration into village networks (former nomads and never nomads).
 
