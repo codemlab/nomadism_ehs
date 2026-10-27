@@ -415,8 +415,10 @@ search_term     <- search_terms
 freq_why_settle <- sapply(search_terms, function(x) sum(grepl(x, nom$why_settle_cats), na.rm = TRUE))
 names(freq_why_settle) <- search_terms
 
-pct_why_settle_tired      <- round(freq_why_settle["tired"]     / n_nom_sub * 100, 1)
-pct_why_settle_livestock  <- round(freq_why_settle["livestock"] / n_nom_sub * 100, 1)
+# denominator: former and part-time nomads who answered the question on reasons for settling
+n_why_settle <- sum(!is.na(nom$why_settle_cats) & nom$why_settle_cats != "")
+pct_why_settle_tired      <- round(freq_why_settle["tired"]     / n_why_settle * 100, 1)
+pct_why_settle_livestock  <- round(freq_why_settle["livestock"] / n_why_settle * 100, 1)
 
 # Sedentarisation process: who decided
 own_pat     <- "^Me$|^Me,|^I am|^Me and"
