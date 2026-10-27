@@ -872,7 +872,7 @@ ggplot(dall_inc, aes(x = group2, y = income, fill = group2)) +
   geom_boxplot(width = 0.3, na.rm = TRUE) +
   stat_slab(side = "right", scale = 0.4, na.rm = TRUE) +
   theme_minimal(base_size = 25) +
-  labs(y = "Annual income (USD)") +
+  labs(x = "Nomadic status", y = "Annual income (USD)", fill = "Nomadic status") +
   scale_fill_manual(values = c("former nomad" = "slateblue", "never nomad" = "forestgreen", "nomad" = "coral"))
 ggsave("figures/income_comparison.png", width = 12, height = 6)
 
