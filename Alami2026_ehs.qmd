@@ -277,7 +277,7 @@ Open-ended responses were recorded in Tamazight or Darija, transcribed in Latin 
 
 ### Participants
 
-We first describe the three groups compared in this study: nomads, former nomads (first-generation settled) and never nomads living in the same village. Throughout, "villagers" refers to former nomads and never nomads together.
+We first describe the three groups compared in this study: nomads, former nomads and never nomads living in the same village. Throughout, "villagers" refers to former nomads and never nomads together.
 
 ``` {r}
 #| label: tbl-demographics
@@ -327,7 +327,7 @@ To the question *”If you could return to being a nomad now, with the same herd
 Of `r n_ft_nomads` nomads, `r n_want_yes` (`r pct_want_yes`%) wished to settle. The most common reason was the physical toll of nomadism (`r freq_why_want["tired"]`), which participants linked to water scarcity and pasture degradation lengthening travel distances, followed by declining herds and rising feed costs (`r freq_why_want["livestock"]`), which made nomadism appear increasingly unsustainable. Children's schooling, protection from winter cold and snow, and access to water, electricity and markets were also frequently cited (Figure \ref{fig:reasons-want-settling}).
 
 ```{=latex}
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{figures/des_reasons_want_settling.png}
   \caption{Reasons given by current nomads for wanting to settle.}
@@ -342,7 +342,7 @@ Among the `r n_want_no` who did not wish to settle, most were attached to their 
 Perceived advantages are summarised in Figure \ref{fig:adv}. These largely align with stated reasons for settling, and former and current nomads broadly agree, though former nomads more often cite environmental quality and tradition as nomadic advantages, and markets and shelter as settling advantages.
 
 ```{=latex}
-\begin{figure}[h]
+\begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{figures/perceived_advantages.png}
   \caption{Perceived advantages of nomadic and settled life reported by current nomads and former nomads.}
