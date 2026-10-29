@@ -1056,7 +1056,7 @@ fs %>% group_by(group2) %>%
 
 ##==================== SEDENTARISATION DESCRIPTIVE PLOTS ====================##
 
-labels_why_settle <- c("Physically tired or ill", "Children's schooling", "Livestock loss",
+labels_why_settle <- c("Physical hardship and toll of nomadic life", "Children's schooling", "Livestock loss",
                        "Marriage to villager", "Conflict", "Joined family",
                        "Defense of material wealth", "Overcrowding in tent")
 search_terms_settle <- c("tired", "school", "livestock", "marriage", "conflict", "family", "defend", "overcrowding")
