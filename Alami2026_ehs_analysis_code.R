@@ -36,6 +36,8 @@ col_former_nomad_past <- "#C9B8E0"  # light purple: former nomads describing the
 col_never_nomad       <- "#009E73"  # bluish green
 col_villager          <- "#999999"  # grey: former and never nomads combined
 group_labels <- c("nomad" = "Nomads", "former nomad" = "Former nomads", "never nomad" = "Never nomads")
+fig_base_size <- 11   # base font size for all figures; figures are saved at print size
+fig_width     <- 6.5  # inches (full text width)
 group_cols   <- c("Nomads" = col_nomad, "Former nomads" = col_former_nomad, "Never nomads" = col_never_nomad, "Villagers" = col_villager)
 library(boot)
 library(kableExtra)
@@ -593,9 +595,9 @@ labels_need <- c("less", "same","more")
 nom$nomad_relative_need <- factor(nom$nomad_relative_need, levels = labels_need)
 nom$settled_relative_need <- factor(nom$settled_relative_need, levels = labels_need)
 
-g_need_nom  <- "Nomads, now\n(compared with other nomads)"
-g_need_past <- "Former nomads, when nomadic\n(compared with other nomads)"
-g_need_now  <- "Former nomads, now\n(compared with other villagers)"
+g_need_nom  <- "Nomads, now (compared with other nomads)"
+g_need_past <- "Former nomads, when nomadic (compared with other nomads)"
+g_need_now  <- "Former nomads, now (compared with other villagers)"
 df_need <- bind_rows(
   data.frame(group = g_need_nom,  category = nom$nomad_relative_need[nom$nomadic == 1]),
   data.frame(group = g_need_past, category = nom$nomad_relative_need[nom$nomadic == 0]),
@@ -612,8 +614,9 @@ des_perceived_need <- ggplot(df_need, aes(x = factor(category, levels = labels_n
   scale_fill_manual(values = setNames(c(col_nomad, col_former_nomad_past, col_former_nomad), c(g_need_nom, g_need_past, g_need_now))) +
   scale_pattern_manual(values = setNames(c("none", "stripe", "none"), c(g_need_nom, g_need_past, g_need_now))) +
   labs(x = "Perceived economic situation relative to peers", y = "Percent of participants in each group", fill = NULL, pattern = NULL) +
-  theme_minimal(base_size = 16) + theme(legend.position = "top", legend.key.size = unit(1.1, "cm"))
-ggsave("figures/perceived_need.png", des_perceived_need, width = 12, height = 7.5, dpi = 200, bg = "white")
+  theme_minimal(base_size = fig_base_size) + theme(legend.position = "top", legend.key.size = unit(0.5, "cm")) +
+  guides(fill = guide_legend(ncol = 1), pattern = guide_legend(ncol = 1))
+ggsave("figures/perceived_need.png", des_perceived_need, width = fig_width, height = 4.8, dpi = 300, bg = "white")
 
 # percentages "more in need", selected by group name
 need_more <- function(g) round(df_need$prct[df_need$group == g & df_need$category == "more"], 1)
@@ -698,7 +701,7 @@ table(nom$group,nom$settled_conflicts)
 # NEVER: 27/35 (77.1%)
 
 ### Advantages of nomadism
-labels_advnom <- c("Environment: space, quiet, nature", "Freedom, self-sufficiency","Mental wellbeing, ability to avoid social problems", "Caring for livestock","Good life contigent on rainfall", "No advantages of nomadic life","Food and cultural traditions","Identity and pride in being a nomad")
+labels_advnom <- c("Environment: space, quiet, nature", "Freedom, self-sufficiency","Mental well-being, ability to avoid social problems", "Caring for livestock","Good life contingent on rainfall", "No advantages of nomadic life","Food and cultural traditions","Identity and pride in being a nomad")
 search_terms <- c("atmosphere", "freedom", "peace", "livestock", "conditional", "nothing", "food", "identity")
 freq_advnom <- sapply(search_terms,function(x)c(sum(grepl(x,nom$advnom_cat[nom$group2=="nomad"])),sum(grepl(x,nom$advnom_cat[nom$group2=="former nomad"]))))
 
@@ -749,7 +752,7 @@ p_advnom <- ggplot(df_advnom_ord,
     y = "Percentage within group (%)",
     fill = NULL
   ) +
-  theme_minimal(base_size = 13)
+  theme_minimal(base_size = fig_base_size - 1)
 
 # Advantages of settling
 
@@ -796,7 +799,7 @@ p_advset <- ggplot(df_advset_ord,
     y = "Percentage within group (%)",
     fill = NULL
   ) +
-  theme_minimal(base_size = 13)
+  theme_minimal(base_size = fig_base_size - 1)
 
 library(patchwork)
 (p_advnom / p_advset) +
@@ -804,24 +807,24 @@ library(patchwork)
   plot_annotation(tag_levels = "a") &
   theme(legend.position = "bottom")
 
-ggsave("figures/perceived_advantages.png", width = 12, height = 14)
+ggsave("figures/perceived_advantages.png", width = fig_width, height = 8, dpi = 300, bg = "white")
 
 
 ##==================== POSTERIOR PLOTS ====================##
 
-p_income <- bayesplot::mcmc_areas(
-  as.matrix(inc_model_brm),
-  regex_pars = "^b_",
-  prob = 0.9
-)
-ggsave("figures/income_model.png", p_income, width = 8, height = 6)
+coef_plot <- function(model, labels) {
+  m <- as.matrix(model)[, names(labels)]; colnames(m) <- labels
+  bayesplot::mcmc_areas(m, prob = 0.9) +
+    bayesplot::theme_default(base_size = fig_base_size, base_family = "sans") +
+    labs(x = "Coefficient (posterior distribution with 90% interval)") }
+p_income <- coef_plot(inc_model_brm, c(b_Intercept = "Intercept (income amount)", b_sexmale = "Male (income amount)",
+  b_age_std = "Age (income amount)", b_former_nomad = "Former nomad (income amount)",
+  b_hu_Intercept = "Intercept (no income)", b_hu_sexmale = "Male (no income)",
+  b_hu_age_std = "Age (no income)", b_hu_former_nomad = "Former nomad (no income)"))
+ggsave("figures/income_model.png", p_income, width = fig_width, height = 4, dpi = 300, bg = "white")
 
-p_wealth <- bayesplot::mcmc_areas(
-  as.matrix(wealth_model_brm),
-  regex_pars = "^b_",
-  prob = 0.9
-)
-ggsave("figures/wealth_model.png", p_wealth, width = 8, height = 4)
+p_wealth <- coef_plot(wealth_model_brm, c(b_Intercept = "Intercept", b_sexmale = "Male", b_age_std = "Age", b_former_nomad = "Former nomad"))
+ggsave("figures/wealth_model.png", p_wealth, width = fig_width, height = 2.6, dpi = 300, bg = "white")
 
 ##==================== COUNTERFACTUAL PREDICTIONS (Figure 5 and Appendix) ====================##
 # Predicted outcomes for a former nomad vs a never nomad of average age, by sex, excluding household
@@ -833,7 +836,7 @@ exchange_cf <- 0.09838  # MAD to USD, June 2023
 sd_inc_cf <- sd(dinc$net_income); sd_w_cf <- sd(dw$wealth)
 cf_nd <- expand.grid(former_nomad = c(0, 1), sex = c("female", "male"), age_std = 0)
 cf_nd_med <- transform(cf_nd, time_com_std = 0, yrs_edu_std = 0, darija = 0, income_std = mean(wealth_model_brm_full$data$income_std))
-cf_lev <- c("Total effect (adjusted for age and sex)", "Direct effect (mediators held fixed)")
+cf_lev <- c("Total effect", "Direct effect")
 cf_long <- function(mat, model) bind_rows(lapply(seq_len(nrow(cf_nd)), function(i)
   data.frame(cf_nd[i, ], value = mat[, i], Model = model, row.names = NULL))) |>
   mutate(Group = factor(ifelse(former_nomad == 1, "Former nomads", "Never nomads"), levels = c("Never nomads", "Former nomads")),
@@ -851,16 +854,17 @@ cf_panel <- function(df, title, lab, facet) {
   p <- ggplot(df, aes(x = Sex, y = value, fill = Group)) +
     stat_halfeye(.width = 0.9, position = position_dodge(width = 0.7), slab_alpha = 0.85, point_interval = median_qi) +
     scale_fill_manual(values = group_cols) + scale_y_continuous(labels = lab) +
-    labs(title = title, x = NULL, y = NULL, fill = NULL) + theme_minimal(base_size = 12)
+    labs(title = title, x = NULL, y = NULL, fill = NULL) + theme_minimal(base_size = fig_base_size - 1) +
+    theme(plot.title = element_text(size = fig_base_size))
   if (facet) p <- p + facet_grid(Model ~ ., switch = "y") + theme(strip.placement = "outside")
   p }
 cf_figure <- function(models, facet) {
-  (cf_panel(filter(cf_z, Model %in% models), "a. Probability of having no income", function(x) paste0(x, "%"), facet) |
-   cf_panel(filter(cf_i, Model %in% models), "b. Annual income among earners", scales::dollar, facet) |
+  (cf_panel(filter(cf_z, Model %in% models), "a. Probability of\nhaving no income", function(x) paste0(x, "%"), facet) |
+   cf_panel(filter(cf_i, Model %in% models), "b. Annual income\namong earners", scales::dollar, facet) |
    cf_panel(filter(cf_w, Model %in% models), "c. Wealth", scales::dollar, facet)) +
     plot_layout(guides = "collect") & theme(legend.position = "top") }
-ggsave("figures/counterfactual_total.png", cf_figure(cf_lev[1], FALSE), width = 14, height = 5.2, dpi = 200, bg = "white")
-ggsave("figures/counterfactual_total_direct.png", cf_figure(cf_lev, TRUE), width = 14, height = 8.5, dpi = 200, bg = "white")
+ggsave("figures/counterfactual_total.png", cf_figure(cf_lev[1], FALSE), width = fig_width, height = 3.4, dpi = 300, bg = "white")
+ggsave("figures/counterfactual_total_direct.png", cf_figure(cf_lev, TRUE), width = fig_width, height = 5.6, dpi = 300, bg = "white")
 
 # Ratios former / never nomads (identical for women and men, as the models have no sex interaction)
 cf_ratio <- function(df) df |> filter(Sex == "Women") |> group_by(Model) |>
@@ -883,15 +887,14 @@ ggplot(dw[which(dw$wealth>0 & !is.na(dw$years_in_com)),], aes(x = years_in_com, 
   geom_point(alpha = 0.6) +
   geom_smooth(method = "lm", aes(group = factor(former_nomad)), se = T) +
   labs(
-    title = "Interaction between Years in Community and Former Nomad Status",
-    x = "Years in Community",
-    y = "Adjusted Log Wealth (Residuals from Age & Sex)",
+    x = "Years in the community",
+    y = "Log wealth adjusted for age and sex (residuals)",
     color = NULL, fill = NULL
   ) +
-  theme_minimal() +
+  theme_minimal(base_size = fig_base_size) + theme(legend.position = "top") +
   scale_color_manual(values = c("0" = col_never_nomad, "1" = col_former_nomad), labels = c("0" = "Never nomads", "1" = "Former nomads")) +
   scale_fill_manual(values = c("0" = col_never_nomad, "1" = col_former_nomad), labels = c("0" = "Never nomads", "1" = "Former nomads"))
-ggsave("figures/wealth_interaction.png", width = 12, height = 6)
+ggsave("figures/wealth_interaction.png", width = fig_width, height = 4, dpi = 300, bg = "white")
 
 # income nomad comparison
 med_inc_nomad      <- round(median(d$income[d$group2 == "nomad"],        na.rm = TRUE))
@@ -904,8 +907,8 @@ ggplot(dall_inc, aes(x = Group, y = income, fill = Group)) +
   stat_slab(side = "right", scale = 0.4, na.rm = TRUE, show.legend = FALSE) +
   scale_fill_manual(values = group_cols) + scale_y_continuous(labels = scales::dollar) +
   labs(x = "Nomadic status", y = "Annual income (US$)") +
-  theme_minimal(base_size = 22)
-ggsave("figures/income_comparison.png", width = 12, height = 6, dpi = 200, bg = "white")
+  theme_minimal(base_size = fig_base_size)
+ggsave("figures/income_comparison.png", width = fig_width, height = 3.6, dpi = 300, bg = "white")
 
 
 # wealth nomad comparison
@@ -927,11 +930,11 @@ source("code/dag_plot.R")
 
 des_education_by_group <- ggplot(d, aes(x = factor(group_labels[as.character(group2)], levels = c("Nomads", "Former nomads", "Never nomads")), y = yrs_edu, fill = group_labels[as.character(group2)])) +
   geom_boxplot(alpha = 0.8, outlier.shape = 21, na.rm = TRUE) +
-  labs(x = NULL, y = "Years of education") +
-  theme_bw(base_size = 16) +
+  labs(x = NULL, y = "Years of schooling") +
+  theme_minimal(base_size = fig_base_size) +
   scale_fill_manual(values = group_cols) +
   theme(legend.position = "none")
-ggsave("figures/des_education_by_group.png", des_education_by_group, width = 8, height = 6)
+ggsave("figures/des_education_by_group.png", des_education_by_group, width = fig_width, height = 3.8, dpi = 300, bg = "white")
 
 # education table
 d %>%
@@ -1046,13 +1049,10 @@ ws <- ws[complete.cases(ws[c("water_insecurity", "group2")]), ]
 
 des_water_insecurity <- ggplot(ws, aes(x = water_insecurity, fill = group2)) +
   stat_bin(aes(y = after_stat(density)), position = 'dodge', binwidth = 1, na.rm = TRUE) +
-  labs(x = "Water insecurity score", y = "Proportion", fill = NULL) +
-  theme_bw() +
-  theme(axis.title.x = element_text(size = 18), axis.title.y = element_text(size = 18),
-        axis.text.x  = element_text(size = 16),  axis.text.y  = element_text(size = 16),
-        legend.text  = element_text(size = 16),   legend.title = element_text(size = 16)) +
+  labs(x = "Water insecurity score", y = "Proportion of participants", fill = NULL) +
+  theme_minimal(base_size = fig_base_size) + theme(legend.position = "top") +
   scale_fill_manual(values = group_cols)
-ggsave("figures/des_water_insecurity.png", des_water_insecurity, width = 8, height = 6)
+ggsave("figures/des_water_insecurity.png", des_water_insecurity, width = fig_width, height = 3.8, dpi = 300, bg = "white")
 
 ws %>% group_by(group2) %>%
   summarise(n = n(), mean_score = mean(water_insecurity), sd_score = sd(water_insecurity),
@@ -1070,14 +1070,11 @@ fs$food_insecurity <- as.numeric(fs$food_insecurity)
 
 des_food_insecurity <- ggplot(fs, aes(x = food_insecurity, fill = group2)) +
   stat_bin(aes(y = after_stat(density)), position = 'dodge', binwidth = 1, na.rm = TRUE) +
-  labs(x = "Food insecurity score", y = "Proportion", fill = NULL) +
-  theme_bw() +
-  theme(axis.title.x = element_text(size = 18), axis.title.y = element_text(size = 18),
-        axis.text.x  = element_text(size = 16),  axis.text.y  = element_text(size = 16),
-        legend.text  = element_text(size = 16),   legend.title = element_text(size = 16)) +
+  labs(x = "Food insecurity score", y = "Proportion of participants", fill = NULL) +
+  theme_minimal(base_size = fig_base_size) + theme(legend.position = "top") +
   scale_fill_manual(values = group_cols) +
   scale_x_continuous(breaks = min(fs$food_insecurity):max(fs$food_insecurity))
-ggsave("figures/des_food_insecurity.png", des_food_insecurity, width = 8, height = 6)
+ggsave("figures/des_food_insecurity.png", des_food_insecurity, width = fig_width, height = 3.8, dpi = 300, bg = "white")
 
 fs %>% group_by(group2) %>%
   summarise(n = n(), mean_score = mean(food_insecurity), sd_score = sd(food_insecurity),
@@ -1100,48 +1097,45 @@ df_why_settle$labels_why_settle <- factor(
 des_why_settle <- ggplot(df_why_settle, aes(x = labels_why_settle, y = freq_why_settle)) +
   geom_bar(stat = "identity", show.legend = FALSE, fill = col_former_nomad) +
   coord_flip() +
-  labs(x = "Reason for settling", y = "Frequency of mentions") +
-  theme_bw(base_size = 16) +
-  theme(axis.text.y = element_text(size = 16), axis.text.x = element_text(size = 16)) +
+  labs(x = NULL, y = "Number of former and part-time nomads mentioning reason") +
+  theme_minimal(base_size = fig_base_size) +
   ylim(0, max(df_why_settle$freq_why_settle) + 3)
-ggsave("figures/des_why_settle.png", des_why_settle, width = 10, height = 6)
+ggsave("figures/des_why_settle.png", des_why_settle, width = fig_width, height = 3.4, dpi = 300, bg = "white")
 
 des_age_settled <- ggplot(nom, aes(x = age_settled)) +
   geom_histogram(binwidth = 2, fill = col_former_nomad, color = "white") +
   coord_cartesian(xlim = c(8, 60)) +
-  labs(x = "Age when settled", y = "Frequency") +
-  theme_minimal(base_size = 18) +
-  theme(plot.title = element_text(hjust = 0.5, face = "bold"),
-        axis.title = element_text(face = "bold"))
-ggsave("figures/des_age_settled.png", des_age_settled, width = 8, height = 6)
+  labs(x = "Age at settling (years)", y = "Number of former nomads") +
+  theme_minimal(base_size = fig_base_size)
+ggsave("figures/des_age_settled.png", des_age_settled, width = fig_width, height = 3.4, dpi = 300, bg = "white")
 
 df_why_village <- as.data.frame(table(nom$settle_where_why_cat))
+labels_why_village <- c(support_from_immediate_family = "Support from immediate family", support_from_in_laws = "Support from in-laws",
+                        support_from_unrelated = "Support from unrelated individuals", purchase_house_land = "Purchased a house or land",
+                        inherited_land_house = "Inherited land or a house", marriage_to_villager = "Marriage to a villager")
+df_why_village$Var1 <- labels_why_village[as.character(df_why_village$Var1)]
 des_why_tz <- ggplot(df_why_village, aes(x = reorder(Var1, Freq), y = Freq)) +
   geom_col(fill = col_former_nomad) +
-  labs(x = "Why choose the study village to settle?", y = "Frequency of mentions") +
-  theme_minimal(base_size = 16) +
+  labs(x = NULL, y = "Number of former nomads") +
+  theme_minimal(base_size = fig_base_size) +
   coord_flip()
-ggsave("figures/des_why_tz.png", des_why_tz, width = 10, height = 6)
+ggsave("figures/des_why_tz.png", des_why_tz, width = fig_width, height = 3, dpi = 300, bg = "white")
 
-labels_why_want <- c("nomadism is physically tiring",
-                     "declining livestock/drought/increasing expenses",
-                     "protection from the elements/danger to small children",
-                     "children's schooling",
-                     "access to infrastructure (water, electricity, markets)",
-                     "engaged to villager",
-                     "boredom and solitude of nomadic life")
+labels_why_want <- c("Nomadism is physically tiring",
+                     "Declining herds, drought or rising costs",
+                     "Protection from the elements and danger to small children",
+                     "Children's schooling",
+                     "Access to infrastructure (water, electricity, markets)",
+                     "Engaged to a villager",
+                     "Boredom and solitude of nomadic life")
 df_reasons_want_settling <- data.frame(labels_why_want, freq_why_want)
 
 des_reasons_want_settling <- ggplot(df_reasons_want_settling, aes(x = reorder(labels_why_want, freq_why_want), y = freq_why_want)) +
   geom_bar(stat = "identity", color = col_nomad, fill = col_nomad) +
-  labs(x = "Reasons for wanting to settle in the future", y = "Frequency of mentions") +
-  theme_bw() +
-  coord_flip() +
-  theme(axis.title.x = element_text(size = 16), axis.title.y = element_text(size = 16),
-        axis.text.x  = element_text(size = 16, angle = 45, hjust = 1),
-        axis.text.y  = element_text(size = 16),
-        legend.text  = element_text(size = 16), legend.title = element_text(size = 16))
-ggsave("figures/des_reasons_want_settling.png", des_reasons_want_settling, width = 10, height = 6)
+  labs(x = NULL, y = "Number of nomads mentioning reason") +
+  theme_minimal(base_size = fig_base_size) +
+  coord_flip()
+ggsave("figures/des_reasons_want_settling.png", des_reasons_want_settling, width = fig_width, height = 3.4, dpi = 300, bg = "white")
 
 tbl_not_want_settle <- subset(nom, nom$want_settle == "no")
 table(tbl_not_want_settle$want_settle_why_cat)
@@ -1171,9 +1165,9 @@ df_bfc <- nom[!is.na(nom$best_for_children), ] |>
            labels = rev(c("Village life is better", "Nomadic life is better", "Undecided / it depends"))),
          group2_lab = factor(group2_lab, levels = rev(sort(unique(group2_lab), decreasing = TRUE))))  # nomads on top
 
-theme_bfc <- theme_minimal(base_size = 11) +
+theme_bfc <- theme_minimal(base_size = fig_base_size) +
   theme(panel.grid.major.y = element_blank(), panel.grid.minor = element_blank(),
-        axis.title.y = element_blank(), plot.title = element_text(face = "bold", size = 11),
+        axis.title.y = element_blank(), plot.title = element_text(face = "bold", size = fig_base_size),
         legend.position = "top", legend.title = element_blank())
 
 p_bfc_pref <- ggplot(df_bfc, aes(x = prct, y = best_for_children, fill = group2_lab)) +
@@ -1203,7 +1197,7 @@ p_bfc_why <- ggplot(df_bfc_why, aes(x = prct, y = theme)) +
   theme_bfc
 
 des_best_for_children <- p_bfc_pref / p_bfc_why + plot_layout(heights = c(1, 1.6))
-ggsave("figures/des_best_for_children.png", des_best_for_children, width = 7, height = 7, dpi = 300, bg = "white")
+ggsave("figures/des_best_for_children.png", des_best_for_children, width = fig_width, height = 6.5, dpi = 300, bg = "white")
 
 # Nomadic and undecided groups are too small for percentages: report their reasons as counts
 table(nom$best_for_children_why_cat[!nom$best_for_children %in% "village life is better"],

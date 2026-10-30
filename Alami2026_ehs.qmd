@@ -522,6 +522,11 @@ Claude Code (Anthropic, claude-sonnet-4-6) was used for cleaning, organising, an
 
 ## Appendix {.appendix}
 
+```{=latex}
+\setcounter{figure}{0}\renewcommand{\thefigure}{A\arabic{figure}}
+\setcounter{table}{0}\renewcommand{\thetable}{A\arabic{table}}
+```
+
 ``` {r}
 #| label: tbl-watfood-items
 #| tbl-cap: "Item-level wording and response distribution for the water and food insecurity scales."
@@ -703,20 +708,9 @@ Former Nomad     & $\checkmark$ & $\checkmark$  & $\checkmark$ \\
 ```{=latex}
 \begin{figure}[h]
   \centering
-  \begin{subfigure}[b]{0.9\textwidth}
-    \includegraphics[width=\linewidth]{figures/income_model.png}
-    \caption{}\label{fig:coef-a}
-  \end{subfigure}
-
-  \vspace{0.5em}
-
-  \begin{subfigure}[b]{0.9\textwidth}
-    \includegraphics[width=\linewidth]{figures/wealth_model.png}
-    \caption{}\label{fig:coef-b}
-  \end{subfigure}
-
-  \caption{Posterior distributions (90\% intervals) of coefficients from the total-effect models of income (a) and wealth (b), adjusted for age and sex. The mediators discussed in the text (years of education, Darija fluency, time in the community and, for wealth, income) are not plotted, as they are included only in the mediator models; their estimates are reported in Table \ref{tbl-mediators} (Appendix).}
-  \label{fig:coef}
+  \includegraphics[width=0.9\textwidth]{figures/des_best_for_children.png}
+  \caption{Where it is better for children to grow up, according to current and former nomads (A), and the reasons given by those who answered the village (B). Answers were coded into themes; one answer can mention several themes, so percentages in B sum to more than 100\%.}
+  \label{fig:best-children}
 \end{figure}
 ```
 
@@ -732,43 +726,9 @@ Former Nomad     & $\checkmark$ & $\checkmark$  & $\checkmark$ \\
 ```{=latex}
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.6\textwidth]{figures/wealth_interaction.png}
-  \caption{Interaction between years in community and former nomad status}
-  \label{fig:int}
-\end{figure}
-```
-
-```{=latex}
-\begin{figure}[h]
-  \centering
   \includegraphics[width=0.9\textwidth]{figures/des_education_by_group.png}
   \caption{Years of schooling by group (nomads, former nomads, never nomads).}
   \label{fig:edu-group}
-\end{figure}
-```
-
-``` {r}
-#| label: tbl-edu-age
-#| tbl-cap: "Mean years of schooling by group and age band (number of participants in parentheses)."
-#| tbl-pos: "H"
-edu_cell <- function(x) sprintf("%.1f (%d)", mean(x, na.rm = TRUE), sum(!is.na(x)))
-edu_tab <- with(d[!is.na(d$age_band), ], tapply(yrs_edu, list(age_band, group2), edu_cell))
-data.frame(`Age band` = rownames(edu_tab),
-           `Never nomads` = edu_tab[, "never nomad"],
-           `Former nomads` = edu_tab[, "former nomad"],
-           `Nomads` = edu_tab[, "nomad"],
-           check.names = FALSE, row.names = NULL) %>%
-  gt::gt() %>%
-  gt::tab_options(table.font.size = 8, table.width = gt::pct(100))
-```
-
-
-```{=latex}
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.9\textwidth]{figures/des_water_insecurity.png}
-  \caption{Water insecurity scores by group (nomads vs. villagers).}
-  \label{fig:water-ins}
 \end{figure}
 ```
 
@@ -790,6 +750,60 @@ data.frame(`Age band` = rownames(edu_tab),
 \end{figure}
 ```
 
+```{=latex}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/wealth_interaction.png}
+  \caption{Interaction between years in community and former nomad status}
+  \label{fig:int}
+\end{figure}
+```
+
+```{=latex}
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[b]{0.9\textwidth}
+    \includegraphics[width=\linewidth]{figures/income_model.png}
+    \caption{}\label{fig:coef-a}
+  \end{subfigure}
+
+  \vspace{0.5em}
+
+  \begin{subfigure}[b]{0.9\textwidth}
+    \includegraphics[width=\linewidth]{figures/wealth_model.png}
+    \caption{}\label{fig:coef-b}
+  \end{subfigure}
+
+  \caption{Posterior distributions (90\% intervals) of coefficients from the total-effect models of income (a) and wealth (b), adjusted for age and sex. The mediators discussed in the text (years of education, Darija fluency, time in the community and, for wealth, income) are not plotted, as they are included only in the mediator models; their estimates are reported in Table \ref{tbl-mediators} (Appendix).}
+  \label{fig:coef}
+\end{figure}
+```
+
+```{=latex}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/des_water_insecurity.png}
+  \caption{Water insecurity scores by group (nomads vs. villagers).}
+  \label{fig:water-ins}
+\end{figure}
+```
+
+``` {r}
+#| label: tbl-edu-age
+#| tbl-cap: "Mean years of schooling by group and age band (number of participants in parentheses)."
+#| tbl-pos: "H"
+edu_cell <- function(x) sprintf("%.1f (%d)", mean(x, na.rm = TRUE), sum(!is.na(x)))
+edu_tab <- with(d[!is.na(d$age_band), ], tapply(yrs_edu, list(age_band, group2), edu_cell))
+data.frame(`Age band` = rownames(edu_tab),
+           `Never nomads` = edu_tab[, "never nomad"],
+           `Former nomads` = edu_tab[, "former nomad"],
+           `Nomads` = edu_tab[, "nomad"],
+           check.names = FALSE, row.names = NULL) %>%
+  gt::gt() %>%
+  gt::tab_options(table.font.size = 8, table.width = gt::pct(100))
+```
+
+
 ``` {r}
 #| label: tbl-conflicts
 #| tbl-cap: "Frequency of conflicts reported by nomads (current life) and former nomads (nomadic past and village life)."
@@ -807,15 +821,6 @@ data.frame(
   gt::tab_options(table.font.size = 8, table.width = gt::pct(100))
 ```
 
-
-```{=latex}
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=0.8\textwidth]{figures/des_best_for_children.png}
-  \caption{Where it is better for children to grow up, according to current and former nomads (A), and the reasons given by those who answered the village (B). Answers were coded into themes; one answer can mention several themes, so percentages in B sum to more than 100\%.}
-  \label{fig:best-children}
-\end{figure}
-```
 
 ``` {r}
 #| label: tbl-full
