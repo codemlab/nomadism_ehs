@@ -269,7 +269,7 @@ All analyses were performed using `r substr(version$version.string, 1,15)`. To c
 
 Our models assume the causal structure shown in the directed acyclic graph in @fig-dag. Following this structure, we fitted two models for each outcome. The first estimates the total effect of former nomad status, adjusting only for age and sex. The second adds the hypothesised mediators (education, Darija fluency and time in the community, plus income in the wealth model) to estimate the direct effect remaining once these pathways are accounted for. We included income as a mediator of wealth because lower earnings limit the savings that settled households can convert into land, vehicles and household goods. However, the relationship is likely bidirectional, as land and livestock also generate income, so the income coefficient in the wealth model should be read as an association rather than a causal effect. Because each model asks a different question, we did not use model-fit criteria to choose between them; a leave-one-out comparison is reported in the Appendix (@tbl-loo). To assess whether the effect of former nomad status differed by sex or age, we also fitted the total-effect models with interactions between former nomad status and sex and between former nomad status and age (in both parts of the income hurdle model); these are reported in the Appendix (@tbl-interact). All four models include household random intercepts. We used weakly informative priors; chains mixed well with no divergent transitions (@tbl-mcmc-diag, Appendix).
 
-![Directed acyclical graph of the assumed causal relationship between history of nomadism and economic status](figures/dag.png){#fig-dag}
+![Directed acyclic graph of the assumed causal relationships between former nomad status and economic outcomes. Age and sex are treated as confounders, and time in the community, Darija fluency and years of schooling as mediators; income may also affect wealth. This structure determines the variables adjusted for in the total-effect models (age and sex) and the mediator models (age, sex and mediators).](figures/dag.png){#fig-dag}
 
 The models above compare former nomads with never nomads living in the same village (Figure \ref{fig:main}); current nomads are not included. We did not statistically test income differences between current nomads and villagers. Instead, we present this comparison descriptively (Figure \ref{fig:inc-comp}, Appendix). This is because the two groups were sampled differently. Villagers were sampled systematically: we interviewed all consenting adults in a single community, so the village sample closely reflects that community. Nomads, in contrast, were a convenience sample, recruited opportunistically over a wide area wherever households could be located and reached. This sample may be biased, for example towards households that are easier to reach or more market-integrated. Because no systematic data exist on the wider nomadic population, we cannot assess how representative our sample is.
 
@@ -319,7 +319,7 @@ Former and part-time nomads (n = `r n_why_settle` who answered) most often cited
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{figures/des_why_settle.png}
-  \caption{Reasons given by former nomads for settling.}
+  \caption{Reasons for settling given by former and part-time nomads (n = 37) in an open-ended question. Answers were coded into categories, and a participant could mention more than one reason. Bars show the number of participants mentioning each reason.}
   \label{fig:why-settle}
 \end{figure}
 ```
@@ -335,7 +335,7 @@ Of `r n_ft_nomads` nomads, `r n_want_yes` (`r pct_want_yes`%) wished to settle. 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{figures/des_reasons_want_settling.png}
-  \caption{Reasons given by current nomads for wanting to settle.}
+  \caption{Reasons for wanting to settle given by nomads who wished to settle (n = 55). Answers to an open-ended question were coded into categories, and a participant could mention more than one reason. Bars show the number of nomads mentioning each reason.}
   \label{fig:reasons-want-settling}
 \end{figure}
 ```
@@ -350,7 +350,7 @@ Perceived advantages are summarised in Figure \ref{fig:adv}. These largely align
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{figures/perceived_advantages.png}
-  \caption{Perceived advantages of nomadic and settled life reported by current nomads and former nomads.}
+  \caption{Perceived advantages of (a) nomadic life and (b) settled life, given by nomads (n = 75) and former nomads (n = 35) in open-ended questions. Answers were coded into categories, and a participant could mention more than one. Bars show the percentage of each group mentioning each advantage.}
   \label{fig:adv}
 \end{figure}
 ```
@@ -380,16 +380,7 @@ Figure \ref{fig:inc-comp} (Appendix) shows annual gross income (before expenses)
 
 #### Perceived economic need (nomads and former nomads)
 
-Participants rated whether they felt more, as, or less in need than their peers. `r fnom_set_relneed`% of former nomads reported feeling more in need than other villagers, compared to `r fnom_nom_relneed`% who had felt more in need than other nomads before settling. This closely matched the `r nom_nom_relneed`% of current nomads feeling more in need than other nomads, suggesting accurate recall rather than nostalgia (Figure \ref{fig:perceived-need}).
-
-```{=latex}
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.9\textwidth]{figures/perceived_need.png}
-  \caption{Perceived economic need relative to peers, among current nomads and former nomads (before and after settling).}
-  \label{fig:perceived-need}
-\end{figure}
-```
+Participants rated whether they felt more, as, or less in need than their peers. `r fnom_set_relneed`% of former nomads reported feeling more in need than other villagers, compared to `r fnom_nom_relneed`% who had felt more in need than other nomads before settling. This closely matched the `r nom_nom_relneed`% of current nomads feeling more in need than other nomads, suggesting accurate recall rather than nostalgia (Figure \ref{fig:perceived-need}, Appendix).
 
 ### How does settling affect well-being and support networks?
 
@@ -718,7 +709,7 @@ Former Nomad     & $\checkmark$ & $\checkmark$  & $\checkmark$ \\
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.9\textwidth]{figures/income_comparison.png}
-  \caption{Annual income (USD) of former nomads, never nomads and current nomads. This comparison is descriptive, as nomads were a convenience sample.}
+  \caption{Annual gross income (US\$, June 2023 exchange rate) of nomads (n = 74), former nomads (n = 59) and never nomads (n = 139) in the year preceding the interview. Boxes show the median and interquartile range, shaded areas the distribution, and points individual outlying values. This comparison is descriptive, as nomads were a convenience sample.}
   \label{fig:inc-comp}
 \end{figure}
 ```
@@ -727,7 +718,7 @@ Former Nomad     & $\checkmark$ & $\checkmark$  & $\checkmark$ \\
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.9\textwidth]{figures/des_education_by_group.png}
-  \caption{Years of schooling by group (nomads, former nomads, never nomads).}
+  \caption{Years of schooling of nomads (n = 75), former nomads (n = 58) and never nomads (n = 137). Boxes show the median and interquartile range; points show individual outlying values.}
   \label{fig:edu-group}
 \end{figure}
 ```
@@ -736,7 +727,7 @@ Former Nomad     & $\checkmark$ & $\checkmark$  & $\checkmark$ \\
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.9\textwidth]{figures/des_age_settled.png}
-  \caption{Age at settlement among former nomads.}
+  \caption{Age at which former and part-time nomads settled in the village (n = 37), in two-year bins.}
   \label{fig:age-settled}
 \end{figure}
 ```
@@ -745,7 +736,7 @@ Former Nomad     & $\checkmark$ & $\checkmark$  & $\checkmark$ \\
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.9\textwidth]{figures/des_why_tz.png}
-  \caption{Reasons for choosing the current village as a settlement location.}
+  \caption{Main reason given by former and part-time nomads (n = 37) for choosing this village, from an open-ended question in which each answer was coded into one main reason.}
   \label{fig:why-tz}
 \end{figure}
 ```
@@ -754,7 +745,7 @@ Former Nomad     & $\checkmark$ & $\checkmark$  & $\checkmark$ \\
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.9\textwidth]{figures/wealth_interaction.png}
-  \caption{Interaction between years in community and former nomad status}
+  \caption{Wealth of former nomads and never nomads by years lived in the community (n = 188 with non-zero wealth). Points show log wealth adjusted for age and sex (residuals from a mixed model with household random intercepts); lines show linear fits with 95\% confidence bands.}
   \label{fig:int}
 \end{figure}
 ```
@@ -782,8 +773,17 @@ Former Nomad     & $\checkmark$ & $\checkmark$  & $\checkmark$ \\
 ```{=latex}
 \begin{figure}[h]
   \centering
+  \includegraphics[width=0.9\textwidth]{figures/perceived_need.png}
+  \caption{Perceived economic situation relative to peers. Nomads (n = 75) compared themselves with other nomads. Former nomads (n = 34) rated both their situation when they were nomadic, compared with other nomads (hatched bars), and their current situation, compared with other villagers (solid bars). Bars show the percentage of each group giving each response.}
+  \label{fig:perceived-need}
+\end{figure}
+```
+
+```{=latex}
+\begin{figure}[h]
+  \centering
   \includegraphics[width=0.9\textwidth]{figures/des_water_insecurity.png}
-  \caption{Water insecurity scores by group (nomads vs. villagers).}
+  \caption{Distribution of water insecurity scores among nomads (n = 73) and villagers (former and never nomads, n = 187). Scores are the sum of three items adapted from the Household Water Insecurity Experiences Scale (range 0--12), with higher scores indicating greater insecurity.}
   \label{fig:water-ins}
 \end{figure}
 ```

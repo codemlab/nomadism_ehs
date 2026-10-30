@@ -3,7 +3,7 @@ library(grid)  # for arrow()
 
 # ---- Box dimensions ----
 
-make_var <- function(name, x, y, box_width = 1.8, box_height = 0.5) {
+make_var <- function(name, x, y, box_width = 1.8, box_height = 0.6) {
   data.frame(
     name, x, y,
     xmin = x - box_width/2,
@@ -15,13 +15,13 @@ make_var <- function(name, x, y, box_width = 1.8, box_height = 0.5) {
 
 # ---- Variables (with Mediators stacked vertically) ----
 vars <- rbind(
-  make_var("Former nomad (1/0)", -4, 0),
+  make_var("Former nomad\n(1/0)", -4, 0),
   make_var("Age", -1, 2),
   make_var("Sex",  1, 2),
-  make_var("Time in community",      0, -1.5),
-  make_var("Darija speaker (1/0)",   0, -2.3),
+  make_var("Time in\ncommunity",      0, -1.5),
+  make_var("Darija speaker\n(1/0)",   0, -2.3),
   make_var("Education",              0, -3.1),
-  make_var("Unobserved causal pathway", 0, 0, box_width = 2.2),
+  make_var("Unobserved\ncausal pathway", 0, 0, box_width = 2.2),
   make_var("Income", 4,  1),
   make_var("Wealth", 4, -1)
 )
@@ -29,7 +29,7 @@ vars <- rbind(
 # ---- Group boxes (Mediators label goes below) ----
 groups <- rbind(
   make_var("Confounds", 0, 2, box_width = 5, box_height = 1),
-  make_var("Mediators", 0, -2.3, box_width = 2, box_height = 2.2),
+  make_var("Mediators", 0, -2.3, box_width = 2, box_height = 2.4),
   make_var("Outcomes", 4, 0, box_width = 2, box_height = 3)
 )
 
@@ -65,13 +65,13 @@ xend = to_xy[1], yend = to_xy[2])
 
 # ---- Build arrow data ----
 arrows_straight <- rbind(
-  arrow_between_edge(vars, groups, "Former nomad (1/0)", "Mediators"),
-  arrow_between_edge(vars, vars,   "Former nomad (1/0)", "Unobserved causal pathway"),
-  arrow_between_edge(groups, vars, "Confounds", "Former nomad (1/0)", "left","top"),
+  arrow_between_edge(vars, groups, "Former nomad\n(1/0)", "Mediators"),
+  arrow_between_edge(vars, vars,   "Former nomad\n(1/0)", "Unobserved\ncausal pathway"),
+  arrow_between_edge(groups, vars, "Confounds", "Former nomad\n(1/0)", "left","top"),
   arrow_between_edge(groups, groups,"Confounds","Outcomes", "right", "top"),
-  arrow_between_edge(groups, vars, "Confounds", "Unobserved causal pathway"),
+  arrow_between_edge(groups, vars, "Confounds", "Unobserved\ncausal pathway"),
   arrow_between_edge(groups, groups,"Mediators","Outcomes", "right", "bottom"),
-  arrow_between_edge(vars, groups, "Unobserved causal pathway", "Outcomes"),
+  arrow_between_edge(vars, groups, "Unobserved\ncausal pathway", "Outcomes"),
   arrow_between_edge(vars, vars,   "Income", "Wealth")
 )
 
@@ -87,31 +87,31 @@ ggplot() +
   # Group labels (Confounds, Outcomes above; Mediators below)
   geom_text(data = subset(groups, name != "Mediators"),
             aes(x = x, y = ymax + 0.35, label = name),
-            fontface = "bold", size = 6, vjust = 0) +
+            fontface = "bold", size = 4.2, vjust = 0) +
   geom_text(data = subset(groups, name == "Mediators"),
             aes(x = x, y = ymin - 0.35, label = name),
-            fontface = "bold", size = 6, vjust = 1) +
+            fontface = "bold", size = 4.2, vjust = 1) +
 
   # Variable boxes + labels
   geom_rect(data = vars,
             aes(xmin = xmin, xmax = xmax, ymin = ymin, ymax = ymax),
             fill = "white", color = "black") +
-  geom_text(data = vars, aes(x = x, y = y, label = name), size = 4) +
+  geom_text(data = vars, aes(x = x, y = y, label = name), size = 3.4, lineheight = 0.9) +
 
   # Straight arrows
   geom_segment(data = arrows_straight,
                aes(x = x, y = y, xend = xend, yend = yend),
-               arrow = arrow(length = unit(0.6, "cm"), type = "closed"),
-               linewidth = 0.7) +
+               arrow = arrow(length = unit(0.25, "cm"), type = "closed"),
+               linewidth = 0.5) +
 
   # Curved arrow (single curvature value for the whole layer)
   geom_curve(data = arrows_curved,
              aes(x = x, y = y, xend = xend, yend = yend),
              curvature = -0.9,  # bend leftwards around the Unobserved box
-             arrow = arrow(length = unit(0.6, "cm"), type = "closed"),
-             linewidth = 0.7) +
+             arrow = arrow(length = unit(0.25, "cm"), type = "closed"),
+             linewidth = 0.5) +
 
   coord_fixed() +
   theme_void()
 
-ggsave("figures/dag.png", width = 12, height = 6, bg = "white")
+ggsave("figures/dag.png", width = 6.5, height = 4, dpi = 300, bg = "white")
