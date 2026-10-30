@@ -61,6 +61,8 @@ library(dplyr)
 ``` {r derived-vars}
 nom <- read.csv("manuscript_data/nomadism_qual.csv")
 loo_tab <- readRDS("model_output/loo_comparison.rds")
+cf_ratios <- readRDS("model_output/counterfactual_ratios.rds")
+cf_pct <- function(outcome, model) round(100 * cf_ratios$ratio[cf_ratios$outcome == outcome & grepl(model, cf_ratios$Model)])
 # years of schooling by group within age bands
 d$age_band <- cut(d$age, c(17, 30, 45, 60, Inf), labels = c("18-30", "31-45", "46-60", "61+"))
 edu_young <- round(tapply(d$yrs_edu[d$age_band %in% "18-30"], d$group2[d$age_band %in% "18-30"], mean, na.rm = TRUE), 1)
@@ -361,26 +363,15 @@ We next ask whether settling carries an economic cost, by comparing the income a
 
 #### Wealth and income (former nomads and never nomads)
 
-Income is net annual income from all activities in the year before the interview, and wealth is the estimated value of household possessions, including land, livestock and goods. Former nomads have lower wealth and income than never nomads living in the same village: median annual income is \$`r round(median(d$net_income[d$group2 == "former nomad"], na.rm = T))` versus \$`r round(median(d$net_income[d$group2 == "never nomad"], na.rm = T))`, and median wealth is $\approx$\$`r format(round(median(d$wealth[d$group2 == "former nomad"], na.rm = T)/100)*100, big.mark=",")` versus $\approx$\$`r format(round(median(d$wealth[d$group2 == "never nomad"], na.rm = T)/100)*100, big.mark=",")`. After adjusting for age, sex and household, former nomads remain poorer than never nomads, although the size of the difference is uncertain (Figure \ref{fig:main}). The standardised total effect on log wealth is `r round(median(draws_wealth$b_former_nomad), 2)` (90% CI [`r paste(round(quantile(draws_wealth$b_former_nomad, c(0.05,0.95)),2), collapse = " - ")` ]). Adding mediators reduced the estimated wealth difference between former nomads and never nomads (from `r round(median(draws_wealth$b_former_nomad), 2)` to `r round(median(draws_wealth_full$b_former_nomad), 2)`, 90% CI [`r paste(round(quantile(draws_wealth_full$b_former_nomad, c(0.05,0.95)),2), collapse = " - ")`]). In this model, wealth was positively associated with income ($\Beta$ = `r round(median(draws_wealth_full$b_income_std), 2)` per SD, about US\$2,000; 90% CI [`r paste(round(quantile(draws_wealth_full$b_income_std, c(0.05,0.95)),2), collapse = " - ")`]) and with time in the community ($\Beta$ = `r round(median(draws_wealth_full$b_time_com_std), 2)` per SD, about 18.5 years; 90% CI [`r paste(round(quantile(draws_wealth_full$b_time_com_std, c(0.05,0.95)),2), collapse = " - ")`]), but not with education ($\Beta$ = `r round(median(draws_wealth_full$b_yrs_edu_std), 2)`, 90% CI [`r paste(round(quantile(draws_wealth_full$b_yrs_edu_std, c(0.05,0.95)),2), collapse = " - ")`]) (@tbl-mediators, Appendix). Interacting years in community with former nomad status, recently settled former nomads appear substantially poorer than both longer-established former nomads and never nomads who have lived similar durations in the community (Figure \ref{fig:int}, Appendix).
+Income is net annual income from all activities in the year before the interview, and wealth is the estimated value of household possessions, including land, livestock and goods. Former nomads have lower wealth and income than never nomads living in the same village: median annual income is \$`r round(median(d$net_income[d$group2 == "former nomad"], na.rm = T))` versus \$`r round(median(d$net_income[d$group2 == "never nomad"], na.rm = T))`, and median wealth is $\approx$\$`r format(round(median(d$wealth[d$group2 == "former nomad"], na.rm = T)/100)*100, big.mark=",")` versus $\approx$\$`r format(round(median(d$wealth[d$group2 == "never nomad"], na.rm = T)/100)*100, big.mark=",")`. After adjusting for age, sex and household, former nomads remain poorer than never nomads, although the size of the difference is uncertain (Figure \ref{fig:main}). For a woman or man of average age, the models predict that former nomads earn about `r cf_pct("income", "Total")`% as much as never nomads among those with an income, and own about `r cf_pct("wealth", "Total")`% as much wealth; holding schooling, Darija fluency, time in the community and (for wealth) income fixed, these figures rise to `r cf_pct("income", "Direct")`% and `r cf_pct("wealth", "Direct")`%, and the differences become uncertain (Figure \ref{fig:cf-direct}, Appendix). The standardised total effect on log wealth is `r round(median(draws_wealth$b_former_nomad), 2)` (90% CI [`r paste(round(quantile(draws_wealth$b_former_nomad, c(0.05,0.95)),2), collapse = " - ")` ]). Adding mediators reduced the estimated wealth difference between former nomads and never nomads (from `r round(median(draws_wealth$b_former_nomad), 2)` to `r round(median(draws_wealth_full$b_former_nomad), 2)`, 90% CI [`r paste(round(quantile(draws_wealth_full$b_former_nomad, c(0.05,0.95)),2), collapse = " - ")`]). In this model, wealth was positively associated with income ($\Beta$ = `r round(median(draws_wealth_full$b_income_std), 2)` per SD, about US\$2,000; 90% CI [`r paste(round(quantile(draws_wealth_full$b_income_std, c(0.05,0.95)),2), collapse = " - ")`]) and with time in the community ($\Beta$ = `r round(median(draws_wealth_full$b_time_com_std), 2)` per SD, about 18.5 years; 90% CI [`r paste(round(quantile(draws_wealth_full$b_time_com_std, c(0.05,0.95)),2), collapse = " - ")`]), but not with education ($\Beta$ = `r round(median(draws_wealth_full$b_yrs_edu_std), 2)`, 90% CI [`r paste(round(quantile(draws_wealth_full$b_yrs_edu_std, c(0.05,0.95)),2), collapse = " - ")`]) (@tbl-mediators, Appendix). Interacting years in community with former nomad status, recently settled former nomads appear substantially poorer than both longer-established former nomads and never nomads who have lived similar durations in the community (Figure \ref{fig:int}, Appendix).
 
 Differences in income are also relatively small ($\Beta$ = `r round(median(draws_inc$b_former_nomad), 2)`, 90% CI: [`r paste(round(quantile(draws_inc$b_former_nomad, c(0.05,0.95)),2), collapse = " - ")`]), and there is essentially no difference in the log-odds of having no income ($\Beta$ = `r round(median(draws_inc$b_hu_former_nomad), 2)`, 90% CI: [`r paste(round(quantile(draws_inc$b_hu_former_nomad, c(0.05,0.95)),2), collapse = " - ")`]). There is a strong signal that Darija fluency plays an important role in income ($\Beta$ = `r round(median(draws_inc_full$b_darija), 2)`, 90% CI: [`r paste(round(quantile(draws_inc_full$b_darija, c(0.05,0.95)),2), collapse = " - ")`]), although this doesn't seem to strongly mediate the income difference between former nomads and never nomads (@tbl-mediators, Appendix). Allowing the effect of former nomad status to vary by sex and age did not improve model fit (ELPD difference: income `r sprintf("%.1f", int_res$loo["Income","elpd_diff"])`, SE = `r sprintf("%.1f", int_res$loo["Income","se_diff"])`; wealth `r sprintf("%.1f", int_res$loo["Wealth","elpd_diff"])`, SE = `r sprintf("%.1f", int_res$loo["Wealth","se_diff"])`), and we found no clear evidence that the effect differed between women and men or across ages (@tbl-interact, Appendix). Among earners, the effect of former nomad status on income was similar for women ($\Beta$ = `r fmt_int("Income: amount (earners)", "Former nomad effect: women")`) and men ($\Beta$ = `r fmt_int("Income: amount (earners)", "Former nomad effect: men")`). The income gap among earners was somewhat larger for older former nomads (age × former nomad: $\Beta$ = `r fmt_int("Income: amount (earners)", "Age × former nomad")`), but this difference was uncertain.
 
 ```{=latex}
 \begin{figure}[H]
   \centering
-  \begin{subfigure}[b]{0.9\textwidth}
-    \includegraphics[width=\linewidth]{figures/income_model.png}
-    \caption{}\label{fig:sub-a}
-  \end{subfigure}
-
-  \vspace{0.5em}
-
-  \begin{subfigure}[b]{0.9\textwidth}
-    \includegraphics[width=\linewidth]{figures/wealth_model.png}
-    \caption{}\label{fig:sub-b}
-  \end{subfigure}
-
-  \caption{Posterior distributions (90\% intervals) of coefficients from the total-effect models of income (a) and wealth (b), adjusted for age and sex. The mediators discussed in the text (years of education, Darija fluency, time in the community and, for wealth, income) are not plotted, as they are included only in the mediator models; their estimates are reported in Table \ref{tbl-mediators} (Appendix).}
+  \includegraphics[width=\textwidth]{figures/counterfactual_total.png}
+  \caption{Predicted income and wealth of former nomads and never nomads of average age, by sex, from the total-effect models (adjusted for age and sex; household effects averaged out). (a) Probability of having no income. (b) Annual income among those with some income. (c) Wealth. Income and wealth are the predictions for a typical (median) individual, in US\$ at the June 2023 exchange rate. Points show posterior medians, black bars 90\% credible intervals, and shaded areas the full posterior distributions. Predictions with mediators held fixed are shown in Figure \ref{fig:cf-direct} and model coefficients in Figure \ref{fig:coef} (Appendix).}
   \label{fig:main}
 \end{figure}
 ```
@@ -716,6 +707,35 @@ Former Nomad     & $\checkmark$ & $\checkmark$  & $\checkmark$ \\
 \end{tabular}
 \caption{Parameters included in ERGM models.\label{tab-ergm}}
 \end{table}
+```
+
+```{=latex}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{figures/counterfactual_total_direct.png}
+  \caption{Predicted income and wealth of former nomads and never nomads of average age, by sex, from the total-effect models (top row) and the mediator models (bottom row). In the mediator models, years of schooling, time in the community and, for wealth, income are held at their sample means, and Darija fluency at ``not fluent''; differences between groups in the bottom row therefore show the direct effect of former nomad status, whereas absolute levels depend on the values at which mediators are held. Points show posterior medians, black bars 90\% credible intervals, and shaded areas the full posterior distributions.}
+  \label{fig:cf-direct}
+\end{figure}
+```
+
+```{=latex}
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[b]{0.9\textwidth}
+    \includegraphics[width=\linewidth]{figures/income_model.png}
+    \caption{}\label{fig:coef-a}
+  \end{subfigure}
+
+  \vspace{0.5em}
+
+  \begin{subfigure}[b]{0.9\textwidth}
+    \includegraphics[width=\linewidth]{figures/wealth_model.png}
+    \caption{}\label{fig:coef-b}
+  \end{subfigure}
+
+  \caption{Posterior distributions (90\% intervals) of coefficients from the total-effect models of income (a) and wealth (b), adjusted for age and sex. The mediators discussed in the text (years of education, Darija fluency, time in the community and, for wealth, income) are not plotted, as they are included only in the mediator models; their estimates are reported in Table \ref{tbl-mediators} (Appendix).}
+  \label{fig:coef}
+\end{figure}
 ```
 
 ```{=latex}
