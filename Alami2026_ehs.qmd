@@ -432,55 +432,10 @@ Current nomads (n = `r n_nom_free`) were much more likely to report that they li
 
 #### Social networks (former nomads and never nomads)
 
-The full output from the ERGMs can be found in the Supplementary Material (@tbl-full). As expected, we find evidence of very strong reciprocity and homophily by sex and *bone* (tribal affiliation), and strong kinship effects. For the purpose of this study, we focus on the estimated relationship between being a first-generation former nomad and engaging in labour exchange, social activities, and material support networks. These results can be seen in @tbl-ergm-results. We do not find strong evidence that first generation families have more or less outgoing or incoming ties than never nomads, with the possible exception of labour ties, where former nomads have `r pct_work_out`% greater odds of nominating other people (95%CI: `r ci_work_out_lo`-`r ci_work_out_hi`). However, we do find strong evidence of homophily across all three networks, with `r pct_work_hom`%, `r pct_soc_hom`%, and `r pct_sup_hom`% greater odds of a tie between members of the same group (former nomads versus never nomads), for labour networks, socialisation, and material support respectively. These results control for age, sex, income, wealth, household, reciprocity, relatedness, and number of external ties.
+The full output from the ERGMs can be found in the Supplementary Material (@tbl-full). As expected, we find evidence of very strong reciprocity and homophily by sex and *bone* (tribal affiliation), and strong kinship effects. For the purpose of this study, we focus on the estimated relationship between being a first-generation former nomad and engaging in labour exchange, social activities, and material support networks. These results can be seen in @tbl-ergm-results (Supplementary Material). We do not find strong evidence that first generation families have more or less outgoing or incoming ties than never nomads, with the possible exception of labour ties, where former nomads have `r pct_work_out`% greater odds of nominating other people (95%CI: `r ci_work_out_lo`-`r ci_work_out_hi`). However, we do find strong evidence of homophily across all three networks, with `r pct_work_hom`%, `r pct_soc_hom`%, and `r pct_sup_hom`% greater odds of a tie between members of the same group (former nomads versus never nomads), for labour networks, socialisation, and material support respectively. These results control for age, sex, income, wealth, household, reciprocity, relatedness, and number of external ties.
 
 
 
-
-``` {r}
-#| label: tbl-ergm-results
-#| tbl-cap: Output from ERGMs. The outcome is the log-odds ratio of observing a tie between two nodes, conditional on the rest of the network parameters. This table only includes the parameters of interest, namely the effects of being a former nomad on outgoing ties and incoming ties, and homophily, i.e. the log-odds of a tie if either both nodes are former nomads or both are not.
-#| tbl-pos: "H"
-tbl1 <- tbl_regression(mod_work, exponentiate = TRUE, conf.level = 0.95,
-label = list(`nodefactor.Former nomad.Yes` = "Former nomad (outgoing ties)", 
-`nodeifactor.Former nomad.Yes` = "Former nomad (incoming ties)",
-`nodematch.Former nomad` = "Former nomad homophily")) %>% 
-  modify_header(label = "**Variable**", estimate = "**Odds Ratio**")
-
-tbl2 <- tbl_regression(mod_soc, exponentiate = TRUE, conf.level = 0.95,
-label = list(`nodefactor.Former nomad.Yes` = "Former nomad (outgoing ties)", 
-`nodeifactor.Former nomad.Yes` = "Former nomad (incoming ties)",
-`nodematch.Former nomad` = "Former nomad homophily")) %>% 
-  modify_header(estimate = "**Odds Ratio**")
-
-tbl3 <- tbl_regression(mod_support, exponentiate = TRUE, conf.level = 0.95,
-label = list(`nodefactor.Former nomad.Yes` = "Former nomad (outgoing ties)", 
-`nodeifactor.Former nomad.Yes` = "Former nomad (incoming ties)",
-`nodematch.Former nomad` = "Former nomad homophily")) %>% 
-  modify_header(estimate = "**Odds Ratio**")
-
-table <- tbl_merge(
-  tbls = list(tbl1, tbl2, tbl3),
-  tab_spanner = c("**Labour (agriculture + childcare)**", "**Socialisation and festivities**", "**Material support (including loans)**")
-) %>%
-  remove_abbreviation() %>%
-  modify_table_body(~ .x %>% dplyr::filter(.data$variable %in% c("nodefactor.Former nomad.Yes","nodeifactor.Former nomad.Yes", "nodematch.Former nomad"))) %>%
-  modify_caption("**Exponential Random Graph models of social networks**\\label{{tab-ergm-results}}") %>%
-  modify_footnote_header(footnote = "also includes controls for age, sex, log income, log wealth, household, reciprocity, relatedness, and number of external ties", columns = everything())
-
-# Print
-table %>%
-  as_gt() %>%
-  gt::tab_options(table.font.size = 8,
-                  table.width = gt::pct(100),
-                  data_row.padding = gt::px(0),
-                  table.align = "center") %>%
-  gt::cols_width(
-    label ~ gt::px(90),
-    everything() ~ gt::px(50)
-  )
-
-```
 
 ## Discussion
 \noindent How and why contemporary nomadic pastoralists settle has important implications for evolutionary theories of subsistence change and for policies governing some of the world's most marginalised populations, yet remains among the least studied livelihood transitions in the evolutionary social sciences. Drawing on data from Amazigh transhumant pastoralists in southeastern Morocco, we examine why settling occurs, what it costs financially, and how it affects well-being and former nomads' ability to build or rebuild support networks in their new community. Unlike contexts where sedentarisation is imposed, and in the absence of any state sedentarisation programme, the large majority (`r pct_want_yes`%) actively want to settle, and former nomads overwhelmingly report no regret, despite lower village incomes. We propose reframing sedentarisation not as crisis-driven displacement or a linear transition towards a more market integrated lifestyle, but as a calculated trade-off in which individuals trade material autonomy for reduced physical hardship, social embeddedness, and expanded opportunities for one's children.
@@ -904,3 +859,49 @@ tbl1 <- tbl_regression(mod_work, exponentiate = TRUE, conf.level = 0.95) |>
     everything() ~ gt::px(50)
   )
 ```
+
+``` {r}
+#| label: tbl-ergm-results
+#| tbl-cap: Output from ERGMs. The outcome is the log-odds ratio of observing a tie between two nodes, conditional on the rest of the network parameters. This table only includes the parameters of interest, namely the effects of being a former nomad on outgoing ties and incoming ties, and homophily, i.e. the log-odds of a tie if either both nodes are former nomads or both are not.
+#| tbl-pos: "H"
+tbl1 <- tbl_regression(mod_work, exponentiate = TRUE, conf.level = 0.95,
+label = list(`nodefactor.Former nomad.Yes` = "Former nomad (outgoing ties)", 
+`nodeifactor.Former nomad.Yes` = "Former nomad (incoming ties)",
+`nodematch.Former nomad` = "Former nomad homophily")) %>% 
+  modify_header(label = "**Variable**", estimate = "**Odds Ratio**")
+
+tbl2 <- tbl_regression(mod_soc, exponentiate = TRUE, conf.level = 0.95,
+label = list(`nodefactor.Former nomad.Yes` = "Former nomad (outgoing ties)", 
+`nodeifactor.Former nomad.Yes` = "Former nomad (incoming ties)",
+`nodematch.Former nomad` = "Former nomad homophily")) %>% 
+  modify_header(estimate = "**Odds Ratio**")
+
+tbl3 <- tbl_regression(mod_support, exponentiate = TRUE, conf.level = 0.95,
+label = list(`nodefactor.Former nomad.Yes` = "Former nomad (outgoing ties)", 
+`nodeifactor.Former nomad.Yes` = "Former nomad (incoming ties)",
+`nodematch.Former nomad` = "Former nomad homophily")) %>% 
+  modify_header(estimate = "**Odds Ratio**")
+
+table <- tbl_merge(
+  tbls = list(tbl1, tbl2, tbl3),
+  tab_spanner = c("**Labour (agriculture + childcare)**", "**Socialisation and festivities**", "**Material support (including loans)**")
+) %>%
+  remove_abbreviation() %>%
+  modify_table_body(~ .x %>% dplyr::filter(.data$variable %in% c("nodefactor.Former nomad.Yes","nodeifactor.Former nomad.Yes", "nodematch.Former nomad"))) %>%
+  modify_caption("**Exponential Random Graph models of social networks**\\label{{tab-ergm-results}}") %>%
+  modify_footnote_header(footnote = "also includes controls for age, sex, log income, log wealth, household, reciprocity, relatedness, and number of external ties", columns = everything())
+
+# Print
+table %>%
+  as_gt() %>%
+  gt::tab_options(table.font.size = 8,
+                  table.width = gt::pct(100),
+                  data_row.padding = gt::px(0),
+                  table.align = "center") %>%
+  gt::cols_width(
+    label ~ gt::px(90),
+    everything() ~ gt::px(50)
+  )
+
+```
+
