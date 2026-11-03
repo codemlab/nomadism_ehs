@@ -556,6 +556,10 @@ watfood_tab %>%
   gt::tab_options(table.font.size = 8, table.width = gt::pct(100), data_row.padding = gt::px(2))
 ```
 
+{{< include _tab_sed_items.qmd >}}
+
+{{< include _tab_poss_cost.qmd >}}
+
 ```{=latex}
 \begin{table}[H]
 \small
@@ -580,64 +584,6 @@ Material support & Loans (given) & ``Please name up to 10 people who have borrow
 \end{tabular}
 \caption{Elicitation prompts used to construct the three social support networks.\label{tab-network-items}}
 \end{table}
-```
-
-{{< include _tab_sed_items.qmd >}}
-
-{{< include _tab_poss_cost.qmd >}}
-
-All four wealth and income models used weakly informative priors: Normal(0, 1) on group-level standard deviations and Normal(0, 5) on the intercept. Diagnostics are summarised in @tbl-mcmc-diag.
-
-``` {r}
-#| label: tbl-mcmc-diag
-#| tbl-cap: "MCMC diagnostics for the Bayesian wealth and income models. Each model was run with 4 chains, 1,000 warmup and 1,000 sampling iterations (4,000 post-warmup draws total)."
-#| tbl-pos: "H"
-library(brms)
-diag_models <- list(
-  "Income, total effect" = inc_model_brm,
-  "Income, full model"   = inc_model_brm_full,
-  "Wealth, total effect" = wealth_model_brm,
-  "Wealth, full model"   = wealth_model_brm_full
-)
-diag_tab <- do.call(rbind, lapply(names(diag_models), function(nm) {
-  m  <- diag_models[[nm]]
-  np <- nuts_params(m)
-  data.frame(
-    Model = nm,
-    `Divergent transitions` = sum(np$Value[np$Parameter == "divergent__"]),
-    `Parameters with Rhat > 1.01` = sum(rhat(m) >= 1.01, na.rm = TRUE),
-    `Parameters with ESS ratio < 0.5` = sum(neff_ratio(m) < 0.5, na.rm = TRUE),
-    `Parameters with ESS ratio < 0.1` = sum(neff_ratio(m) < 0.1, na.rm = TRUE),
-    check.names = FALSE
-  )
-}))
-
-diag_tab %>%
-  gt::gt() %>%
-  gt::tab_options(table.font.size = 8, table.width = gt::pct(100))
-```
-
-Coefficients of the mediator models are reported in @tbl-mediators.
-
-``` {r}
-#| label: tbl-mediators
-#| tbl-cap: "Coefficients of the mediator models of income and wealth. Estimates are posterior medians with 90% intervals. Continuous predictors are standardised (per standard deviation); 'Zero income' rows are from the hurdle part of the income model (log-odds of having no income)."
-#| tbl-pos: "H"
-med_labels <- c(Intercept = "Intercept", sexmale = "Male", age_std = "Age", former_nomad = "Former nomad",
-                time_com_std = "Time in community", darija = "Darija fluency", yrs_edu_std = "Years of education",
-                income_std = "Income")
-med_rows <- function(m, outcome) {
-  fx <- fixef(m, probs = c(0.05, 0.95))
-  part <- ifelse(grepl("^hu_", rownames(fx)), "Zero income", "")
-  term <- sub("^hu_", "", rownames(fx))
-  data.frame(Model = ifelse(part == "", outcome, paste0(outcome, ": zero income")),
-             Predictor = med_labels[term],
-             `Estimate [90% interval]` = sprintf("%.2f [%.2f, %.2f]", fx[, "Estimate"], fx[, "Q5"], fx[, "Q95"]),
-             check.names = FALSE, row.names = NULL)
-}
-rbind(med_rows(inc_model_brm_full, "Income"), med_rows(wealth_model_brm_full, "Wealth")) %>%
-  gt::gt(groupname_col = "Model") %>%
-  gt::tab_options(table.font.size = 8, table.width = gt::pct(100))
 ```
 
 Leave-one-out cross-validation, with both models fitted to the same `r loo_tab$n[1]` participants, showed no reliable difference in predictive performance between the total-effect and mediator models for either income or wealth (@tbl-loo). The estimated effect of former nomad status in the total-effect models was virtually unchanged when they were refitted on this common sample.
@@ -673,6 +619,37 @@ data.frame(
   gt::tab_options(table.font.size = 8, table.width = gt::pct(100))
 ```
 
+All four wealth and income models used weakly informative priors: Normal(0, 1) on group-level standard deviations and Normal(0, 5) on the intercept. Diagnostics are summarised in @tbl-mcmc-diag.
+
+``` {r}
+#| label: tbl-mcmc-diag
+#| tbl-cap: "MCMC diagnostics for the Bayesian wealth and income models. Each model was run with 4 chains, 1,000 warmup and 1,000 sampling iterations (4,000 post-warmup draws total)."
+#| tbl-pos: "H"
+library(brms)
+diag_models <- list(
+  "Income, total effect" = inc_model_brm,
+  "Income, full model"   = inc_model_brm_full,
+  "Wealth, total effect" = wealth_model_brm,
+  "Wealth, full model"   = wealth_model_brm_full
+)
+diag_tab <- do.call(rbind, lapply(names(diag_models), function(nm) {
+  m  <- diag_models[[nm]]
+  np <- nuts_params(m)
+  data.frame(
+    Model = nm,
+    `Divergent transitions` = sum(np$Value[np$Parameter == "divergent__"]),
+    `Parameters with Rhat > 1.01` = sum(rhat(m) >= 1.01, na.rm = TRUE),
+    `Parameters with ESS ratio < 0.5` = sum(neff_ratio(m) < 0.5, na.rm = TRUE),
+    `Parameters with ESS ratio < 0.1` = sum(neff_ratio(m) < 0.1, na.rm = TRUE),
+    check.names = FALSE
+  )
+}))
+
+diag_tab %>%
+  gt::gt() %>%
+  gt::tab_options(table.font.size = 8, table.width = gt::pct(100))
+```
+
 ```{=latex}
 \begin{table}[H]
 \centering
@@ -694,6 +671,141 @@ Former Nomad     & $\checkmark$ & $\checkmark$  & $\checkmark$ \\
 \end{tabular}
 \caption{Parameters included in ERGM models.\label{tab-ergm}}
 \end{table}
+```
+
+``` {r}
+#| label: tbl-edu-age
+#| tbl-cap: "Mean years of schooling by group and age band (number of participants in parentheses)."
+#| tbl-pos: "H"
+edu_cell <- function(x) sprintf("%.1f (%d)", mean(x, na.rm = TRUE), sum(!is.na(x)))
+edu_tab <- with(d[!is.na(d$age_band), ], tapply(yrs_edu, list(age_band, group2), edu_cell))
+data.frame(`Age band` = rownames(edu_tab),
+           `Never nomads` = edu_tab[, "never nomad"],
+           `Former nomads` = edu_tab[, "former nomad"],
+           `Nomads` = edu_tab[, "nomad"],
+           check.names = FALSE, row.names = NULL) %>%
+  gt::gt() %>%
+  gt::tab_options(table.font.size = 8, table.width = gt::pct(100))
+```
+
+Coefficients of the mediator models are reported in @tbl-mediators.
+
+``` {r}
+#| label: tbl-mediators
+#| tbl-cap: "Coefficients of the mediator models of income and wealth. Estimates are posterior medians with 90% intervals. Continuous predictors are standardised (per standard deviation); 'Zero income' rows are from the hurdle part of the income model (log-odds of having no income)."
+#| tbl-pos: "H"
+med_labels <- c(Intercept = "Intercept", sexmale = "Male", age_std = "Age", former_nomad = "Former nomad",
+                time_com_std = "Time in community", darija = "Darija fluency", yrs_edu_std = "Years of education",
+                income_std = "Income")
+med_rows <- function(m, outcome) {
+  fx <- fixef(m, probs = c(0.05, 0.95))
+  part <- ifelse(grepl("^hu_", rownames(fx)), "Zero income", "")
+  term <- sub("^hu_", "", rownames(fx))
+  data.frame(Model = ifelse(part == "", outcome, paste0(outcome, ": zero income")),
+             Predictor = med_labels[term],
+             `Estimate [90% interval]` = sprintf("%.2f [%.2f, %.2f]", fx[, "Estimate"], fx[, "Q5"], fx[, "Q95"]),
+             check.names = FALSE, row.names = NULL)
+}
+rbind(med_rows(inc_model_brm_full, "Income"), med_rows(wealth_model_brm_full, "Wealth")) %>%
+  gt::gt(groupname_col = "Model") %>%
+  gt::tab_options(table.font.size = 8, table.width = gt::pct(100))
+```
+
+``` {r}
+#| label: tbl-conflicts
+#| tbl-cap: "Frequency of conflicts reported by nomads (current life) and former nomads (nomadic past and village life)."
+#| tbl-pos: "H"
+cf <- function(n, total) sprintf("%d (%.1f%%)", n, 100 * n / total)
+with_na <- function(x, total) c(x, total - sum(x))
+data.frame(
+  Frequency = c("Never", "Rarely", "Sometimes", "Often", "No answer"),
+  `Nomads` = cf(with_na(c(n_conf_nom_never, n_conf_nom_rarely, 0, n_conf_nom_often), n_nom_support), n_nom_support),
+  `Former nomads: nomadic past` = cf(with_na(c(n_conf_fnom_never, n_conf_fnom_rarely, 0, n_conf_fnom_often), n_nom_sub), n_nom_sub),
+  `Former nomads: village life` = cf(with_na(c(n_sconf_fnom_never, n_sconf_fnom_rarely, n_sconf_fnom_sometimes, 0), n_nom_sub), n_nom_sub),
+  check.names = FALSE
+) %>%
+  gt::gt() %>%
+  gt::tab_options(table.font.size = 8, table.width = gt::pct(100))
+```
+
+``` {r}
+#| label: tbl-ergm-results
+#| tbl-cap: Output from ERGMs. The outcome is the log-odds ratio of observing a tie between two nodes, conditional on the rest of the network parameters. This table only includes the parameters of interest, namely the effects of being a former nomad on outgoing ties and incoming ties, and homophily, i.e. the log-odds of a tie if either both nodes are former nomads or both are not.
+#| tbl-pos: "H"
+tbl1 <- tbl_regression(mod_work, exponentiate = TRUE, conf.level = 0.95,
+label = list(`nodefactor.Former nomad.Yes` = "Former nomad (outgoing ties)", 
+`nodeifactor.Former nomad.Yes` = "Former nomad (incoming ties)",
+`nodematch.Former nomad` = "Former nomad homophily")) %>% 
+  modify_header(label = "**Variable**", estimate = "**Odds Ratio**")
+
+tbl2 <- tbl_regression(mod_soc, exponentiate = TRUE, conf.level = 0.95,
+label = list(`nodefactor.Former nomad.Yes` = "Former nomad (outgoing ties)", 
+`nodeifactor.Former nomad.Yes` = "Former nomad (incoming ties)",
+`nodematch.Former nomad` = "Former nomad homophily")) %>% 
+  modify_header(estimate = "**Odds Ratio**")
+
+tbl3 <- tbl_regression(mod_support, exponentiate = TRUE, conf.level = 0.95,
+label = list(`nodefactor.Former nomad.Yes` = "Former nomad (outgoing ties)", 
+`nodeifactor.Former nomad.Yes` = "Former nomad (incoming ties)",
+`nodematch.Former nomad` = "Former nomad homophily")) %>% 
+  modify_header(estimate = "**Odds Ratio**")
+
+table <- tbl_merge(
+  tbls = list(tbl1, tbl2, tbl3),
+  tab_spanner = c("**Labour (agriculture + childcare)**", "**Socialisation and festivities**", "**Material support (including loans)**")
+) %>%
+  remove_abbreviation() %>%
+  modify_table_body(~ .x %>% dplyr::filter(.data$variable %in% c("nodefactor.Former nomad.Yes","nodeifactor.Former nomad.Yes", "nodematch.Former nomad"))) %>%
+  modify_caption("**Exponential Random Graph models of social networks**\\label{{tab-ergm-results}}") %>%
+  modify_footnote_header(footnote = "also includes controls for age, sex, log income, log wealth, household, reciprocity, relatedness, and number of external ties", columns = everything())
+
+# Print
+table %>%
+  as_gt() %>%
+  gt::tab_options(table.font.size = 8,
+                  table.width = gt::pct(100),
+                  data_row.padding = gt::px(0),
+                  table.align = "center") %>%
+  gt::cols_width(
+    label ~ gt::px(90),
+    everything() ~ gt::px(50)
+  )
+
+```
+
+``` {r}
+#| label: tbl-full
+#| tbl-cap: Full output from ERGMs. Nodefactor and nodecov refer to effects of variables on outgoing ties, nodeifactor and nodeicov on incoming ties. Nodematch and absdiff are estimates of homophily, and the "relmat" variables refer to relatedness. "Mutual" is an estimate of reciprocity, and "edges" is an intercept term (baseline logodds of ties)
+#| tbl-pos: "H"
+tbl1 <- tbl_regression(mod_work, exponentiate = TRUE, conf.level = 0.95) |> 
+    modify_header(label = "**Variable**", estimate = "**Odds Ratio**")
+  
+  tbl2 <- tbl_regression(mod_soc, exponentiate = TRUE, conf.level = 0.95)|>
+    modify_header(estimate = "**Odds Ratio**")
+  
+  tbl3 <- tbl_regression(mod_support, exponentiate = TRUE, conf.level = 0.95) |>
+    modify_header(estimate = "**Odds Ratio**")
+  
+  final_table_full <- tbl_merge(
+    tbls = list(tbl1, tbl2, tbl3),
+    tab_spanner = c("**Labour (agriculture + childcare)**", "**Socialisation and festivities**", "**Material support (including loans)**")
+  ) %>%
+    remove_abbreviation() %>%
+    # Remove CI footnote
+    modify_caption("**Exponential Random Graph models of social networks (full output)**\\label{{tab-full}}")
+  
+  
+  # Print
+  final_table_full %>%
+  as_gt() %>%
+  gt::tab_options(table.font.size = 7,
+                  table.width = gt::pct(105),
+                  data_row.padding = gt::px(0),
+                  table.align = "center"  ) %>%      # 
+  gt::cols_width(
+    label ~ gt::px(100), 
+    everything() ~ gt::px(50)
+  )
 ```
 
 ```{=latex}
@@ -787,119 +899,3 @@ Former Nomad     & $\checkmark$ & $\checkmark$  & $\checkmark$ \\
   \label{fig:water-ins}
 \end{figure}
 ```
-
-``` {r}
-#| label: tbl-edu-age
-#| tbl-cap: "Mean years of schooling by group and age band (number of participants in parentheses)."
-#| tbl-pos: "H"
-edu_cell <- function(x) sprintf("%.1f (%d)", mean(x, na.rm = TRUE), sum(!is.na(x)))
-edu_tab <- with(d[!is.na(d$age_band), ], tapply(yrs_edu, list(age_band, group2), edu_cell))
-data.frame(`Age band` = rownames(edu_tab),
-           `Never nomads` = edu_tab[, "never nomad"],
-           `Former nomads` = edu_tab[, "former nomad"],
-           `Nomads` = edu_tab[, "nomad"],
-           check.names = FALSE, row.names = NULL) %>%
-  gt::gt() %>%
-  gt::tab_options(table.font.size = 8, table.width = gt::pct(100))
-```
-
-
-``` {r}
-#| label: tbl-conflicts
-#| tbl-cap: "Frequency of conflicts reported by nomads (current life) and former nomads (nomadic past and village life)."
-#| tbl-pos: "H"
-cf <- function(n, total) sprintf("%d (%.1f%%)", n, 100 * n / total)
-with_na <- function(x, total) c(x, total - sum(x))
-data.frame(
-  Frequency = c("Never", "Rarely", "Sometimes", "Often", "No answer"),
-  `Nomads` = cf(with_na(c(n_conf_nom_never, n_conf_nom_rarely, 0, n_conf_nom_often), n_nom_support), n_nom_support),
-  `Former nomads: nomadic past` = cf(with_na(c(n_conf_fnom_never, n_conf_fnom_rarely, 0, n_conf_fnom_often), n_nom_sub), n_nom_sub),
-  `Former nomads: village life` = cf(with_na(c(n_sconf_fnom_never, n_sconf_fnom_rarely, n_sconf_fnom_sometimes, 0), n_nom_sub), n_nom_sub),
-  check.names = FALSE
-) %>%
-  gt::gt() %>%
-  gt::tab_options(table.font.size = 8, table.width = gt::pct(100))
-```
-
-
-``` {r}
-#| label: tbl-ergm-results
-#| tbl-cap: Output from ERGMs. The outcome is the log-odds ratio of observing a tie between two nodes, conditional on the rest of the network parameters. This table only includes the parameters of interest, namely the effects of being a former nomad on outgoing ties and incoming ties, and homophily, i.e. the log-odds of a tie if either both nodes are former nomads or both are not.
-#| tbl-pos: "H"
-tbl1 <- tbl_regression(mod_work, exponentiate = TRUE, conf.level = 0.95,
-label = list(`nodefactor.Former nomad.Yes` = "Former nomad (outgoing ties)", 
-`nodeifactor.Former nomad.Yes` = "Former nomad (incoming ties)",
-`nodematch.Former nomad` = "Former nomad homophily")) %>% 
-  modify_header(label = "**Variable**", estimate = "**Odds Ratio**")
-
-tbl2 <- tbl_regression(mod_soc, exponentiate = TRUE, conf.level = 0.95,
-label = list(`nodefactor.Former nomad.Yes` = "Former nomad (outgoing ties)", 
-`nodeifactor.Former nomad.Yes` = "Former nomad (incoming ties)",
-`nodematch.Former nomad` = "Former nomad homophily")) %>% 
-  modify_header(estimate = "**Odds Ratio**")
-
-tbl3 <- tbl_regression(mod_support, exponentiate = TRUE, conf.level = 0.95,
-label = list(`nodefactor.Former nomad.Yes` = "Former nomad (outgoing ties)", 
-`nodeifactor.Former nomad.Yes` = "Former nomad (incoming ties)",
-`nodematch.Former nomad` = "Former nomad homophily")) %>% 
-  modify_header(estimate = "**Odds Ratio**")
-
-table <- tbl_merge(
-  tbls = list(tbl1, tbl2, tbl3),
-  tab_spanner = c("**Labour (agriculture + childcare)**", "**Socialisation and festivities**", "**Material support (including loans)**")
-) %>%
-  remove_abbreviation() %>%
-  modify_table_body(~ .x %>% dplyr::filter(.data$variable %in% c("nodefactor.Former nomad.Yes","nodeifactor.Former nomad.Yes", "nodematch.Former nomad"))) %>%
-  modify_caption("**Exponential Random Graph models of social networks**\\label{{tab-ergm-results}}") %>%
-  modify_footnote_header(footnote = "also includes controls for age, sex, log income, log wealth, household, reciprocity, relatedness, and number of external ties", columns = everything())
-
-# Print
-table %>%
-  as_gt() %>%
-  gt::tab_options(table.font.size = 8,
-                  table.width = gt::pct(100),
-                  data_row.padding = gt::px(0),
-                  table.align = "center") %>%
-  gt::cols_width(
-    label ~ gt::px(90),
-    everything() ~ gt::px(50)
-  )
-
-```
-
-``` {r}
-#| label: tbl-full
-#| tbl-cap: Full output from ERGMs. Nodefactor and nodecov refer to effects of variables on outgoing ties, nodeifactor and nodeicov on incoming ties. Nodematch and absdiff are estimates of homophily, and the "relmat" variables refer to relatedness. "Mutual" is an estimate of reciprocity, and "edges" is an intercept term (baseline logodds of ties)
-#| tbl-pos: "H"
-tbl1 <- tbl_regression(mod_work, exponentiate = TRUE, conf.level = 0.95) |> 
-    modify_header(label = "**Variable**", estimate = "**Odds Ratio**")
-  
-  tbl2 <- tbl_regression(mod_soc, exponentiate = TRUE, conf.level = 0.95)|>
-    modify_header(estimate = "**Odds Ratio**")
-  
-  tbl3 <- tbl_regression(mod_support, exponentiate = TRUE, conf.level = 0.95) |>
-    modify_header(estimate = "**Odds Ratio**")
-  
-  final_table_full <- tbl_merge(
-    tbls = list(tbl1, tbl2, tbl3),
-    tab_spanner = c("**Labour (agriculture + childcare)**", "**Socialisation and festivities**", "**Material support (including loans)**")
-  ) %>%
-    remove_abbreviation() %>%
-    # Remove CI footnote
-    modify_caption("**Exponential Random Graph models of social networks (full output)**\\label{{tab-full}}")
-  
-  
-  # Print
-  final_table_full %>%
-  as_gt() %>%
-  gt::tab_options(table.font.size = 7,
-                  table.width = gt::pct(105),
-                  data_row.padding = gt::px(0),
-                  table.align = "center"  ) %>%      # 
-  gt::cols_width(
-    label ~ gt::px(100), 
-    everything() ~ gt::px(50)
-  )
-```
-
-
