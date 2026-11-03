@@ -1,5 +1,5 @@
 ---
-title: Amazigh Nomads Show Strong Desire to Settle and Low Regret Despite Economic Costs.
+title: Amazigh Nomads Show Strong Desire to Settle and Low Regret Despite Economic Costs
 format:
   cambridge-medium-pdf:
     keep-tex: true
@@ -183,7 +183,7 @@ The gendered division of labour is less pronounced among *rahala* than in the vi
 Wealthier families may reach as far as the Souss region, using trucks for livestock and maintaining seasonal residences. *Rahala* households face significant barriers to healthcare, education, and civil registration. Many individuals lack national identification documents, limiting their ability to enrol their children in school or access public healthcare.
 
 ```{=latex}
-\begin{figure}[H]
+\begin{figure}[tbp]
   \centering
   \begin{minipage}[t]{0.48\textwidth}
     \centering
