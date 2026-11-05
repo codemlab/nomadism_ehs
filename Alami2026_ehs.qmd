@@ -482,29 +482,27 @@ Taken together, our findings indicate that sedentarisation among High Atlas tran
 
 Our findings also speak to longstanding questions about why, repeatedly across history, mobile populations have chosen to settle. Classical accounts of subsistence transitions emphasise distal, structural drivers — climate shifts, demographic pressure, resource intensification [@richerson2001WasAgricultureImpossible; @bocquet-appel2011AgriculturalDemographicTransition; @gupta2004OriginAgricultureDomestication]. Our data suggest these forces operate primarily through proximate individual motivations: accumulated physical toll, aspirations for children's education, and anticipation of a more socially embedded lifestyle. Distinguishing proximate triggers from distal causes matters: the same population-level trend can reflect environmental coercion or deliberate agency, with different implications for policy. Studying sedentarisation while still ongoing, with the behavioural resolution living populations afford, provides a window into the history of human subsistence change.
 
-##### Author Contributions
-
-S.A, E.S designed research; S.A, E.S, K.O, S.E, M.I performed research; S.A, E.S analysed data; S.A, E.S wrote the paper.
-
-##### Financial Support
-
-We would like to thank the ENDOW (NSF awards 1743019, 2218860, and 2218861), Rep2SI (Leverhulme Award RL-2022-039), and EIC (H2020 ERC grant #864519) projects for supporting this research.
-
-##### Conflicts of Interest
-
-The authors declare no competing interests.
-
-##### Acknowledgements
+##### Acknowledgements {.unnumbered}
 
 We thank Abderrafiae Allal, Hanane Hrouk, Karim Jidani, and Samir Haqi for their help with data collection; the Youth association in Tizougaghin for their support with logistics; the Sobhi, Allal and Hrouk families for hosting our research team; and the people of Tizougaghin, Ait Hani and Tizgui for their hospitality and cooperation.
 
-##### Data Availability
+Claude Code (Anthropic), accessed through the Claude Code extension for Visual Studio Code, was used with the claude-sonnet-4-6 model (July 2026) and the claude-opus-5-5 model (October–November 2026). It was used to clean, organise and verify the code for data preparation and formatting, to manage the bibliography, and to help produce graphs and figures. During revision, it was also used to help edit the manuscript text, condensing sections to meet journal length limits and revising wording in response to reviewers' comments, and to help with layout and formatting. All content, interpretations and the design of the data analysis are the authors' own. The authors reviewed and edited every AI-assisted change and take full responsibility for the manuscript.
+
+##### Author Contributions {.unnumbered}
+
+S.A, E.S designed research; S.A, E.S, K.O, S.E, M.I performed research; S.A, E.S analysed data; S.A, E.S wrote the paper.
+
+##### Financial Support {.unnumbered}
+
+We would like to thank the ENDOW (NSF awards 1743019, 2218860, and 2218861), Rep2SI (Leverhulme Award RL-2022-039), and EIC (H2020 ERC grant #864519) projects for supporting this research.
+
+##### Conflicts of Interest {.unnumbered}
+
+The authors declare no competing interests.
+
+##### Research Transparency and Reproducibility {.unnumbered}
 
 The data and analysis code underlying this article are openly available at \url{https://github.com/codemlab/nomadism\_ehs}. The repository includes raw data files, analysis scripts, and the Quarto document used to generate all results and figures reported here, enabling full reproduction of the analyses.
-
-##### Use of AI Tools
-
-Claude Code (Anthropic, claude-sonnet-4-6) was used for cleaning, organising, and verifying the code used for the formatting and preparation of data for analysis, the management of references in the bibliography file, and for support in the creation of graphs and figures (minor adjustments only). It was not used for drafting the writing or the design of the data analysis.
 
 ## References
 
