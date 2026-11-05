@@ -85,7 +85,8 @@ ggplot(all_draws, aes(x = value, y = row, fill = effect)) +
     point_interval = median_qi,
     slab_size = 0.7,
     slab_alpha = 0.8,
-    normalize = "groups"
+    normalize = "groups",
+    interval_size_range = c(0.4, 0.4)
   ) +
     facet_grid(cols = vars(model))+
   scale_y_discrete(drop = F,
@@ -160,7 +161,8 @@ ggplot(all_draws, aes(x = value, y = row, fill = effect)) +
     point_interval = median_qi,
     slab_size = 0.7,
     slab_alpha = 0.8,
-    normalize = "groups"
+    normalize = "groups",
+    interval_size_range = c(0.4, 0.4)
   ) +
     facet_grid(cols = vars(model))+
   scale_y_discrete(drop = F,

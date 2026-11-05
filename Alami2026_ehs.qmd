@@ -819,7 +819,7 @@ tbl1 <- tbl_regression(mod_work, exponentiate = TRUE, conf.level = 0.95) |>
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.9\textwidth]{figures/income_comparison.png}
-  \caption{Annual gross income (US\$, June 2023 exchange rate) of nomads (n = 74), former nomads (n = 59) and never nomads (n = 139) in the year preceding the interview. Boxes show the median and interquartile range, shaded areas the distribution, and points individual outlying values. This comparison is descriptive, as nomads were a convenience sample.}
+  \caption{Annual gross income (US\$, June 2023 exchange rate) of nomads (n = 74), former nomads (n = 59) and never nomads (n = 139) in the year preceding the interview. The y axis is logarithmic, plotted as log(income + 1) so that respondents reporting no income remain visible at \$0. Boxes show the median and interquartile range, shaded areas with black outlines the distribution, and points individual outlying values. This comparison is descriptive, as nomads were a convenience sample.}
   \label{fig:inc-comp}
 \end{figure}
 ```

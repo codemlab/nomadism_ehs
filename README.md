@@ -74,7 +74,7 @@ install.packages(c(
 ├── Alami2026_ehs.qmd               # Manuscript source — compile this second
 ├── references.bib                  # Bibliography
 ├── variables.tex                   # LaTeX macros included by the QMD
-├── code/                           # Helper scripts sourced by the main R file
+├── code/                           # Helper scripts (see note below)
 │   ├── dag_plot.R
 │   ├── map_plot.R
 │   ├── network_creation_function.R
@@ -85,6 +85,10 @@ install.packages(c(
 ├── model_output/                   # Model fit objects written by R script
 └── _extensions/                    # Quarto Cambridge journal extension
 ```
+
+The main R file sources only `dag_plot.R`, `map_plot.R` and `network_creation_function.R`. The manuscript's posterior and counterfactual figures are produced by the main R file itself, not by `posterior_plots.R`.
+
+The income comparison figure (`figures/income_comparison.png`) uses a log(income + 1) axis labelled in US$, so that respondents with zero income stay in the plot.
 
 ---
 

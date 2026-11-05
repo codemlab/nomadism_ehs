@@ -852,7 +852,7 @@ cf_i <- bind_rows(lapply(cf_rows, function(r) cf_long(cf_inc(r$i, r$nd), r$lab))
 cf_w <- bind_rows(lapply(cf_rows, function(r) cf_long(cf_wea(r$w, r$nd), r$lab)))
 cf_panel <- function(df, title, lab, facet) {
   p <- ggplot(df, aes(x = Sex, y = value, fill = Group)) +
-    stat_halfeye(.width = 0.9, position = position_dodge(width = 0.7), slab_alpha = 0.85, point_interval = median_qi) +
+    stat_halfeye(.width = 0.9, position = position_dodge(width = 0.7), slab_alpha = 0.85, point_interval = median_qi, interval_size_range = c(0.4, 0.4)) +
     scale_fill_manual(values = group_cols) + scale_y_continuous(labels = lab) +
     labs(title = title, x = NULL, y = NULL, fill = NULL) + theme_minimal(base_size = fig_base_size - 1) +
     theme(plot.title = element_text(size = fig_base_size))
@@ -904,9 +904,16 @@ dall_inc <- d[!is.na(d$income),]
 dall_inc$Group <- factor(group_labels[as.character(dall_inc$group2)], levels = c("Nomads", "Former nomads", "Never nomads"))
 ggplot(dall_inc, aes(x = Group, y = income, fill = Group)) +
   geom_boxplot(width = 0.3, na.rm = TRUE, show.legend = FALSE) +
-  stat_slab(side = "right", scale = 0.4, na.rm = TRUE, show.legend = FALSE) +
-  scale_fill_manual(values = group_cols) + scale_y_continuous(labels = scales::dollar) +
-  labs(x = "Nomadic status", y = "Annual income (US$)") +
+  # Densities sit right of the boxes; bounded at $0 only, so upper tails taper rather than being cut at the maximum.
+  # Upper tails are dropped once negligible (pdf < 0.01), as they otherwise run far beyond the observed incomes.
+  stat_slab(aes(thickness = after_stat(ifelse(pdf < 0.01 & cdf > 0.5, NA, pdf))),
+            side = "right", scale = 0.4, position = position_nudge(x = 0.18), density = density_bounded(bounds = c(0, Inf)), trim = FALSE,
+            na.rm = TRUE, show.legend = FALSE, colour = "black", linewidth = 0.3) +
+  scale_x_discrete(expand = expansion(add = 0)) + coord_cartesian(xlim = c(0.7, 3.65)) +
+  scale_fill_manual(values = group_cols) +
+  # log(x + 1) rather than log(x): about a quarter of respondents report zero income and must stay in the plot
+  scale_y_continuous(trans = "log1p", limits = c(0, 50000), breaks = c(0, 10, 100, 1000, 10000), minor_breaks = NULL, labels = scales::label_dollar(accuracy = 1)) +
+  labs(x = "Nomadic status", y = "Annual income (US$, log scale)") +
   theme_minimal(base_size = fig_base_size)
 ggsave("figures/income_comparison.png", width = fig_width, height = 3.6, dpi = 300, bg = "white")
 
