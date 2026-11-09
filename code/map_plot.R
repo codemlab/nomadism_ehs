@@ -14,7 +14,7 @@ library(patchwork)
 # ---- Waypoints ----
 waypoints <- data.frame(
   name = c("Tagendoust", "Amellagou", "Aït Hani", "Tinghir",
-           "Jbel Saghro", "Boulmane\nDades", "Msemrir", "Agoudal"),
+           "Jbel Saghro", "Boumalne\nDades", "Msemrir", "Agoudal"),
   lat  = c(32.336398, 32.011425, 31.778305, 31.512597,
            31.150331, 31.378035, 31.705714, 32.023067),
   lon  = c(-4.820442, -4.996739, -5.455544, -5.520666,
@@ -27,7 +27,7 @@ waypoints <- data.frame(
 # Spring: south to north through Todgha corridor
 # Autumn: north to south via western route
 spring_names <- c("Jbel Saghro", "Tinghir", "Aït Hani", "Amellagou", "Tagendoust")
-autumn_names <- c("Tagendoust", "Agoudal", "Msemrir", "Boulmane\nDades", "Jbel Saghro")
+autumn_names <- c("Tagendoust", "Agoudal", "Msemrir", "Boumalne\nDades", "Jbel Saghro")
 
 make_route <- function(names, wp) {
   pts <- wp[match(names, wp$name), ]

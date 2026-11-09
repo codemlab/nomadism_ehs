@@ -15,3 +15,9 @@ $endfor$
 $if(keywords)$
 \keywords{$for(keywords)$$it$$sep$; $endfor$}
 $endif$
+
+$if(social-media-summary)$
+\makeatletter
+\g@addto@macro\cup@keywords@print{\par\smallskip{\noindent\bfseries Social media summary: }$social-media-summary$\par}
+\makeatother
+$endif$

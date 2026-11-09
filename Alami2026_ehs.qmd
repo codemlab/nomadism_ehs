@@ -44,8 +44,7 @@ abstract: |
   The transition from nomadic to sedentary lifeways is one of the most consequential shifts in human evolutionary history. Understanding its drivers and consequences is essential for interpreting human evolution and for guiding public policy in regions where nomads are settling. While the forager-to-farmer transition is well-studied, pastoralist sedentarisation remains underexplored. Archaeological and public health studies illuminate post-settlement outcomes but tell us little about lived experiences. Here, we investigate the factors driving settlement among nomadic pastoralists in Morocco's Southeastern High Atlas, describe how this transition unfolds, and evaluate its effects on socioeconomic well-being by comparing nomads, former nomads and never nomads in the same village. Despite lower incomes, the large majority want to settle, and former nomads overwhelmingly report no regret. We conceptualise sedentarisation as a form of *retirement*, a deliberate, intergenerational investment that trades material autonomy for physical ease, social embeddedness, and expanded opportunities for one's children. Former nomads report lower incomes than nomads, having sold part or all of their flock, and rely more on community-based sharing networks. Our findings reframe sedentarisation as an act of agency with implications for evolutionary theories of subsistence change and for policies affecting pastoral populations worldwide.
   
 keywords: [subsistence transition, nomadic pastoralism, sedentarisation, life history theory, lifestyle change, Morocco]
-Social media summary: |
-  Amazigh nomads in Morocco settle as a form of retirement: less income, but more ease and better access to schooling.
+social-media-summary: "Amazigh nomads in Morocco settle as a form of retirement: less income, but more ease and better access to schooling."
 bibliography: references.bib
 suppress-bibliography: true
 ---
