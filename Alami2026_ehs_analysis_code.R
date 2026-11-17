@@ -1,7 +1,7 @@
 ######################################################################
-# Data analysis EHBEA 2024 - Sarah
-# coder: Ed Seabright, Sarah Alami
-# commit: 
+# Replication code for the paper submitted to *Evolution and Human Sciences*. 
+# Authors: Ed Seabright, Sarah Alami
+# Analysis was run under R 4.6.1.
 ######################################################################
 
 # Set Seed
